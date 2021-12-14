@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout/layout_professor_lecture}">
+<th:block layout:fragment="content">
+    <div class="container-fluid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>강의실</h5>
+                    <button class="btn btn-primary" type="button" style="float: right" data-bs-toggle="modal"
+                            data-bs-target=".bd-example-modal-lg">등록
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">주차</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">기간</th>
+                            <th scope="col">시간</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="list, i : ${onlineLecList}">
+                            <th th:text="${i.count}" scope="row"><span th:text="${i.count}"></span></th>
+                            <td th:text="${list.onlineLecWeek}"><span th:text="${list.onlineLecWeek}"></span></td>
+                            <td th:text="${list.onlineLecTitle}"><span th:text="${list.onlineLecTitle}"></span></td>
+                            <td th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}">
+                                <span th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}"></span>
+                            </td>
+                            <td th:text="${list.vidoEndtime}"><span th:text="${list.vidoEndtime}"></span></td>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                    <!-- Modal 창 -->
+                    <form id="lectureModalForm" method="post" enctype="multipart/form-data">
+                        <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                             style="display: none;" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myLargeModalLabel">강의 등록</h4>
+                                        <button class="btn-close" type="button" data-bs-dismiss="modal"
+                                                aria-label="Close"/>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden">
+                                        <label for="onlineLecWeek">주차</label>
+                                        <select name="onlineLecWeek" id="onlineLecWeek" required>
+                                            <option value="1" th:text="1"/>
+                                            <option value="2" th:text="2"/>
+                                            <option value="3" th:text="3"/>
+                                            <option value="4" th:text="4"/>
+                                            <option value="5" th:text="5"/>
+                                            <option value="6" th:text="6"/>
+                                            <option value="7" th:text="7"/>
+                                            <option value="8" th:text="8"/>
+                                            <option value="9" th:text="9"/>
+                                            <option value="10" th:text="10"/>
+                                            <option value="11" th:text="11"/>
+                                            <option value="12" th:text="12"/>
+                                            <option value="13" th:text="13"/>
+                                            <option value="14" th:text="14"/>
+                                            <option value="15" th:text="15"/>
+                                            <option value="16" th:text="16"/>
+                                        </select><br>
+                                        <label for="onlineLecTitle">영상 제목</label>
+                                        <input id="onlineLecTitle" type="text" name="onlineLecTitle"
+                                               placeholder="영상 제목" required><br>
+                                        <label for="onlineLecStart">시작일</label>
+                                        <input id="onlineLecStart" type="date" name="onlineLecStart"
+                                               placeholder="시작일" required>~
+                                        <label for="onlineLecEnd">종료일</label>
+                                        <input id="onlineLecEnd" type="date" name="onlineLecEnd"
+                                               placeholder="종료일" required><br>
+                                        <label for="onlineLectureFile">영상 파일</label>
+                                        <input id="onlineLectureFile" type="file" name="onlineLectureFile" multiple
+                                               required>
+                                        <input id="onlineLectureTime" type="hidden" name="onlineLectureTime" value="">
+                                        <pre id="infos"></pre>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="registerLecture" class="btn btn-primary" type="button"
+                                                style="float: right">등록
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const registerBtn = document.querySelector('#registerLecture');
+        $(document).ready(function () {
+            registerBtn.addEventListener('click', function () {
+                if ($("#onlineLecWeek").val().length == 0) {
+                    alert("주차를 입력하세요.");
+                    $("#onlineLecWeek").focus();
+                    return false;
+                }
+                if ($("#onlineLecTitle").val().length == 0) {
+                    alert("제목을 입력하세요.");
+                    $("#onlineLecTitle").focus();
+                    return false;
+                }
+                if ($("#onlineLecStart").val().length == 0) {
+                    alert("시작일을 입력하세요.");
+                    $("#onlineLecStart").focus();
+                    return false;
+                }
+                if ($("#onlineLecEnd").val().length == 0) {
+                    alert("종료일을 입력하세요.");
+                    $("#onlineLecEnd").focus();
+                    return false;
+                }
+                if ($("#onlineLectureFile").val().length == 0) {
+                    alert("파일을 등록하세요.");
+                    $("#onlineLectureFile").focus();
+                    return false;
+                }
+            })
+        })
+
+        const myVideos = [];
+        window.URL = window.URL || window.webkitURL;
+        //파일 첨부를 했을 때 onchange를 통한 함수 시작
+        document.getElementById('onlineLectureFile').onchange = setFileInfo;
+
+        registerBtn.addEventListener('click', function () {
+            const form = $('#lectureModalForm')[0];
+            const videoFile = document.getElementById('onlineLectureFile');
+            //form data를 담을 변수
+            let formData = new FormData(form);
+
+            $(document).ready(function () {
+                if ($("#onlineLecWeek").val().length == 0) {
+                    alert("주차를 입력하세요.");
+                    $("#onlineLecWeek").focus();
+                    return false;
+                }
+                if ($("#onlineLecTitle").val().length == 0) {
+                    alert("제목을 입력하세요.");
+                    $("#onlineLecTitle").focus();
+                    return false;
+                }
+                if ($("#onlineLecStart").val().length == 0) {
+                    alert("시작일을 입력하세요.");
+                    $("#onlineLecStart").focus();
+                    return false;
+                }
+                if ($("#onlineLecEnd").val().length == 0) {
+                    alert("종료일을 입력하세요.");
+                    $("#onlineLecEnd").focus();
+                    return false;
+                }
+                if ($("#onlineLectureFile").val().length == 0) {
+                    alert("파일을 등록하세요.");
+                    $("#onlineLectureFile").focus();
+                    return false;
+                }
+            })
+
+            $.ajax({
+                url: "/uploadLecture",
+                enctype: 'multipart/form-data',
+                cache: false,
+                processData: false,
+                contentType: false,
+                data: formData,
+                method: "Post",
+                dataType: "json",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (fragment) {
+                    if (fragment.state == "true") {
+                        console.log("등록 확인")
+                        swal("등록 성공")
+                        location.reload();
+                    } else {
+                        console.log(fragment + " " + fragment.state);
+                        console.log("등록 실패");
+                        swal("등록실패");
+                        return;
+                    }
+                }
+            });
+        })
+
+        function setFileInfo() {
+            var files = this.files;
+            myVideos.push(files[0]);
+            var video = document.createElement('video');
+            video.preload = 'metadata'
+
+            video.onloadedmetadata = function () {
+                window.URL.revokeObjectURL(video.src);
+                var duration = video.duration;
+                myVideos[myVideos.length - 1].duration = duration;
+                updateInfos();
+            }
+            video.src = URL.createObjectURL((files[0]));
+        }
+
+        function updateInfos() {
+            var infos = document.getElementById("infos");
+            infos.textContent = "";
+            for (var i = 0; i < myVideos.length; i++) {
+                infos.textContent += myVideos[i].name + " duration: " + myVideos[i].duration + "\n";
+                document.querySelector('#onlineLectureTime').value = myVideos[i].duration;
+            }
+        }
+    </script>
+</th:block>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="sidebarFragment">
+    <header class="main-nav">
+        <div class="sidebar-user text-center"><a class="setting-primary" href="javascript:void(0)"><i data-feather="settings"></i></a><img class="img-90 rounded-circle" th:src="@{/static/images/memberImg/} + ${session.memberImg} + @{.png}" alt="">
+            <div class="badge-bottom"><span class="badge badge-primary">New</span></div><a href="user-profile.html">
+                <h6 class="mt-3 f-14 f-w-600" th:text="${session.userName}">Emay Walter</h6></a>
+            <p class="mb-0 font-roboto" th:text="${session.major}">Human Resources Department</p>
+            <ul>
+                <li>
+                    <span sec:authorize="hasRole('ROLE_STUDENT')">학생</span>
+                    <span sec:authorize="hasRole('ROLE_PROFESSOR')">교수</span>
+                    <span sec:authorize="hasRole('ROLE_ADMIN')">임직원</span>
+                </li>
+                <li><span th:text="${session.grade}+학년">2 year</span>
+                    <p>Experince</p>
+                </li>
+                <li><span><span class="counter">95.2</span>k</span>
+                    <p>Follower </p>
+                </li>
+            </ul>
+        </div>
+        <nav>
+            <div class="main-navbar">
+                <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+                <div id="mainnav">
+                    <ul sec:authorize="hasRole('ROLE_STUDENT')" class="nav-menu custom-scrollbar">
+                        <th:block th:replace="/fragment/nav_student.html :: nav_studentFragment"></th:block>
+                    </ul>
+                    <ul sec:authorize="hasRole('ROLE_PROFESSOR')" class="nav-menu custom-scrollbar">
+                        <th:block th:replace="/fragment/nav_professor.html :: nav_professorFragment"></th:block>
+                    </ul>
+                    <ul sec:authorize="hasRole('ROLE_ACCADEMIC_DEP')" class="nav-menu custom-scrollbar">
+                        <th:block th:replace="/fragment/nav_accademic_dep.html :: nav_accademic_depFragment"></th:block>
+                    </ul>
+                    <ul sec:authorize="hasRole('ROLE_ADMIN_DEP')" class="nav-menu custom-scrollbar">
+                        <th:block th:replace="/fragment/nav_admin_dep.html :: nav_admin_depFragment"></th:block>
+                    </ul>
+                    <ul sec:authorize="hasRole('ROLE_GENERAL_DEP')" class="nav-menu custom-scrollbar">
+                        <th:block th:replace="/fragment/nav_general_dep.html :: nav_general_depFragment"></th:block>
+                    </ul>
+                    <ul sec:authorize="hasRole('ROLE_STUDENT_DEP')" class="nav-menu custom-scrollbar">
+                        <th:block th:replace="/fragment/nav_student_dep.html :: nav_student_depFragment"></th:block>
+                    </ul>
+                </div>
+                <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+            </div>
+        </nav>
+    </header>
+</th:block>
+</html>

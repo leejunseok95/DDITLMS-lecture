@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout/layout_student_lecture}">
+<th:block layout:fragment="content">
+    <div class="container-fluid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>강의실</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">주차</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">기간</th>
+                            <th scope="col">학습현황</th>
+                            <th scope="col">시간</th>
+                            <th scope="col">진행률</th>
+                            <th scope="col">출결</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+<!--                            <tr class="goOnlineLecVideo" th:id="${list.onlineLecCd}" th:each="list : ${onlineLecList}">-->
+<!--                                <th th:text="${list.onlineLecCd}" scope="row"><span th:text="${list.onlineLecCd}"></span></th>-->
+<!--                                <td th:text="${list.onlineLecWeek}"><span th:text="${list.onlineLecWeek}"></span></td>-->
+<!--                                <td th:text="${list.onlineLecTitle}"><span th:text="${list.onlineLecTitle}"></span></td>-->
+<!--                                <td th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}">-->
+<!--                                    <span th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}"></span>-->
+<!--                                </td>-->
+<!--                                <td th:text="${list.learningStatus}"><span th:text="${list.learningStatus}"></span></td>-->
+<!--                                <td th:text="${list.vidoEndtime}"><span th:text="${list.vidoEndtime}"></span></td>-->
+<!--                                <td>%</td>-->
+<!--                                <td>아직</td>-->
+<!--                                <input name="atchmnFlSn" type="hidden" th:value="${list.atchmnflSn}"/>-->
+<!--                                <input id="mberNo" name="mberNo" type="hidden" th:value="${mberNo}"/>-->
+<!--                            </tr>-->
+                            <tr class="goOnlineLecVideo" th:id="${list.onlineLecCd}" th:each="list,i : ${onlineLecPrintList}">
+                                <th th:text="${i.count}" scope="row"><span th:text="${i.count}"></span></th>
+                                <td th:text="${list.onlineLecWeek}"><span th:text="${list.onlineLecWeek}"></span></td>
+                                <td th:text="${list.onlineLecTitle}"><span th:text="${list.onlineLecTitle}"></span></td>
+                                <td th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}">
+                                    <span th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}"></span>
+                                </td>
+                                <td th:text="${list.learningStatus}"><span th:text="${list.learningStatus}"></span></td>
+                                <td th:text="${list.vidoEndtime}"><span th:text="${list.vidoEndtime}"></span></td>
+                                <td th:text="${list.vidoProgress}+'%'"><span th:text="${list.vidoProgress}+'%'"></span></td>
+                                <td th:text="${list.atendSttus}">출결</td>
+                                <input name="atchmnFlSn" type="hidden" th:value="${list.atchmnflSn}"/>
+                                <input id="mberNo" name="mberNo" type="hidden" th:value="${mberNo}"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const formBtn = document.querySelector('form');
+        const mberNo = document.querySelector('#mberNo').value;
+        const goOnlineLecVideos = document.querySelectorAll('.goOnlineLecVideo');
+
+        goOnlineLecVideos.forEach(goOnlineLecVideo => {
+            goOnlineLecVideo.addEventListener('click', function (event) {
+                location.href="/goOnlineLecVideoPlayer?onlineLecCd=" + event.currentTarget.id + "&mberNo=" + mberNo;
+            })
+        })
+
+        function doSubmit() {
+            console.log("test");
+            formBtn.submit();
+        }
+
+        // $(document).ready(function () {
+        //     setTimeout(function () {
+        //         const endTime = videoPlayTime.duration;
+        //         console.log("time : " + endTime);
+        //     }, 500);
+        //     setInterval(function () {
+        //         let currentTime = videoPlayTime.currentTime;
+        //         console.log("currentTime : " + currentTime);
+        //     }, 1000);
+        // });
+
+    </script>
+</th:block>
+</html>

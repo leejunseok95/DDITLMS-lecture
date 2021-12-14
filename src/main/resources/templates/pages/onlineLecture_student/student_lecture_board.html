@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout/layout_student_lecture}">
+<th:block layout:fragment="content">
+    <div class="container-fluid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>게시판</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">No</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">작성자</th>
+                            <th scope="col">등록일</th>
+                            <th scope="col">조회수</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg" data-bs-original-title="" title="">
+                            <th scope="row">1</th>
+<!--                            <td>-->
+<!--                                <a data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg" data-bs-original-title="" title="">테스트</a>-->
+<!--                            </td>-->
+                            <td>test</td>
+                            <td>박성룡(교수)</td>
+                            <td>2021.12.05</td>
+                            <td>17</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!-- Modal 창 -->
+                    <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myLargeModalLabel">게시판 제목</h4>
+                                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
+                                </div>
+                                <div class="modal-body">등록일</div>
+                                <div class="modal-body">안의 내용</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

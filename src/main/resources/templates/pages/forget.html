@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:replace="/fragment/head.html :: headFragment"></th:block>
+<body>
+<th:block th:replace="/fragment/loader.html :: loaderFragment"></th:block>
+<section>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xl-7"><img class="bg-img-cover bg-center" th:src="@{/static/images/login.jpg}" alt="looginpage"></div>
+      <div class="col-xl-5 p-0">
+        <div class="login-card">
+          <div class="col-sm-12 col-xl-6 xl-100">
+            <div class="card height-equal">
+              <div class="card-header pb-0">
+                <h5>아이디/비밀번호 찾기</h5>
+              </div>
+              <div class="card-body">
+                <ul class="nav nav-dark" id="pills-darktab" role="tablist">
+                  <li class="nav-item"><a class="nav-link active" id="pills-darkhome-tab" data-bs-toggle="pill" href="#pills-id" role="tab" aria-controls="pills-id" aria-selected="true"><i class="icon-user"></i>Id</a></li>
+                  <li class="nav-item"><a class="nav-link" id="pills-darkprofile-tab" data-bs-toggle="pill" href="#pills-password" role="tab" aria-controls="pills-password" aria-selected="false"><i class="icon-lock"></i>Password</a></li>
+                </ul>
+                <div class="tab-content" id="pills-darktabContent">
+                  <div class="tab-pane fade show active" id="pills-id" role="tabpanel" aria-labelledby="pills-id">
+                    <div>
+                      <div class="form-group">
+                        <br/>
+                        <label>학번</label>
+                        <div class="input-group"><span class="input-group-text"><i class="icon-id-badge"></i></span>
+                          <input id="identification-findID" class="form-control" type="text" name="userNumber"  required="" placeholder="학번">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label>이름</label>
+                        <div class="input-group"><span class="input-group-text"><i class="icon-user"></i></span>
+                          <input id="name-findID" class="form-control" type="text" name="name"  required="" placeholder="이름">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button style="float:right" id="button-findID" class="btn btn-primary" type="button">ID 찾기</button>
+                      </div>
+                      <p><a class="ms-2" href="/login">돌아가기</a></p>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="pills-password" role="tabpanel" aria-labelledby="pills-password">
+                    <div>
+                      <div class="col-sm-12 col-xl-6 xl-100">
+                        <div class="card height-equal">
+                          <div class="card-body">
+                            <ul class="nav nav-pills" id="pills-icontab" role="tablist">
+                              <li class="nav-item"><a class="nav-link active" id="pills-mail-li" data-bs-toggle="pill" href="#pills-mail" role="tab" aria-controls="pills-mail" aria-selected="true"><i class="icon-email"></i>Mail</a></li>
+                              <li class="nav-item"><a class="nav-link" id="pills-phone-li" data-bs-toggle="pill" href="#pills-phone" role="tab" aria-controls="pills-phone" aria-selected="false"><i class="icon-mobile"></i>Phone</a></li>
+                            </ul>
+                            <div class="form-group">
+                              <br/>
+                              <label>학번</label>
+                              <div class="input-group"><span class="input-group-text"><i class="icon-id-badge"></i></span>
+                                <input id="identification-changePassword" class="form-control" type="text" required="" placeholder="학번">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label>이름</label>
+                              <div class="input-group"><span class="input-group-text"><i class="icon-user"></i></span>
+                                <input id="name-changePassword" class="form-control" type="text" required="" placeholder="이름">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label>아이디</label>
+                              <div class="input-group"><span class="input-group-text"><i class="icon-user"></i></span>
+                                <input id="id-changePassword" class="form-control" type="text" required="" placeholder="아이디">
+                              </div>
+                            </div>
+                            <div class="tab-content" id="pills-mailContent">
+                              <div class="tab-pane fade active show" id="pills-mail" role="tabpanel" aria-labelledby="pills-mail">
+                                <div class="form-group">
+                                  <label>메일</label>
+                                  <div class="input-group"><span class="input-group-text"><i class="icon-id-badge"></i></span>
+                                    <input class="form-control" id="mail-text" type="text" name="mail"  required="" placeholder="mail">
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <button style="float:right" id="button-change-password-mail" class="btn btn-primary" type="button">메일로 변경하기</button>
+                                </div>
+                              </div>
+                              <div class="tab-pane fade" id="pills-phone" role="tabpanel" aria-labelledby="pills-phone">
+                                <div class="form-group">
+                                  <label>전화번호</label>
+                                  <div class="row">
+                                    <div class="col">
+                                      <input id="phone1" class="form-control text-center opt-text" type="text" maxlength="3" onkeyPress="javascript:checkInputNum();">
+                                    </div>-
+                                    <div class="col">
+                                      <input id="phone2" class="form-control text-center opt-text" type="text" maxlength="4" onkeyPress="javascript:checkInputNum();">
+                                    </div>-
+                                    <div class="col">
+                                      <input id="phone3" class="form-control text-center opt-text" type="text" maxlength="4" onkeyPress="javascript:checkInputNum();">
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <button style="float:right" id="button-change-password-phone" class="btn btn-primary" type="button">문자로 변경하기</button>
+                                </div>
+                              </div>
+                              <p><a class="ms-2" href="/login">돌아가기</a></p>
+                            </div>
+                            <button id="btn-modal" style="display: none" data-bs-toggle="modal" data-bs-target="#passwordmodal" data-bs-original-title=""></button>
+                            <div class="modal fade" id="passwordmodal" tabindex="-1" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel2">비밀번호 변경</h5>
+                                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="mb-3">
+                                      <label>인증번호</label>
+                                      <div class="input-group"><span class="input-group-text"><i id="account_icon" class="icon-id-badge"></i></span>
+                                        <input id="text-otp" class="form-control" type="text" required="" placeholder="인증번호 6자리" onkeyPress="javascript:checkInputNum();">
+                                        <button style="float:right" id="btn-otpcheck" class="btn btn-primary" type="button">인증</button>
+                                      </div>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label>새 비밀번호</label>
+                                      <div id="pass-alert" class="alert alert-danger outline alert-dismissible fade show hidden" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-down"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
+                                        <span style="margin-left:30px;" class="password_exception"></span>
+                                        <button style="top:0px;" class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close" data-bs-original-title="" title=""></button>
+                                      </div>
+                                      <div class="input-group"><span class="input-group-text"><i class="icon-lock"></i></span>
+                                        <input id="newpassword" class="form-control" type="password" name="password" required="" placeholder="*********">
+                                        <div class="show-hide"><span class="show">                         </span></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button id="btn-close" class="btn btn-secondary" type="button" data-bs-dismiss="modal" data-bs-original-title="" title="">Close</button>
+                                    <button id="btn-change" class="btn btn-primary disabled" type="button" data-bs-original-title="" title="">비밀번호 변경</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<th:block th:replace="/fragment/script.html :: scriptFragment"></th:block>
+<script th:inline="javascript">
+  const token = $("meta[name='_csrf']").attr("content");
+  const header = $("meta[name='_csrf_header']").attr("content");
+  const identificationFindID = document.querySelector("#identification-findID");
+  const nameFindID = document.querySelector("#name-findID");
+  const identificationChangePassword = document.querySelector("#identification-changePassword");
+  const nameChnagePassword = document.querySelector("#name-changePassword");
+  const idChangePassword = document.querySelector("#id-changePassword");
+  const changeBtn = document.querySelector("#btn-change");
+  const closeBtn = document.querySelector("#btn-close");
+  let otpFlag = false;
+
+  identificationFindID.addEventListener("keyup",function (){
+    identificationChangePassword.value = identificationFindID.value;
+  });
+  identificationChangePassword.addEventListener("keyup",function (){
+    identificationFindID.value = identificationChangePassword.value;
+  });
+  nameFindID.addEventListener("keyup",function (){
+    nameChnagePassword.value = nameFindID.value;
+  });
+  nameChnagePassword.addEventListener("keyup",function (){
+    nameFindID.value = nameChnagePassword.value;
+  });
+
+  const buttonFindID = document.querySelector("#button-findID");
+
+  buttonFindID.addEventListener("click",function() {
+    if(identificationFindID.value=="" || nameFindID.value==""){
+      return;
+    }
+    const params = {
+      identification : identificationFindID.value,
+      name : nameFindID.value
+    };
+    $.ajax({
+      url: "/forget/findID",
+      data: params,
+      method: "GET",
+      dataType: "json"
+    })
+    .done(function(fragment){
+      if(fragment.find == "true"){
+        swal(`아이디는 ${fragment.id}입니다.`);
+      }else{
+        swal(`해당 학번,이름이 맞지 않거나 계정이 존재하지 않습니다.`);
+      }
+    });
+  });
+
+  const passwordMail = document.querySelector("#button-change-password-mail");
+  passwordMail.addEventListener("click",function(){
+    const mailText = document.querySelector("#mail-text");
+    if(identificationFindID.value=="" || nameFindID.value=="" || mailText.value==""){
+      return;
+    }
+    const params = {
+      identification : identificationFindID.value,
+      name : nameFindID.value,
+      mail : mailText.value,
+      id : idChangePassword.value
+    };
+    $.ajax({
+      url: "/forget/mail",
+      data: params,
+      method: "GET",
+      dataType: "json"
+    })
+    .done(function(fragment){
+      const modalBtn = document.querySelector("#btn-modal");
+      if(fragment.find == "false"){
+        swal("계정이 존재하지 않습니다.");
+      }else{
+        otpFlag = false;
+        modalBtn.click();
+      }
+    });
+  });
+  const passwordPhone = document.querySelector("#button-change-password-phone");
+  const phone1 = document.querySelector("#phone1");
+  const phone2 = document.querySelector("#phone2");
+  const phone3 = document.querySelector("#phone3");
+
+  phone1.addEventListener("keyup",function(){
+    if(phone1.value.length==3){
+      phone2.focus();
+    }
+  });
+  phone2.addEventListener("keyup",function(){
+    if(phone2.value.length==4){
+      phone3.focus();
+    }
+  });
+  passwordPhone.addEventListener("click",function(){
+    if(identificationFindID.value=="" || nameFindID.value=="" || phone1.value=="" || phone2.value=="" || phone3.value==""){
+      return;
+    }
+    const phone = phone1.value + phone2.value + phone3.value;
+    const params = {
+      identification : identificationFindID.value,
+      name : nameFindID.value,
+      phone : phone,
+      id : idChangePassword.value
+    };
+    $.ajax({
+      url: "/forget/phone",
+      data: params,
+      method: "GET",
+      dataType: "json"
+    })
+    .done(function(fragment){
+      const modalBtn = document.querySelector("#btn-modal");
+      if(fragment.find == "false"){
+        swal("계정이 존재하지 않습니다.");
+      }else{
+        otpFlag = false;
+        modalBtn.click();
+      }
+    });
+  });
+
+  const otpCheckBtn = document.querySelector("#btn-otpcheck");
+  otpCheckBtn.addEventListener("click",function(){
+    const otpText = document.querySelector("#text-otp");
+    const params = {
+      otpText : otpText.value
+    };
+    $.ajax({
+      url: "/forget/otpcheck",
+      data: params,
+      method: "Post",
+      dataType: "json",
+      beforeSend: function(xhr){
+        xhr.setRequestHeader(header,token);
+      }
+    })
+    .done(function(fragment){
+      if(fragment.check == "true"){
+        swal("인증성공");
+        otpFlag = true;
+        if(passwordFlag&&otpFlag){
+          changeBtn.classList.remove("disabled");
+        }
+      }else{
+        swal("인증실패");
+        otpFlag = false;
+        changeBtn.classList.add("disabled");
+      }
+    });
+  })
+
+  const PASSWORDREG_1 = /[A-Za-z\d#?!@$%^&*-]{8,}$/;
+  const PASSWORDREG_2 = /(?=.*?[a-z])(?=.*?[A-Z])/;
+  const PASSWORDREG_3 = /(?=.*?[0-9#?!@$%^&*-])/;
+  let passwordFlag = false;
+
+  const newPassword = document.querySelector("#newpassword");
+  newPassword.addEventListener("keyup",function(){
+    const passAlert = document.querySelector("#pass-alert");
+    const passAlertText = passAlert.querySelector('.password_exception');
+    const passwordText = newPassword.value;
+    passwordFlag = false;
+    if(!PASSWORDREG_1.test(passwordText)){
+      passAlert.classList.remove("hidden");
+      passAlertText.innerHTML = "<b>8자</b> 이상이여야 합니다."
+    }else if(!PASSWORDREG_2.test(passwordText)){
+      passAlert.classList.remove("hidden");
+      passAlertText.innerHTML = "<b>소문자</b>와 <b>대문자</b>가 모두 포함되어야 합니다."
+    }else if(!PASSWORDREG_3.test(passwordText)){
+      passAlert.classList.remove("hidden");
+      passAlertText.innerHTML = "<b>숫자</b>또는 <b>기호</b> 가 포함되어야 합니다."
+    }else if(passwordText == ""){
+      passAlert.classList.add("hidden");
+    }else{
+      passAlert.classList.add("hidden");
+      passwordFlag = true;
+      if(passwordFlag&&otpFlag){
+        changeBtn.classList.remove("disabled");
+      }
+    }
+  });
+
+  changeBtn.addEventListener("click",function(){
+    if(!passwordFlag || !otpFlag){
+      return;
+    }
+    const params = {
+      id : idChangePassword.value,
+      password : newPassword.value
+    };
+    $.ajax({
+      url: "/forget/changepassword",
+      data: params,
+      method: "Post",
+      dataType: "json",
+      beforeSend: function(xhr){
+        xhr.setRequestHeader(header,token);
+      }
+    })
+    .done(function(fragment){
+      if(fragment.change == "false"){
+        swal("알 수 없는 오류가 발생하였습니다.");
+        return;
+      }
+      swal("비밀번호 변경 성공");
+      closeBtn.click();
+    });
+  });
+
+</script>
+</body>
+</html>

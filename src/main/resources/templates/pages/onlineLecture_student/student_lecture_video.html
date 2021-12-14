@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout/layout_student_lecture}">
+<th:block layout:fragment="content">
+    <div class="container-fluid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>강의실</h5>
+                </div>
+                <div class="player">
+                    <!--마지막에 #을 이용하여 시작 시간을 설정할 수 있음-->
+                    <video class="player__video viewer" th:src="@{/static/video/} + ${atchmnflDTO.getOrignlFileNm()} + '#t='+${vidoInfoDTO.vidoPlaytime}"></video>
+                    <input id="mberNo" type="hidden" th:value="${mberNo}">
+                    <input id="onlineLecCd" type="hidden" th:value="${onlineLecCd}">
+                    <input id="vidoInfoSn" type="hidden" th:value="${vidoInfoDTO.getVidoInfoSn()}">
+                    <div class="player__controls">
+                        <div class="progress">
+                            <div style="background: #0a58ca" class="progress__filled"></div>
+                        </div>
+                        <button class="player__button toggle" title="Toggle Play">►</button>
+                        <label for="volume">볼륨</label>
+                        <input id="volume" type="range" name="volume" class="player__slider" min="0" max="1" step="0.05" value="1">
+                        <label for="playbackRate">속도조절</label>
+                        <input id="playbackRate" type="range" name="playbackRate" class="player__slider" min="0.5" max="2" step="0.1"
+                               value="1">
+                        <button data-skip="-10" class="player__button">« 10s</button>
+                        <button data-skip="25" class="player__button">25s »</button>
+                        <div style="display: inline" id="timeContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const player = document.querySelector('.player');
+        const video = player.querySelector('.viewer');
+        const progress = player.querySelector('.progress');
+        const progressBar = player.querySelector('.progress__filled');
+        const toggle = player.querySelector('.toggle');
+        const skipButtons = player.querySelectorAll('[data-skip]');
+        const ranges = player.querySelectorAll('.player__slider');
+        const timeContent = document.querySelector('#timeContent');
+        const mberNo = document.querySelector('#mberNo');
+        const onlineLecCd = document.querySelector('#onlineLecCd');
+        const vidoInfoSn = document.querySelector('#vidoInfoSn');
+
+        window.addEventListener('beforeunload', (event)=> {
+            console.log("페이지 이동")
+
+            const dialogText = '강의를 종료하시겠습니까?';
+            event.returnValue = dialogText;
+            uploadVideoInfo();
+
+            return dialogText;
+        })
+
+        let videoCurrentTime = null;
+        let videoDurationTime = null;
+        let percent = null;
+
+        Interval = setInterval(function () {
+            videoCurrentTime = Math.floor(video.currentTime);
+            videoDurationTime = Math.floor(video.duration);
+            percent = Math.floor((Math.floor(video.currentTime) / Math.floor(video.duration))*100);
+
+            timeContent.innerHTML =
+                '재생시간 : ' + time(Math.floor(video.currentTime)) +
+                ' 전체 재생 시간 : ' + time(Math.floor(video.duration)) +
+                ' 진행률 : ' + percent + '%';
+            if(percent == 100) {
+                alert("강의 완료");
+                uploadVideoInfo();
+                stop();
+            }
+        }, 500)
+
+        function stop() {
+            console.log('stop');
+            clearInterval(Interval);
+        }
+
+        function uploadVideoInfo() {
+            let formData = {
+                vidoInfoSn : vidoInfoSn.value,
+                mberNo : mberNo.value,
+                vidoPlaytime : videoCurrentTime,
+                vidoProgress : percent,
+                onlineLecCd : onlineLecCd.value
+            }
+
+            console.log(formData)
+
+            $.ajax ({
+                url: "/onlineLecture/uploadVideoInfo",
+                data : formData,
+                method : "post",
+                dataType : "json",
+                beforeSend : function (xhr) {
+                    xhr.setRequestHeader(header,token);
+                }
+            })
+            .done(function (fragment) {
+                if(fragment.state == "true") {
+                    swal("강의 내용을 저장합니다.");
+                }
+            });
+        }
+
+        function time(seconds) {
+            var hour = parseInt(seconds/3600) < 10 ? '0'+ parseInt(seconds/3600) : parseInt(seconds/3600);
+            var min = parseInt((seconds%3600)/60) < 10 ? '0'+ parseInt((seconds%3600)/60) : parseInt((seconds%3600)/60);
+            var sec = seconds % 60 < 10 ? '0'+seconds % 60 : seconds % 60;
+            return hour+":"+min+":" + sec;
+        }
+
+        function togglePlay() {
+            const method = video.paused ? 'play' : 'pause'; // 비디오 재생 상태에 따른 메소드 호출
+            video[method]();
+        }
+
+        function keyMove(e) {
+            if(e.which == 32) {
+                togglePlay();
+            }
+        }
+
+        video.addEventListener('click', togglePlay); // video 클릭 이벤트 구현
+
+        function updateButton() {
+            const icon = this.paused ? '►' : '❚ ❚';
+            toggle.textContent = icon;
+        }
+
+        video.addEventListener('play', updateButton);
+        video.addEventListener('pause', updateButton);
+
+        function handleProgress() {
+            const percent = (video.currentTime / video.duration) * 100;
+            progressBar.style.flexBasis = `${percent}%`;
+        }
+
+
+        video.addEventListener('timeupdate', handleProgress);
+        toggle.addEventListener('click', togglePlay); // 토글버튼을 클릭하면 영상 재생
+        toggle.addEventListener('keydown', keyMove); //스페이스 키를 눌렀을 시 영상 재생
+
+        function skip() {
+            video.currentTime += parseFloat(this.dataset.skip);
+        }
+
+        skipButtons.forEach((button) => button.addEventListener('click', skip));
+
+        function handleRangeUpdate() {
+            video[this.name] = this.value;
+        }
+
+        ranges.forEach(range => range.addEventListener('change', handleRangeUpdate));
+        ranges.forEach(range => range.addEventListener('mousemove', handleRangeUpdate));
+
+        function scrub(e) {
+            const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
+            video.currentTime = scrubTime;
+        }
+
+        let mousedown = false;
+        progress.addEventListener('click', scrub);
+        progress.addEventListener('mousemove', (e) => mousedown && scrub(e));
+        progress.addEventListener('mousedown', () => mousedown = true);
+        progress.addEventListener('mouseup', () => mousedown = false);
+
+
+    </script>
+</th:block>
+</html>

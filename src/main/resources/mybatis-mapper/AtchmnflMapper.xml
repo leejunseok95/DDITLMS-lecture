@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.dditlms.mapper.AtchmnflMapper">
+    <!--com.example.dditlms.vo.AtchmnflVO-->
+    <insert id="uploadFile" parameterType="hashmap">
+        <selectKey keyProperty="key">
+            INSERT INTO ATCHMNFL(atchmnfl_sn, file_sn, file_stre_cours, stre_file_nm, orignl_file_nm, file_extsn, file_size, job_se, dwld_co)
+            VALUES(SEQ_FILE.NEXTVAL,1,#{fileStreCours},#{streFileNm},#{orignlFileNm},#{fileExtsn},#{fileSize},#{jobSe},#{dwldCo})
+        </selectKey>
+        INSERT INTO ONLINE_LEC
+        VALUES('O'||SEQ_ONLINE.NEXTVAL, '1','JAVA란', '2021-06-01', '2021-12-31', '학습진행', #{key}, 'TEST001');
+    </insert>
+
+    <delete id="deleteFile" parameterType="int">
+        DELETE FROM ATCHMNFL WHERE ATCHMNFL_SN = #{atchmnflSn}
+    </delete>
+
+    <select id="findByonlineLecCd" parameterType="int" resultType="AtchmnflDTO">
+        SELECT * FROM ATCHMNFL WHERE ATCHMNFL_SN = #{atchmnflSn}
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="headerFragment">
+    <header>
+        <nav class="navbar navbar-dark bg-dark" aria-label="First navbar example">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">온라인 강의(교수)</a>
+                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse" id="navbarsExample01" style="">
+                    <ul class="navbar-nav me-auto mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/professorOnlineLecture}">강의실</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/professorOnlineLecture/board}">게시판</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/professorOnlineLecture/assignment}">과제</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/professorOnlineLecture/exam}">시험</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/professorOnlineLecture/management}">학생관리</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+</th:block>
+</html>

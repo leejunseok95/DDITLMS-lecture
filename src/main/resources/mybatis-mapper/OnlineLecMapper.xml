@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.dditlms.mapper.OnlineLecMapper">
+    <select id="getOnlineLectureList" parameterType="AtnlcLctreDTO" resultType="OnlineLecForPrintDTO">
+        SELECT C.ONLINE_LEC_CD, C.ONLINE_LEC_WEEK, C.ONLINE_LEC_TITLE, C.ONLINE_LEC_START,
+               C.ONLINE_LEC_END, C.LEARNING_STATUS, C.ATCHMNFL_SN, C.ESTBL_COURS_CD, C.ESTBL_COURS_CD, C.VIDO_ENDTIME
+        FROM  ATNLC_LCTRE A, estbl_cours B, ONLINE_LEC C
+        WHERE C.ESTBL_COURS_CD = B.ESTBL_COURS_CD
+          AND B.ESTBL_COURS_CD = A.ESTBL_COURS_CD
+          AND A.MBER_NO = #{mberNo}
+          AND C.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <!--해당 내용에서 출결 과정도 추가할 것이지만 일단 진행 %를 가지고 올것-->
+    <select id="getOnlineLectureListVer2" parameterType="AtnlcLctreDTO" resultType="OnlineLecForPrintDTO">
+        SELECT C.ONLINE_LEC_CD, C.ONLINE_LEC_WEEK, C.ONLINE_LEC_TITLE, C.ONLINE_LEC_START,
+               C.ONLINE_LEC_END, C.LEARNING_STATUS, C.ATCHMNFL_SN, C.ESTBL_COURS_CD,
+               C.ESTBL_COURS_CD,C.VIDO_ENDTIME, d.vido_progress, E.ATEND_STTUS
+         FROM ATNLC_LCTRE A, estbl_cours B, ONLINE_LEC C, VIDO_INFO D, ATEND E
+        WHERE C.ESTBL_COURS_CD = B.ESTBL_COURS_CD
+          AND B.ESTBL_COURS_CD = A.ESTBL_COURS_CD
+          AND d.online_lec_cd = c.online_lec_cd
+          AND E.online_lec_cd = c.online_lec_cd
+          AND A.MBER_NO = #{mberNo}
+          AND C.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <!--처음 온라인 강의를 접속했을 때 관련 출결 정보 유무를 확인하기 위한 쿼리-->
+    <select id="getAtendInfo" parameterType="hashmap" resultType="AtendDTO">
+        select *
+        from atend
+        where mber_no = #{mberNo}
+          and estbl_cours_cd = #{estblCoursCd}
+          and ONLINE_LEC_CD = #{onlineLecCd}
+    </select>
+
+    <select id="getVidoInfo" parameterType="map" resultType="VidoInfoDTO">
+        SELECT *
+        FROM VIDO_INFO
+        WHERE MBER_NO = #{mberNo}
+          and online_lec_cd = #{onlineLecCd}
+    </select>
+
+    <select id="checkVideoInfo" parameterType="VidoInfoDTO" resultType="int">
+        SELECT vido_info_sn
+        FROM VIDO_INFO
+        WHERE MBER_NO = #{mberNo}
+          and online_lec_cd = #{onlineLecCd}
+          and vido_info_sn = #{vidoInfoSn}
+    </select>
+
+    <select id="getOnlineLectureVideoName" parameterType="string" resultType="AtchmnflDTO">
+        select *
+        from ATCHMNFL a
+        join online_lec b on(a.ATCHMNFL_SN = b.ATCHMNFL_SN)
+         where b.ONLINE_LEC_CD = #{onlineLecCd}
+    </select>
+
+    <select id="getProgessorOnlineLecutreList" parameterType="EstblCoursDTO" resultType="OnlineLecDTO">
+        SELECT C.ONLINE_LEC_CD, C.ONLINE_LEC_WEEK, C.ONLINE_LEC_TITLE, C.ONLINE_LEC_START,
+               C.ONLINE_LEC_END, C.LEARNING_STATUS, C.ATCHMNFL_SN, C.ESTBL_COURS_CD, C.VIDO_ENDTIME,
+               C.VIDO_STARTTIME
+        FROM ESTBL_COURS A, ONLINE_LEC C
+        WHERE A.ESTBL_COURS_CD = C.ESTBL_COURS_CD
+          AND A.MBER_NO = #{mberNo}
+          AND A.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <!--처음 온라인 강의를 접속했을 때 출결 값이 없을 시 삽입하기 위한 쿼리-->
+    <insert id="insertAtendInfo" parameterType="hashmap">
+        insert into atend(ATEND_CODE, ATEND_STTUS, ATEND_DATE, ATEND_TIME, MBER_NO, ESTBL_COURS_CD, ONLINE_LEC_CD)
+        values(SEQ_ATEND.NEXTVAL ,'-', null, null, #{mberNo}, #{estblCoursCd}, #{onlineLecCd})
+    </insert>
+
+    <insert id="insertAtchmnfl" parameterType="AtchmnflDTO">
+        <selectKey resultType="int" keyProperty="atchmnflSn" order="BEFORE">
+            SELECT SEQ_FILE.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO ATCHMNFL(atchmnfl_sn, file_sn, file_stre_cours, stre_file_nm, orignl_file_nm, file_extsn, file_size, job_se, dwld_co)
+        VALUES(#{atchmnflSn},1,#{fileStreCours},#{streFileNm},#{orignlFileNm},#{fileExtsn},#{fileSize},#{jobSe},#{dwldCo})
+
+    </insert>
+
+    <insert id="insertOnlineLecture" parameterType="OnlineLecDTO">
+        INSERT INTO ONLINE_LEC
+        VALUES('O'||SEQ_ONLINE.NEXTVAL, #{onlineLecWeek},#{onlineLecTitle}, #{onlineLecStart}, #{onlineLecEnd}, #{learningStatus}, #{atchmnflSn}, #{estblCoursCd}, #{vidoStarttime},#{vidoEndtime})
+    </insert>
+
+    <insert id="saveOnlineLecVideoInfo" parameterType="VidoInfoDTO">
+        INSERT INTO vido_info(VIDO_INFO_SN, MBER_NO, VIDO_PLAYTIME, VIDO_PROGRESS, ONLINE_LEC_CD)
+        VALUES(SEQ_VIDOINFO.NEXTVAL, #{mberNo},#{vidoPlaytime},#{vidoProgress},#{onlineLecCd})
+    </insert>
+
+    <update id="updateVideoInfo" parameterType="VidoInfoDTO">
+        update vido_info
+        set vido_playtime = #{vidoPlaytime},
+            vido_progress = #{vidoProgress}
+        where vido_info_sn = #{vidoInfoSn}
+    </update>
+
+    <update id="updateOnlineLecLearningStatus" parameterType="OnlineLecForPrintDTO">
+        UPDATE ONLINE_LEC
+        SET LEARNING_STATUS = #{learningStatus}
+        WHERE ONLINE_LEC_CD = #{onlineLecCd}
+    </update>
+</mapper>
