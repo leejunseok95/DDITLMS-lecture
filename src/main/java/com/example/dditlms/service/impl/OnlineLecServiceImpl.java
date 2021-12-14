@@ -57,11 +57,13 @@ public class OnlineLecServiceImpl implements OnlineLecService {
 
     @Override
     public List<AtendDTO> getAtendInfo(Map<String, Object> putVideoInfo) {
+        logger.info("putVideoInfo in onlineLecServiceImpl getAtendInfo: " + putVideoInfo);
         return onlineLecMapper.getAtendInfo(putVideoInfo);
     }
 
     @Override
     public void insertAtendInfo(Map<String, Object> putVideoInfo) {
+        logger.info("putVideoInfo in onlineLecServiceImpl: " + putVideoInfo);
         onlineLecMapper.insertAtendInfo(putVideoInfo);
     }
 
@@ -86,4 +88,13 @@ public class OnlineLecServiceImpl implements OnlineLecService {
         return onlineLecMapper.updateOnlineLecLearningStatus(onlineLecForPrintDTO);
     }
 
+    @Override
+    public void updateAtendForOnlineLecture(AtendDTO atendDTO) {
+        onlineLecMapper.updateAtendForOnlineLecture(atendDTO);
+    }
+
+    @Override
+    public OnlineLecForPrintDTO getOnlineLecInfoForCheckAtendInfo(String onlineLecCd) {
+        return onlineLecMapper.getOnlineLecInfoForCheckAtendInfo(onlineLecCd);
+    }
 }

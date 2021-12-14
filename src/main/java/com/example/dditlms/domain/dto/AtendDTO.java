@@ -19,4 +19,11 @@ public class AtendDTO {
     private int mberNo;
     private String estblCoursCd;
     private String onlineLecCd;
+
+    public AtendDTO(String atendSttus, Date atendDate, int mberNo, String onlineLecCd) {
+        this.atendSttus = atendSttus;
+        this.atendDate = atendDate;
+        this.mberNo = mberNo;
+        this.onlineLecCd = onlineLecCd;
+    }
 }

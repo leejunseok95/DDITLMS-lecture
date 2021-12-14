@@ -29,15 +29,18 @@
     </select>
 
     <!--처음 온라인 강의를 접속했을 때 관련 출결 정보 유무를 확인하기 위한 쿼리-->
-    <select id="getAtendInfo" parameterType="hashmap" resultType="AtendDTO">
+    <select id="getAtendInfo" parameterType="hashMap" resultType="AtendDTO">
         select *
         from atend
         where mber_no = #{mberNo}
-          and estbl_cours_cd = #{estblCoursCd}
+        <if test="!estblCoursCd.equals('') and estblCoursCd!=null">
+            and ESTBL_COURS_CD = #{estblCoursCd}
+        </if>
           and ONLINE_LEC_CD = #{onlineLecCd}
     </select>
 
-    <select id="getVidoInfo" parameterType="map" resultType="VidoInfoDTO">
+    <!--시청 중인 영상 정보를 가져오는 쿼리-->
+    <select id="getVidoInfo" parameterType="hashmap" resultType="VidoInfoDTO">
         SELECT *
         FROM VIDO_INFO
         WHERE MBER_NO = #{mberNo}
@@ -69,6 +72,14 @@
           AND A.ESTBL_COURS_CD = #{estblCoursCd}
     </select>
 
+    <!--출결체크 관리를 위해 온라인강의 진행률과 시간 정보를 가지고 오기-->
+    <select id="getOnlineLecInfoForCheckAtendInfo" parameterType="string" resultType="OnlineLecForPrintDTO">
+        SELECT *
+        FROM ONLINE_LEC A, VIDO_INFO B
+        WHERE A.ONLINE_LEC_CD = B.ONLINE_LEC_CD
+          AND A.ONLINE_LEC_CD = #{onlineLecCd}
+    </select>
+
     <!--처음 온라인 강의를 접속했을 때 출결 값이 없을 시 삽입하기 위한 쿼리-->
     <insert id="insertAtendInfo" parameterType="hashmap">
         insert into atend(ATEND_CODE, ATEND_STTUS, ATEND_DATE, ATEND_TIME, MBER_NO, ESTBL_COURS_CD, ONLINE_LEC_CD)
@@ -79,10 +90,8 @@
         <selectKey resultType="int" keyProperty="atchmnflSn" order="BEFORE">
             SELECT SEQ_FILE.NEXTVAL FROM DUAL
         </selectKey>
-
         INSERT INTO ATCHMNFL(atchmnfl_sn, file_sn, file_stre_cours, stre_file_nm, orignl_file_nm, file_extsn, file_size, job_se, dwld_co)
         VALUES(#{atchmnflSn},1,#{fileStreCours},#{streFileNm},#{orignlFileNm},#{fileExtsn},#{fileSize},#{jobSe},#{dwldCo})
-
     </insert>
 
     <insert id="insertOnlineLecture" parameterType="OnlineLecDTO">
@@ -106,5 +115,14 @@
         UPDATE ONLINE_LEC
         SET LEARNING_STATUS = #{learningStatus}
         WHERE ONLINE_LEC_CD = #{onlineLecCd}
+    </update>
+
+    <!--영상을 다보면 출석이 되도록하는 쿼리-->
+    <update id="updateAtendForOnlineLecture" parameterType="AtendDTO">
+        UPDATE ATEND
+        SET ATEND_STTUS = #{atendSttus},
+            ATEND_DATE = #{atendDate}
+        WHERE ONLINE_LEC_CD = #{onlineLecCd}
+          AND MBER_NO = #{mberNo}
     </update>
 </mapper>

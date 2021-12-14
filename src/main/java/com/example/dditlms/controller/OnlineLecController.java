@@ -87,11 +87,13 @@ public class OnlineLecController {
         logger.info("onlineLecListMap Version 2 : " + onlineLecPrintList.toString());
 
         int updateLearningStaResult = 0;
+        AtendDTO atendDTO = null;
         for(OnlineLecForPrintDTO onlineLecForPrintDTO : onlineLecPrintList) {
             try {
                 Date startLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecStart().toString());
                 Date endLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecEnd().toString());
                 Date nowDate = dateFormat.parse(now.toString());
+                int videoProgress = onlineLecForPrintDTO.getVidoProgress();
 
                 if(startLectureDay.before(nowDate) && endLectureDay.after(nowDate)) {
                     logger.info("학습진행");
@@ -102,8 +104,17 @@ public class OnlineLecController {
                 } else if(endLectureDay.before(nowDate)) {
                     logger.info("학습종료");
                     onlineLecForPrintDTO.setLearningStatus("학습종료");
-                }
 
+                    if (videoProgress < 50) {
+                        atendDTO =
+                                new AtendDTO("n", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
+                        onlineLecService.updateAtendForOnlineLecture(atendDTO);
+                    } else if(videoProgress >= 50 && videoProgress <= 95) {
+                        atendDTO =
+                                new AtendDTO("o", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
+                        onlineLecService.updateAtendForOnlineLecture(atendDTO);
+                    }
+                }
                 updateLearningStaResult = onlineLecService.updateOnlineLecLearningStatus(onlineLecForPrintDTO);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -120,20 +131,17 @@ public class OnlineLecController {
 
     @GetMapping("/goOnlineLecVideoPlayer")
     public ModelAndView goOnlineLecVideoPlayer(@RequestParam("onlineLecCd") String onlineLecCd,
-                                               @RequestParam("mberNo") int mberNo,
-                                               Model model) {
+                                               @RequestParam("mberNo") int mberNo, Model model) {
         logger.info("onlineLecCd : " + onlineLecCd);
         logger.info("mberNo : " + mberNo);
 
         ModelAndView mv = new ModelAndView("pages/onlineLecture_student/student_lecture_video");
-        AtchmnflDTO atchmnflDTO = new AtchmnflDTO();
-        VidoInfoDTO vidoInfoDTO = null;
         Map<String, Object> putVideoInfo = new HashMap<>();
         putVideoInfo.put("mberNo", mberNo);
         putVideoInfo.put("onlineLecCd", onlineLecCd);
+        AtchmnflDTO atchmnflDTO = onlineLecService.getOnlineLectureVideoName(onlineLecCd);
+        VidoInfoDTO vidoInfoDTO = onlineLecService.getVidoInfo(putVideoInfo);
 
-        vidoInfoDTO = onlineLecService.getVidoInfo(putVideoInfo);
-        atchmnflDTO = onlineLecService.getOnlineLectureVideoName(onlineLecCd);
         logger.info("atchmnflDTO : " + atchmnflDTO);
 
         mv.addObject("atchmnflDTO", atchmnflDTO);
@@ -154,17 +162,36 @@ public class OnlineLecController {
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
 
+        int mberNo = Integer.parseInt(paramMap.get("mberNo"));
+        String onlineLecCd = paramMap.get("onlineLecCd");
+        OnlineLecForPrintDTO onlineLecForPrintDTO
+                = onlineLecService.getOnlineLecInfoForCheckAtendInfo(onlineLecCd);
         VidoInfoDTO vidoInfoDTO = null;
+
         Map<String, Object> putVideoInfo = new HashMap<>();
-        putVideoInfo.put("mberNo", paramMap.get("mberNo"));
-        putVideoInfo.put("onlineLecCd", paramMap.get("onlineLecCd"));
+        putVideoInfo.put("mberNo", mberNo);
+        putVideoInfo.put("onlineLecCd", onlineLecCd);
+        putVideoInfo.put("estblCoursCd", "");
+        logger.info("putvideoInfo : " + putVideoInfo);
+
+        List<AtendDTO> atendDTOList = onlineLecService.getAtendInfo(putVideoInfo);
+        SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date now = new Date();
+        logger.info("오늘날 date now : " + now);
 
         int getVidoInfoSn = onlineLecService.getVidoInfo(putVideoInfo).getVidoInfoSn();
         int vidoInfoSn = Integer.parseInt(paramMap.get("vidoInfoSn"));
+        int videoProgress = Integer.parseInt(paramMap.get("vidoProgress"));
+        Date startDay = onlineLecForPrintDTO.getOnlineLecStart();
+        Date endDay = onlineLecForPrintDTO.getOnlineLecEnd();
 
-        if(paramMap.get("vidoProgress").toString().equals("100")) {
+        if(videoProgress == 100) {
             logger.info("영상 100% 시청 완료");
-
+            if(startDay.before(now) && endDay.after(now)) {
+                onlineLecService.updateAtendForOnlineLecture(
+                        new AtendDTO("y", now, mberNo, onlineLecCd));
+            }
         }
 
         if(getVidoInfoSn == vidoInfoSn) {

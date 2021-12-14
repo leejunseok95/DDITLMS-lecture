@@ -23,12 +23,13 @@ public interface OnlineLecService {
     List<AtendDTO> getAtendInfo(Map<String, Object> putVideoInfo);
     //처음 온라인 강의에 접속했을 때 필요한 강의에 대한 출석값이 없다면 insert
     void  insertAtendInfo(Map<String, Object> putVideoInfo);
-
     int updateVideoInfo(VidoInfoDTO vidoInfoDTO);
-    
     int insertAtchmnfl(AtchmnflDTO atchmnflDTO);
     int insertOnlineLecture(OnlineLecDTO onlineLecDTO);
-
     //온라인 강의 기간에 따른 학습현황 변경
     int updateOnlineLecLearningStatus(OnlineLecForPrintDTO onlineLecForPrintDTO);
+    //강의 영상을 다 들었을 때 출석 체크
+    void updateAtendForOnlineLecture(AtendDTO atendDTO);
+    //출결체크 관리를 위해 온라인강의 진행률과 시간 정보를 가지고 오기
+    OnlineLecForPrintDTO getOnlineLecInfoForCheckAtendInfo(String onlineLecCd);
 }

@@ -22,4 +22,6 @@ public interface OnlineLecMapper {
     int updateOnlineLecLearningStatus(OnlineLecForPrintDTO onlineLecForPrintDTO);
     List<AtendDTO> getAtendInfo(Map<String, Object> putVideoInfo);
     void  insertAtendInfo(Map<String, Object> putVideoInfo);
+    void updateAtendForOnlineLecture(AtendDTO atendDTO);
+    OnlineLecForPrintDTO getOnlineLecInfoForCheckAtendInfo(String onlineLecCd);
 }

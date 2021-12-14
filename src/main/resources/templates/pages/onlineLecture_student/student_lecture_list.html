@@ -24,22 +24,27 @@
                             <th scope="col">출결</th>
                         </tr>
                         </thead>
-                        <tbody>
-<!--                            <tr class="goOnlineLecVideo" th:id="${list.onlineLecCd}" th:each="list : ${onlineLecList}">-->
-<!--                                <th th:text="${list.onlineLecCd}" scope="row"><span th:text="${list.onlineLecCd}"></span></th>-->
-<!--                                <td th:text="${list.onlineLecWeek}"><span th:text="${list.onlineLecWeek}"></span></td>-->
-<!--                                <td th:text="${list.onlineLecTitle}"><span th:text="${list.onlineLecTitle}"></span></td>-->
-<!--                                <td th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}">-->
-<!--                                    <span th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}"></span>-->
-<!--                                </td>-->
-<!--                                <td th:text="${list.learningStatus}"><span th:text="${list.learningStatus}"></span></td>-->
-<!--                                <td th:text="${list.vidoEndtime}"><span th:text="${list.vidoEndtime}"></span></td>-->
-<!--                                <td>%</td>-->
-<!--                                <td>아직</td>-->
-<!--                                <input name="atchmnFlSn" type="hidden" th:value="${list.atchmnflSn}"/>-->
-<!--                                <input id="mberNo" name="mberNo" type="hidden" th:value="${mberNo}"/>-->
-<!--                            </tr>-->
-                            <tr class="goOnlineLecVideo" th:id="${list.onlineLecCd}" th:each="list,i : ${onlineLecPrintList}">
+                        <tbody th:each="list,i : ${onlineLecPrintList}">
+                            <tr class="goOnlineLecVideo" style="cursor: pointer; :hover{background: #0a58ca}" th:id="${list.onlineLecCd}"
+                                th:if="${list.onlineLecStart.before(#dates.createNow()) and list.onlineLecEnd.after(#dates.createNow())}">
+                                <th th:text="${i.count}" scope="row"><span th:text="${i.count}"></span></th>
+                                <td th:text="${list.onlineLecWeek}"><span th:text="${list.onlineLecWeek}"></span></td>
+                                <td th:text="${list.onlineLecTitle}"><span th:text="${list.onlineLecTitle}"></span></td>
+                                <td th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}">
+                                    <span th:text="${#dates.format(list.onlineLecStart, 'yyyy-MM-dd')}+ ' ~ ' +${#dates.format(list.onlineLecEnd, 'yyyy-MM-dd')}"></span>
+                                </td>
+                                <td th:text="${list.learningStatus}"><span th:text="${list.learningStatus}"></span></td>
+                                <td th:text="${list.vidoEndtime}"><span th:text="${list.vidoEndtime}"></span></td>
+                                <td th:if="${list.atendSttus.equals('y')}" th:text="'100%'"><span th:text="'100%'"></span></td>
+                                <td th:if="${!(list.atendSttus.equals('y'))}" th:text="${list.vidoProgress}+'%'"><span th:text="${list.vidoProgress}+'%'"></span></td>
+                                <!--출결상태 관리-->
+                                <td th:if="${list.atendSttus.equals('y')}"><span>출석</span></td>
+                                <td th:if="${list.atendSttus.equals('n')}"><span>결석</span></td>
+                                <td th:if="${list.atendSttus.equals('o')}"><span>지각</span></td>
+                                <td th:if="${list.atendSttus.equals('-')}"><span>-</span></td>
+                                <input name="atchmnFlSn" type="hidden" th:value="${list.atchmnflSn}"/>
+                            </tr>
+                            <tr th:id="${list.onlineLecCd}" th:if="${list.onlineLecStart.after(#dates.createToday()) or list.onlineLecEnd.before(#dates.createToday())}">
                                 <th th:text="${i.count}" scope="row"><span th:text="${i.count}"></span></th>
                                 <td th:text="${list.onlineLecWeek}"><span th:text="${list.onlineLecWeek}"></span></td>
                                 <td th:text="${list.onlineLecTitle}"><span th:text="${list.onlineLecTitle}"></span></td>
@@ -49,17 +54,21 @@
                                 <td th:text="${list.learningStatus}"><span th:text="${list.learningStatus}"></span></td>
                                 <td th:text="${list.vidoEndtime}"><span th:text="${list.vidoEndtime}"></span></td>
                                 <td th:text="${list.vidoProgress}+'%'"><span th:text="${list.vidoProgress}+'%'"></span></td>
-                                <td th:text="${list.atendSttus}">출결</td>
+                                <!--출결상태 관리-->
+                                <td th:if="${list.atendSttus.equals('y')}"><span>출석</span></td>
+                                <td th:if="${list.atendSttus.equals('n')}"><span>결석</span></td>
+                                <td th:if="${list.atendSttus.equals('o')}"><span>지각</span></td>
+                                <td th:if="${list.atendSttus.equals('-')}"><span>-</span></td>
                                 <input name="atchmnFlSn" type="hidden" th:value="${list.atchmnflSn}"/>
-                                <input id="mberNo" name="mberNo" type="hidden" th:value="${mberNo}"/>
                             </tr>
                         </tbody>
                     </table>
+                    <input id="mberNo" name="mberNo" type="hidden" th:value="${mberNo}"/>
                 </div>
             </div>
         </div>
     </div>
-    <script>
+    <script th:inline="javascript">
         const formBtn = document.querySelector('form');
         const mberNo = document.querySelector('#mberNo').value;
         const goOnlineLecVideos = document.querySelectorAll('.goOnlineLecVideo');
@@ -69,23 +78,6 @@
                 location.href="/goOnlineLecVideoPlayer?onlineLecCd=" + event.currentTarget.id + "&mberNo=" + mberNo;
             })
         })
-
-        function doSubmit() {
-            console.log("test");
-            formBtn.submit();
-        }
-
-        // $(document).ready(function () {
-        //     setTimeout(function () {
-        //         const endTime = videoPlayTime.duration;
-        //         console.log("time : " + endTime);
-        //     }, 500);
-        //     setInterval(function () {
-        //         let currentTime = videoPlayTime.currentTime;
-        //         console.log("currentTime : " + currentTime);
-        //     }, 1000);
-        // });
-
     </script>
 </th:block>
 </html>

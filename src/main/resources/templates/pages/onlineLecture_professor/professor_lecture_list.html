@@ -12,6 +12,9 @@
                     <button class="btn btn-primary" type="button" style="float: right" data-bs-toggle="modal"
                             data-bs-target=".bd-example-modal-lg">등록
                     </button>
+                    <button class="btn btn-primary" type="button" style="float: right; margin-right: 10px;" data-bs-toggle="modal"
+                            data-bs-target=".bd-example-modal-lg2">수정 일단?
+                    </button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -38,6 +41,63 @@
 
                         </tbody>
                     </table>
+                    <!-- Modal 창 -->
+                    <form id="lectureModalFormUpdate" method="post" enctype="multipart/form-data">
+                        <div class="modal fade bd-example-modal-lg2" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                             style="display: none;" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myLargeModalLabelUpdate">강의 등록</h4>
+                                        <button class="btn-close" type="button" data-bs-dismiss="modal"
+                                                aria-label="Close"/>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden">
+                                        <label for="onlineLecWeek">testtest</label>
+                                        <select name="onlineLecWeek" id="onlineLecWeekUpdate" required>
+                                            <option value="1" th:text="1"/>
+                                            <option value="2" th:text="2"/>
+                                            <option value="3" th:text="3"/>
+                                            <option value="4" th:text="4"/>
+                                            <option value="5" th:text="5"/>
+                                            <option value="6" th:text="6"/>
+                                            <option value="7" th:text="7"/>
+                                            <option value="8" th:text="8"/>
+                                            <option value="9" th:text="9"/>
+                                            <option value="10" th:text="10"/>
+                                            <option value="11" th:text="11"/>
+                                            <option value="12" th:text="12"/>
+                                            <option value="13" th:text="13"/>
+                                            <option value="14" th:text="14"/>
+                                            <option value="15" th:text="15"/>
+                                            <option value="16" th:text="16"/>
+                                        </select><br>
+                                        <label for="onlineLecTitleUpdate">영상 제목</label>
+                                        <input id="onlineLecTitleUpdate" type="text" name="onlineLecTitleUpdate"
+                                               placeholder="영상 제목" required><br>
+                                        <label for="onlineLecStartUpdate">시작일</label>
+                                        <input id="onlineLecStartUpdate" type="date" name="onlineLecStartUpdate"
+                                               placeholder="시작일" required>~
+                                        <label for="onlineLecEndUpdate">종료일</label>
+                                        <input id="onlineLecEndUpdate" type="date" name="onlineLecEndUpdate"
+                                               placeholder="종료일" required><br>
+                                        <label for="onlineLectureFileUpdate">영상 파일</label>
+                                        <input id="onlineLectureFileUpdate" type="file" name="onlineLectureFileUpdate" multiple
+                                               required>
+                                        <input id="onlineLectureTimeUpdate" type="hidden" name="onlineLectureTimeUpdate" value="">
+                                        <pre id="infosUpdate"></pre>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="registerLectureUpdate" class="btn btn-primary" type="button"
+                                                style="float: right">등록
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!--modal창 종료-->
                     <!-- Modal 창 -->
                     <form id="lectureModalForm" method="post" enctype="multipart/form-data">
                         <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
@@ -94,6 +154,7 @@
                             </div>
                         </div>
                     </form>
+                    <!--modal창 종료-->
                 </div>
             </div>
         </div>
@@ -137,37 +198,8 @@
 
         registerBtn.addEventListener('click', function () {
             const form = $('#lectureModalForm')[0];
-            const videoFile = document.getElementById('onlineLectureFile');
             //form data를 담을 변수
             let formData = new FormData(form);
-
-            $(document).ready(function () {
-                if ($("#onlineLecWeek").val().length == 0) {
-                    alert("주차를 입력하세요.");
-                    $("#onlineLecWeek").focus();
-                    return false;
-                }
-                if ($("#onlineLecTitle").val().length == 0) {
-                    alert("제목을 입력하세요.");
-                    $("#onlineLecTitle").focus();
-                    return false;
-                }
-                if ($("#onlineLecStart").val().length == 0) {
-                    alert("시작일을 입력하세요.");
-                    $("#onlineLecStart").focus();
-                    return false;
-                }
-                if ($("#onlineLecEnd").val().length == 0) {
-                    alert("종료일을 입력하세요.");
-                    $("#onlineLecEnd").focus();
-                    return false;
-                }
-                if ($("#onlineLectureFile").val().length == 0) {
-                    alert("파일을 등록하세요.");
-                    $("#onlineLectureFile").focus();
-                    return false;
-                }
-            })
 
             $.ajax({
                 url: "/uploadLecture",

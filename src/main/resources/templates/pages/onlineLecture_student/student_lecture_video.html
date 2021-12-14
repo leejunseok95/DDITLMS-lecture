@@ -46,6 +46,9 @@
         const mberNo = document.querySelector('#mberNo');
         const onlineLecCd = document.querySelector('#onlineLecCd');
         const vidoInfoSn = document.querySelector('#vidoInfoSn');
+        let videoCurrentTime = null;
+        let videoDurationTime = null;
+        let percent = null;
 
         window.addEventListener('beforeunload', (event)=> {
             console.log("페이지 이동")
@@ -57,10 +60,6 @@
             return dialogText;
         })
 
-        let videoCurrentTime = null;
-        let videoDurationTime = null;
-        let percent = null;
-
         Interval = setInterval(function () {
             videoCurrentTime = Math.floor(video.currentTime);
             videoDurationTime = Math.floor(video.duration);
@@ -70,11 +69,11 @@
                 '재생시간 : ' + time(Math.floor(video.currentTime)) +
                 ' 전체 재생 시간 : ' + time(Math.floor(video.duration)) +
                 ' 진행률 : ' + percent + '%';
-            if(percent == 100) {
-                alert("강의 완료");
-                uploadVideoInfo();
-                stop();
-            }
+            // if(percent == 100) {
+            //     alert("강의 완료");
+            //     uploadVideoInfo();
+            //     stop();
+            // }
         }, 500)
 
         function stop() {
