@@ -67,6 +67,7 @@ public class OnlineLecServiceImpl implements OnlineLecService {
 
     @Override
     public int updateVideoInfo(VidoInfoDTO vidoInfoDTO) {
+
         return onlineLecMapper.updateVideoInfo(vidoInfoDTO);
     }
 
