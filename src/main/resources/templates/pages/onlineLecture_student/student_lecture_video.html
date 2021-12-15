@@ -8,11 +8,11 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>강의실</h5>
+                    <h5>온라인 강의</h5>
                 </div>
                 <div class="player">
                     <!--마지막에 #을 이용하여 시작 시간을 설정할 수 있음-->
-                    <video class="player__video viewer" th:src="@{/static/video/} + ${atchmnflDTO.getOrignlFileNm()} + '#t='+${vidoInfoDTO.vidoPlaytime}"></video>
+                    <video class="player__video viewer" style="width: 100%; max-width: 100%; height: 500px;" width="1553" height="280" align="center" th:src="@{/static/video/} + ${atchmnflDTO.getOrignlFileNm()} + '#t='+${vidoInfoDTO.vidoPlaytime}"></video>
                     <input id="mberNo" type="hidden" th:value="${mberNo}">
                     <input id="onlineLecCd" type="hidden" th:value="${onlineLecCd}">
                     <input id="vidoInfoSn" type="hidden" th:value="${vidoInfoDTO.getVidoInfoSn()}">
@@ -121,7 +121,7 @@
         }
 
         function keyMove(e) {
-            if(e.which == 32) {
+            if(e.which === 32) {
                 togglePlay();
             }
         }
@@ -144,7 +144,7 @@
 
         video.addEventListener('timeupdate', handleProgress);
         toggle.addEventListener('click', togglePlay); // 토글버튼을 클릭하면 영상 재생
-        toggle.addEventListener('keydown', keyMove); //스페이스 키를 눌렀을 시 영상 재생
+        window.addEventListener('keydown', keyMove); //스페이스 키를 눌렀을 시 영상 재생
 
         function skip() {
             video.currentTime += parseFloat(this.dataset.skip);

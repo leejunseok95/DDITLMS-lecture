@@ -319,6 +319,9 @@ public class OnlineLecController {
                     saveName = randomName + "." + extension;
                     originalName = file.getOriginalFilename();
 
+                    //check ----
+                    //파일 저장 이름을 변경해서 저장
+                    //저장된 이름을 불러와서 그에 맞는 경로에 설정
                     File target = new File(videoFilePath, originalName);
                     file.transferTo(target);
 

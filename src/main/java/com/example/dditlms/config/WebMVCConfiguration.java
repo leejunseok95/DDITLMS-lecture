@@ -12,7 +12,8 @@ public class WebMVCConfiguration {
     public CommonsMultipartResolver multipartResolver(){
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
         commonsMultipartResolver.setDefaultEncoding("UTF-8");
-        commonsMultipartResolver.setMaxUploadSize(1 * 1024 * 1024 * 1024);
+//        commonsMultipartResolver.setMaxUploadSize(1 * 1024 * 1024 * 1024);
+        commonsMultipartResolver.setMaxUploadSize(50 * 1024 * 1024);
         return commonsMultipartResolver;
     }
 

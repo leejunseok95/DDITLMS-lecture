@@ -13,7 +13,7 @@
                             data-bs-target=".bd-example-modal-lg">등록
                     </button>
                     <button class="btn btn-primary" type="button" style="float: right; margin-right: 10px;" data-bs-toggle="modal"
-                            data-bs-target=".bd-example-modal-lg2">수정 일단?
+                            data-bs-target=".bd-example-modal-lg2">수정
                     </button>
                 </div>
                 <div class="table-responsive">
@@ -113,6 +113,7 @@
                                         <input type="hidden">
                                         <label for="onlineLecWeek">주차</label>
                                         <select name="onlineLecWeek" id="onlineLecWeek" required>
+                                            <option th:text="선택하시오" selected disabled/>
                                             <option value="1" th:text="1"/>
                                             <option value="2" th:text="2"/>
                                             <option value="3" th:text="3"/>
@@ -161,45 +162,96 @@
     </div>
     <script>
         const registerBtn = document.querySelector('#registerLecture');
-        $(document).ready(function () {
-            registerBtn.addEventListener('click', function () {
-                if ($("#onlineLecWeek").val().length == 0) {
-                    alert("주차를 입력하세요.");
-                    $("#onlineLecWeek").focus();
-                    return false;
-                }
-                if ($("#onlineLecTitle").val().length == 0) {
-                    alert("제목을 입력하세요.");
-                    $("#onlineLecTitle").focus();
-                    return false;
-                }
-                if ($("#onlineLecStart").val().length == 0) {
-                    alert("시작일을 입력하세요.");
-                    $("#onlineLecStart").focus();
-                    return false;
-                }
-                if ($("#onlineLecEnd").val().length == 0) {
-                    alert("종료일을 입력하세요.");
-                    $("#onlineLecEnd").focus();
-                    return false;
-                }
-                if ($("#onlineLectureFile").val().length == 0) {
-                    alert("파일을 등록하세요.");
-                    $("#onlineLectureFile").focus();
-                    return false;
-                }
-            })
-        })
-
+        const selectBox = document.querySelector('#onlineLecWeek');
+        const startDay = document.querySelector('#onlineLecStart');
+        const endDay = document.querySelector('#onlineLecEnd');
         const myVideos = [];
         window.URL = window.URL || window.webkitURL;
         //파일 첨부를 했을 때 onchange를 통한 함수 시작
         document.getElementById('onlineLectureFile').onchange = setFileInfo;
 
+        selectBox.addEventListener('change', function() {
+            if($(this).val() == '1') {
+                startDay.value = "2021-09-06";
+                endDay.value = "2021-09-11";
+            } else if($(this).val() == '2') {
+                startDay.value = "2021-09-13";
+                endDay.value = "2021-09-18";
+            } else if($(this).val() == '3') {
+                startDay.value = "2021-09-20";
+                endDay.value = "2021-09-25";
+            } else if($(this).val() == '4') {
+                startDay.value = "2021-09-27";
+                endDay.value = "2021-10-02";
+            } else if($(this).val() == '5') {
+                startDay.value = "2021-10-04";
+                endDay.value = "2021-10-09";
+            } else if($(this).val() == '6') {
+                startDay.value = "2021-10-11";
+                endDay.value = "2021-10-16";
+            } else if($(this).val() == '7') {
+                startDay.value = "2021-10-18";
+                endDay.value = "2021-10-23";
+            } else if($(this).val() == '8') {
+                startDay.value = "2021-10-25";
+                endDay.value = "2021-10-30";
+            }else if($(this).val() == '9') {
+                startDay.value = "2021-11-01";
+                endDay.value = "2021-11-06";
+            }else if($(this).val() == '10') {
+                startDay.value = "2021-11-08";
+                endDay.value = "2021-11-13";
+            }else if($(this).val() == '11') {
+                startDay.value = "2021-11-15";
+                endDay.value = "2021-11-20";
+            }else if($(this).val() == '12') {
+                startDay.value = "2021-11-22";
+                endDay.value = "2021-11-27";
+            }else if($(this).val() == '13') {
+                startDay.value = "2021-11-29";
+                endDay.value = "2021-12-04";
+            }else if($(this).val() == '14') {
+                startDay.value = "2021-12-06";
+                endDay.value = "2021-12-11";
+            }else if($(this).val() == '15') {
+                startDay.value = "2021-12-13";
+                endDay.value = "2021-12-18";
+            }else if($(this).val() == '16') {
+                startDay.value = "2021-12-20";
+                endDay.value = "2021-12-25";
+            }
+        })
+
         registerBtn.addEventListener('click', function () {
             const form = $('#lectureModalForm')[0];
             //form data를 담을 변수
             let formData = new FormData(form);
+
+            if ($("#onlineLecWeek").val().length == 0) {
+                alert("주차를 입력하세요.");
+                $("#onlineLecWeek").focus();
+                return false;
+            }
+            if ($("#onlineLecTitle").val().length == 0) {
+                alert("제목을 입력하세요.");
+                $("#onlineLecTitle").focus();
+                return false;
+            }
+            if ($("#onlineLecStart").val().length == 0) {
+                alert("시작일을 입력하세요.");
+                $("#onlineLecStart").focus();
+                return false;
+            }
+            if ($("#onlineLecEnd").val().length == 0) {
+                alert("종료일을 입력하세요.");
+                $("#onlineLecEnd").focus();
+                return false;
+            }
+            if ($("#onlineLectureFile").val().length == 0) {
+                alert("파일을 등록하세요.");
+                $("#onlineLectureFile").focus();
+                return false;
+            }
 
             $.ajax({
                 url: "/uploadLecture",
