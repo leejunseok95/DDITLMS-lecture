@@ -10,36 +10,117 @@
                 <div class="card-header">
                     <h5>시험</h5>
                 </div>
-                <div class="table-responsive">
+
+                <div>
+                    <div class="btn-group float-end">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">시험문제 생성</button>
+                        <button class="btn btn-secondary">시험지 생성</button>
+                        <button class="btn btn-danger">중간 등록</button>
+                        <button class="btn btn-warning">기말 등록</button>
+                    </div>
+
                     <table class="table table-hover">
                         <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">주차</th>
-                            <th scope="col">제목</th>
-                            <th scope="col">기간</th>
-                            <th scope="col">학습현황</th>
-                            <th scope="col">시간</th>
-                            <th scope="col">진행률</th>
-                            <th scope="col">출결</th>
+                            <th class="col-md-2" scope="col">시험코드</th>
+                            <th class="col-md-2" scope="col">시험제목</th>
+                            <th class="col-md-2" scope="col">시험종류</th>
+                            <th class="col-md-2" scope="col">시험일</th>
+                            <th class="col-md-2" scope="col">시험내용</th>
+                            <th class="col-md-2" scope="col">교과명</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                        </tr>
+                        <td>test</td>
+                        <td>test</td>
+                        <td>test</td>
+                        <td>test</td>
+                        <td>test</td>
+                        <td>test</td>
                         </tbody>
                     </table>
+                </div>
+<!--                <hr>-->
+<!--                <div>-->
+<!--                    <table class="table table-hover">-->
+<!--                        <thead>-->
+<!--                        <tr>-->
+<!--                            <th class="col-md-2" scope="col">학번</th>-->
+<!--                            <th class="col-md-2" scope="col">이름</th>-->
+<!--                            <th class="col-md-2" scope="col">학과</th>-->
+<!--                            <th class="col-md-2" scope="col">중간고사</th>-->
+<!--                            <th class="col-md-2" scope="col">기말고사</th>-->
+<!--                            <th class="col-md-2" scope="col">비고 </th>-->
+<!--                        </tr>-->
+<!--                        </thead>-->
+<!--                        <tbody>-->
+<!--                        <td>test</td>-->
+<!--                        <td>test</td>-->
+<!--                        <td>test</td>-->
+<!--                        <td>test</td>-->
+<!--                        <td>test</td>-->
+<!--                        <td>test</td>-->
+<!--                        </tbody>-->
+<!--                    </table>-->
+<!--                </div>-->
+                <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myLargeModalLabelUpdate">시험문제 등록</h4>
+                                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"/>
+                            </div>
+                            <div class="modal-body">
+                                <label class="col-md-2" for="examTitle">시험문제</label>
+                                <input id="examTitle" type="text" name="examTitle"><br>
+                                <label class="col-md-2" for="examType">시험문제 종류</label>
+                                <select id="examType" name="examType">
+                                    <option selected disabled>선택</option>
+                                    <option value="objective">객관식</option>
+                                    <option value="subjective">주관식</option>
+                                </select><br>
+                                <div id="examTypeResult">
+                                    <input id="examContent" type="hidden" name="examContent">
+                                </div>
+                                <label class="col-md-2" for="examAnswer">시험문제 정답</label>
+                                <input id="examAnswer" type="text" name="examAnswer">
+                            </div>
+                            <div class="modal-footer">
+                                <button id="registerLectureUpdate" class="btn btn-primary float-end" type="button">등록</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+        const examTypeSelectBtn = document.querySelector('#examType');
+        const examTypeResult = document.querySelector('#examTypeResult');
+        const examContent = document.querySelector('#examContent');
+
+        examTypeSelectBtn.addEventListener('change', function () {
+            const examTypeValue = examTypeSelectBtn.value;
+
+            if(examTypeValue == 'objective') {
+                examTypeResult.innerHTML = "<label class='col-md-2' for='examContent'>시험문제 내용</label>\n" +
+                                            "<input class='examContent' type='text'>";
+            } else if(examTypeValue == 'subjective'){
+                examTypeResult.innerHTML = "<label class='col-md-2'>시험문제 내용</label><br>" +
+                                            "<label class='col-md-2'>1번 보기</label>" +
+                                            "<input class='examContent1' type='text'><br>" +
+                                            "<label class='col-md-2'>2번 보기</label>" +
+                                            "<input class='examContent2' type='text'><br>" +
+                                            "<label class='col-md-2'>3번 보기</label>" +
+                                            "<input class='examContent3' type='text'><br>" +
+                                            "<label class='col-md-2'>4번 보기</label>" +
+                                            "<input class='examContent4' type='text'>";
+            }
+        })
+
+        examContent.addEventListener('keydown', function () {
+            let
+        })
+    </script>
 </th:block>
 </html>
