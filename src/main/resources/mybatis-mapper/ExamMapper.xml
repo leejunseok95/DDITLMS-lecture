@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.dditlms.mapper.ExamMapper">
+    <select id="getExamList">
+
+    </select>
+
+    <select id="getExamInfoList" parameterType="hashmap" resultType="ExamInfoDTO">
+        SELECT A.EXAM_INFO_CD, A.EXAM_INFO_TITLE, A.EXAM_INFO_CATEGORY, A.EXAM_INFO_DATE,
+               A.EXAM_INFO_CONTENT, A.ESTBL_COURS_CD, A.EXAM_INFO_TIMELIMIT
+        FROM EXAM_INFO A, ESTBL_COURS B
+        WHERE A.ESTBL_COURS_CD = B.ESTBL_COURS_CD
+          AND A.ESTBL_COURS_CD = #{estblCoursCd}
+          AND B.MBER_NO = #{mberNo}
+    </select>
+
+    <insert id="insertExam" parameterType="ExamDTO">
+        insert into exam(EXAM_SN, EXAM_NUMBER, EXAM_TITLE, EXAM_ANSWER, EXAM_TYPE, EXAM_CONTENT, EXAM_INFO_CD)
+        values('E'||SEQ_EXAM.nextval, #{examNumber}, #{examTitle}, #{examAnswer}, #{examType}, #{examContent}, #{examInfoCd})
+    </insert>
+
+    <insert id="insertExamInfo" parameterType="ExamInfoDTO">
+        insert into exam_info(EXAM_INFO_CD, EXAM_INFO_TITLE, EXAM_INFO_CATEGORY, EXAM_INFO_DATE, EXAM_INFO_CONTENT, ESTBL_COURS_CD, EXAM_INFO_TIMELIMIT)
+        values('EF'||SEQ_EXAMINFO.nextval, #{examInfoTitle}, #{examInfoCategory}, #{examInfoDate}, #{examInfoContent}, #{estblCoursCd}, #{examInfoTimelimit})
+    </insert>
+</mapper>

@@ -264,13 +264,6 @@ public class OnlineLecController {
         return "pages/onlineLecture_professor/professor_lecture_assignment";
     }
 
-    //교수 시험
-    @GetMapping("/professorOnlineLecture/exam")
-    public String goProfessorOnlineLectureExam() {
-        logger.info("professorExam");
-        return "pages/onlineLecture_professor/professor_lecture_exam";
-    }
-
     //교수 학생 관리
     @GetMapping("/professorOnlineLecture/management")
     public String goProfessorOnlineLectureStudManagement() {
