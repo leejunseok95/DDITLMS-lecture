@@ -11,6 +11,8 @@ import java.util.Map;
 public interface ExamMapper {
     //시험 (중간/기말) 정보를 가져오는 쿼리
     List<ExamInfoDTO> getExamInfoList(Map<String, Object> paramMap);
+    //시험 문제 정보를 가지고 오는 쿼리
+    List<ExamDTO> getExamList(String examInfoCd);
 
     //시험문제 정보 insert 하는 쿼리
     int insertExam(ExamDTO examDTO);

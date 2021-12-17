@@ -24,6 +24,11 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
+    public List<ExamDTO> getExamList(String examInfoCd) {
+        return examMapper.getExamList(examInfoCd);
+    }
+
+    @Override
     public int insertExam(ExamDTO examDTO) {
         logger.info("insertExam ExamServiceImpl examDTO : " + examDTO.toString());
         return examMapper.insertExam(examDTO);

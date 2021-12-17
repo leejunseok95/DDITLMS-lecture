@@ -11,40 +11,6 @@
                     <h5>시험 관리</h5>
                 </div>
                 <div class="card-body">
-                    <div>
-                        <label for="selectExamMaker">카테고리 관리</label>
-                        <select id="selectExamMaker" class="btn-square">
-                            <option value="exam" th:text="'(중간/기말)시험등록'" selected></option>
-                            <option value="makeExam" th:text="'시험문제 제작'"></option>
-                        </select>
-                    </div>
-                    <div class="makeExam">
-                        <button class="btn btn-primary float-end" data-bs-toggle="modal"
-                                data-bs-target=".bd-example-modal-lg">시험문제 생성
-                        </button>
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">시험문제</th>
-                                <th scope="col">시험문제 종류</th>
-                                <th scope="col">시험문제 내용</th>
-                                <th scope="col">시험문제 정답</th>
-                                <th scope="col">시험</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>다음 중 참조형인 것은?</td>
-                                <td>객관식</td>
-                                <td>1.int/2.double/3.float/4.String</td>
-                                <td>4</td>
-                                <td>-(중간/기말)</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
                     <div class="exam">
                         <div>
                             <button class="btn btn-primary float-end" data-bs-toggle="modal"
@@ -63,13 +29,22 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>중간고사 시험</td>
-                                    <td>중간고사</td>
-                                    <td>2021.12.30</td>
-                                    <td>블라블라</td>
-                                    <td>진행전</td>
+                                <tr class="goExamPaper" th:each="list, i : ${examInfoList}" style="cursor:pointer;"
+                                    th:id="${list.examInfoCd}">
+                                    <td th:text="${i.count}"><span th:text="${i.count}"></span></td>
+                                    <td th:text="${list.examInfoTitle}"><span th:text="${list.examInfoTitle}"></span>
+                                    </td>
+                                    <td th:if="${list.examInfoCategory.equals('final')}">
+                                        <span th:text="'기말고사'"></span>
+                                    </td>
+                                    <td th:if="${list.examInfoCategory.equals('middle')}">
+                                        <span th:text="'중간고사'"></span>
+                                    </td>
+                                    <td th:text="${#dates.format(list.examInfoDate, 'yyyy-MM-dd HH:mm')}">
+                                        <span th:text="${#dates.format(list.examInfoDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                    </td>
+                                    <td th:text="${list.examInfoContent}"><span th:text="${list.examInfoContent}"></span></td>
+                                    <td th:text="${progress.get(list.examInfoCd)}"></td>
                                     <td>X</td>
                                 </tr>
                                 </tbody>
@@ -79,38 +54,6 @@
                 </div>
             </div>
         </div>
-        <!--시험 문제 등록의 modal창-->
-        <form id="insertExam" method="post">
-            <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
-                 style="display: none;" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="myLargeModalLabelUpdate">시험문제 등록</h4>
-                            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"/>
-                        </div>
-                        <div class="modal-body">
-                            <label class="col-md-2" for="examTitle">시험문제</label>
-                            <input id="examTitle" type="text" name="examTitle"><br>
-                            <label class="col-md-2" for="examType">시험문제 종류</label>
-                            <select id="examType" name="examType">
-                                <option selected disabled>선택</option>
-                                <option value="objective">객관식</option>
-                                <option value="subjective">주관식</option>
-                            </select><br>
-                            <div id="examTypeResult">
-                            </div>
-                            <input id="examContent" type="hidden" name="examContent">
-                            <label class="col-md-2" for="examAnswer">시험문제 정답</label>
-                            <input id="examAnswer" type="text" name="examAnswer">
-                        </div>
-                        <div class="modal-footer">
-                            <button id="examRegister" class="btn btn-primary float-end" type="button">등록</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
         <!--시험 등록의 modal창-->
         <form id="insertExamInfo" method="post">
             <div class="modal fade bd-example-modal-lg2" tabindex="-1" aria-labelledby="myLargeModalLabel"
@@ -137,6 +80,7 @@
                             <label class="col-md-2" for="examInfoTimelimit">시험시간</label>
                             <input id="examInfoTimelimit" name="examInfoTimelimit" type="number">
                             <span>분</span>
+                            <input id="EXAM_INFO_CD" name="EXAM_INFO_CD" type="hidden">
                         </div>
                         <div class="modal-footer">
                             <button id="examInfoRegister" class="btn btn-primary float-end" type="button">등록</button>
@@ -147,106 +91,13 @@
         </form>
     </div>
     <script th:inline="javascript">
-        //시험문제 등록 버튼
-        const examRegisterBtn = document.querySelector('#examRegister');
-        const examForm = $('#insertExam')[0];
         //시험문제정보(중간/기말) 등록 버튼
         const examInfoRegisterBtn = document.querySelector('#examInfoRegister');
         const examInfoForm = $('#insertExamInfo')[0];
-        const selectBtn = document.querySelector('#selectExamMaker');
         const makeExam = document.querySelector('.makeExam');
         const exam = document.querySelector('.exam');
-        const examTypeSelectBtn = document.querySelector('#examType');
         const examTypeResult = document.querySelector('#examTypeResult');
         const content = document.querySelector('#content');
-        let examContentResult = document.querySelector('#examContent');
-
-        examTypeSelectBtn.addEventListener('change', function () {
-            const examTypeValue = examTypeSelectBtn.value;
-
-            if (examTypeValue == 'objective') {
-                examTypeResult.innerHTML = "<label class='col-md-2'>시험문제 내용(설명)</label>\n" +
-                    "<input id='content' class='examContentForResult' type='text' value='null'>";
-            } else if (examTypeValue == 'subjective') {
-                examTypeResult.innerHTML = "<label class='col-md-2'>시험문제 내용</label><br>" +
-                    "<label class='col-md-2'>1번 보기</label>" +
-                    "<input id='content1' class='examContentForResult' type='text'><br>" +
-                    "<label class='col-md-2'>2번 보기</label>" +
-                    "<input id='content2' class='examContentForResult' type='text'><br>" +
-                    "<label class='col-md-2'>3번 보기</label>" +
-                    "<input id='content3' class='examContentForResult' type='text'><br>" +
-                    "<label class='col-md-2'>4번 보기</label>" +
-                    "<input id='content4' class='examContentForResult' type='text'>";
-
-                const content1 = document.querySelector('#content1');
-                const content2 = document.querySelector('#content2');
-                const content3 = document.querySelector('#content3');
-                const content4 = document.querySelector('#content4');
-
-                content1.addEventListener('keyup', updateValue);
-                content2.addEventListener('keyup', updateValue);
-                content3.addEventListener('keyup', updateValue);
-                content4.addEventListener('keyup', updateValue);
-
-                function updateValue() {
-                    examContentResult.value = content1.value + '/' + content2.value + '/' + content3.value + '/' + content4.value + '/';
-                    console.log(examContentResult.value)
-                }
-            }
-        })
-
-        selectBtn.addEventListener('change', function () {
-            const selectValue = selectBtn.value;
-
-            if (selectValue == 'makeExam') {
-                makeExam.style.display = 'block';
-                exam.style.display = 'none';
-            } else if (selectValue == 'exam') {
-                makeExam.style.display = 'none';
-                exam.style.display = 'block';
-            }
-        })
-
-        examRegisterBtn.addEventListener('click', function () {
-            let examFormDate = new FormData(examForm);
-
-            if ($("#examTitle").val().length == 0) {
-                alert("문제를 입력하세요");
-                $("#examTitle").focus();
-                return false;
-            }
-            if ($("#examType").val().length == 0) {
-                alert("문제의 종류를 선택하세요");
-                $("#examType").focus();
-                return false;
-            }
-            if ($("#examAnswer").val().length == 0) {
-                alert("정답을 입력하세요");
-                $("#examAnswer").focus();
-                return false;
-            }
-
-            $.ajax({
-               url : "/exam/insertExam",
-                data : examFormDate,
-                method : "post",
-                dataType : "json",
-                processData: false,
-                contentType: false,
-                beforeSend : function (xhr) {
-                   xhr.setRequestHeader(header, token);
-                }
-            })
-            .done(function (fragment) {
-                if(fragment.state == "true") {
-                    swal("등록 성공");
-                    location.reload();
-                } else {
-                    swal("등록 실패");
-                    location.reload();
-                }
-            });
-        })
 
         examInfoRegisterBtn.addEventListener('click', function () {
             let examInfoFormDate = new FormData(examInfoForm);
@@ -278,18 +129,18 @@
             }
 
             $.ajax({
-                url : "/exam/insertExamInfo",
-                data : examInfoFormDate,
-                method : "post",
-                dataType : "json",
+                url: "/exam/insertExamInfo",
+                data: examInfoFormDate,
+                method: "post",
+                dataType: "json",
                 processData: false,
                 contentType: false,
-                beforeSend : function (xhr) {
+                beforeSend: function (xhr) {
                     xhr.setRequestHeader(header, token);
                 }
             })
                 .done(function (fragment) {
-                    if(fragment.state == "true") {
+                    if (fragment.state == "true") {
                         swal("등록 성공");
                         location.reload();
                     } else {
@@ -297,6 +148,14 @@
                         location.reload();
                     }
                 })
+        })
+
+        const goExamPapers = document.querySelectorAll('.goExamPaper');
+
+        goExamPapers.forEach(goExamPaper => {
+            goExamPaper.addEventListener('click', function (event) {
+                location.href = "/exam/examPaper?examInfoCd=" + event.currentTarget.id;
+            })
         })
     </script>
 </th:block>

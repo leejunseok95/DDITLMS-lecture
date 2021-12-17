@@ -25,7 +25,7 @@
                         </tr>
                         </thead>
                         <tbody th:each="list,i : ${onlineLecPrintList}">
-                            <tr class="goOnlineLecVideo" style="cursor: pointer; :hover{background: #0a58ca}" th:id="${list.onlineLecCd}"
+                            <tr class="goOnlineLecVideo" style="cursor: pointer;" th:id="${list.onlineLecCd}"
                                 th:if="${list.onlineLecStart.before(#dates.createNow()) and list.onlineLecEnd.after(#dates.createNow())}">
                                 <th th:text="${i.count}" scope="row"><span th:text="${i.count}"></span></th>
                                 <td th:text="${list.onlineLecWeek}"><span th:text="${list.onlineLecWeek}"></span></td>
