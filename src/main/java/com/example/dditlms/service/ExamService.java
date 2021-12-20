@@ -2,6 +2,7 @@ package com.example.dditlms.service;
 
 import com.example.dditlms.domain.dto.ExamDTO;
 import com.example.dditlms.domain.dto.ExamInfoDTO;
+import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,14 @@ public interface ExamService {
     int insertExam(ExamDTO examDTO);
     //시험 등록
     int insertExamInfo(ExamInfoDTO examInfoDTO);
+    //시험 문제 삭제
+    int updateExam(ExamDTO examDTO);
     //시험 수정
     int updateExamInfo(ExamInfoDTO examInfoDTO);
     //시험 삭제
     int deleteExamInfo(ExamInfoDTO examInfoDTO);
+    //시험문제 삭제
+    int deleteExam(ExamDTO examDTO);
+    //시험문제 갯수 구하는 쿼리
+    int countExamForExamInfo(ExamInfoDTO examInfoDTO);
 }

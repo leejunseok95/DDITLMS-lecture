@@ -32,7 +32,7 @@
                                 <tbody>
                                 <tr th:each="list, i : ${examInfoList}" class="goModal" th:classappend="${i.index}" style="cursor:pointer;"
                                     th:id="${list.examInfoCd}" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg3">
-                                    <td th:text="${i.index}"><span th:text="${i.count}"></span></td>
+                                    <td th:text="${i.index}"><span th:text="${i.count+1}"></span></td>
                                     <td th:text="${list.examInfoTitle}"><span th:text="${list.examInfoTitle}"></span>
                                     </td>
                                     <td th:if="${list.examInfoCategory.equals('final')}">
@@ -47,7 +47,8 @@
                                     <td th:text="${list.examInfoTimelimit}"><span th:text="${list.examInfoTimelimit}"></span></td>
                                     <td th:text="${list.examInfoContent}"><span th:text="${list.examInfoContent}"></span></td>
                                     <td th:text="${progress.get(list.examInfoCd)}"></td>
-                                    <td>X</td>
+                                    <td th:if="${examAvailability.equals('possible')}" th:text="'완료'"><span th:text="'완료'"></span></td>
+                                    <td th:if="${examAvailability.equals('impossible')}" th:text="'미완료'"><span th:text="'미완료'"></span></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -273,10 +274,10 @@
             })
                 .done(function (fragment) {
                     if (fragment.state == "true") {
-                        swal("등록 성공");
+                        swal("수정 성공");
                         location.reload();
                     } else {
-                        swal("등록 실패");
+                        swal("수정 실패");
                         location.reload();
                     }
                 })
@@ -298,10 +299,10 @@
                 }
             }).done(function (fragment) {
                 if (fragment.state == "true") {
-                    swal("등록 성공");
+                    swal("삭제 성공");
                     location.reload();
                 } else {
-                    swal("등록 실패");
+                    swal("삭제 실패");
                     location.reload();
                 }
             })

@@ -25,14 +25,20 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="list : ${examList}" th:id="${list.examSn}">
+                        <tr th:each="list,i : ${examList}" th:id="${list.examSn}" class="goModal"
+                            th:classappend="${i.index}"
+                            data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg3" style="cursor: pointer">
                             <td class="examList col-md-1" th:text="${list.examNumber}"></td>
                             <td class="examList col-md-4" th:text="${list.examTitle}"></td>
-                            <td class="examList col-md-1" th:if="${list.examType.equals('objective')}" th:text="객관식"></td>
-                            <td class="examList col-md-1" th:if="${list.examType.equals('subjective')}" th:text="주관식"></td>
-                            <td class="examList col-md-1" th:if="${list.examType.equals('objective')}" th:text="---------"></td>
-                            <td class="examList col-md-4" th:if="${list.examType.equals('subjective')}">
-                                <p th:each="num : ${#numbers.sequence(1,4)}" th:text="${num+'.'+examContentMap.get(list.examSn+num)}"></p>
+                            <td class="examList col-md-1" th:if="${list.examType.equals('objective')}"
+                                th:text="객관식"></td>
+                            <td class="examList col-md-1" th:if="${list.examType.equals('subjective')}"
+                                th:text="주관식"></td>
+                            <td class="examList col-md-1" th:if="${list.examType.equals('subjective')}"
+                                th:text="---------"></td>
+                            <td class="examList col-md-4" th:if="${list.examType.equals('objective')}">
+                                <p th:each="num : ${#numbers.sequence(1,4)}"
+                                   th:text="${num+'.'+examContentMap.get(list.examSn+num)}"></p>
                             </td>
                             <td class="examList col-md-2" th:text="${list.examAnswer}"></td>
                         </tr>
@@ -57,14 +63,14 @@
                             <label class="col-md-2" for="examNumber">시험문제 번호</label>
                             <input id="examNumber" type="number" name="examNumber"><br>
                             <label class="col-md-2" for="examType">시험문제 종류</label>
-                            <select id="examType" name="examType">
+                            <select id="examType" class="examType" name="examType">
                                 <option selected disabled>선택</option>
                                 <option value="objective">객관식</option>
                                 <option value="subjective">주관식</option>
                             </select><br>
-                            <div id="examTypeResult">
+                            <div id="examTypeResult" class="examTypeResult">
                             </div>
-                            <input id="examContent" type="hidden" name="examContent">
+                            <input id="examContent" class="examContent" type="hidden" name="examContent">
                             <label class="col-md-2" for="examAnswer">시험문제 정답</label>
                             <input id="examAnswer" type="text" name="examAnswer">
                             <input id="examInfoCd" name="examInfoCd" type="hidden" th:value="${examInfoCd}">
@@ -78,7 +84,7 @@
         </form>
         <!--문제 수정을 위한 모달 창-->
         <form id="updateExam" method="post">
-            <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+            <div class="modal fade bd-example-modal-lg3" tabindex="-1" aria-labelledby="myLargeModalLabel"
                  style="display: none;" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -92,20 +98,22 @@
                             <label class="col-md-2" for="updateExamNumber">시험문제 번호</label>
                             <input id="updateExamNumber" type="number" name="examNumber"><br>
                             <label class="col-md-2" for="updateExamType">시험문제 종류</label>
-                            <select id="updateExamType" name="examType">
+                            <select id="updateExamType" class="examType" name="examType">
                                 <option selected disabled>선택</option>
                                 <option value="objective">객관식</option>
                                 <option value="subjective">주관식</option>
                             </select><br>
-                            <div id="updateExamTypeResult">
+                            <div id="updateExamTypeResult" class="examTypeResult">
                             </div>
-                            <input id="updateExamContent" type="hidden" name="examContent">
+                            <input id="updateExamContent" class="examContent" type="hidden" name="examContent">
                             <label class="col-md-2" for="updateExamAnswer">시험문제 정답</label>
                             <input id="updateExamAnswer" type="text" name="examAnswer">
                             <input id="updateExamInfoCd" name="examInfoCd" type="hidden" th:value="${examInfoCd}">
+                            <input id="updateExamSn" name="examSn" type="hidden">
                         </div>
                         <div class="modal-footer">
                             <button id="examUpdate" class="btn btn-primary float-end" type="button">수정</button>
+                            <button id="examDelete" class="btn btn-primary float-end" type="button">삭제</button>
                         </div>
                     </div>
                 </div>
@@ -113,18 +121,45 @@
         </form>
     </div>
     <script th:inline="javascript">
-        const examTypeSelectBtn = document.querySelector('#examType');
+        const examTypeSelectBtn = document.querySelector('.examType');
         const examRegisterBtn = document.querySelector('#examRegister');
+        const examUpdateBtn = document.querySelector('#examUpdate');
+        const examDeleteBtn = document.querySelector('#examDelete');
         const examForm = $('#insertExam')[0];
+        const examUpdateForm = $('#updateExam')[0];
         let examContentResult = document.querySelector('#examContent');
 
-        examTypeSelectBtn.addEventListener('change', function () {
-            const examTypeValue = examTypeSelectBtn.value;
+        /*<![CDATA[*/
+        const targetList = /*[[ ${examList} ]]*/;
+        /*]]*/
 
-            if (examTypeValue == 'objective') {
+        const examTr = document.querySelectorAll('.goModal')
+
+        const openModal = e => {
+            const index = e.currentTarget.classList[1]
+            console.log(index)
+            document.querySelector('#updateExamSn').value = targetList[index].examSn;
+            document.querySelector('#updateExamTitle').value = targetList[index].examTitle;
+            document.querySelector('#updateExamType').value = targetList[index].examType;
+            document.querySelector('#updateExamNumber').value = targetList[index].examNumber
+            document.querySelector('#updateExamContent').value = targetList[index].examContent;
+            document.querySelector('#updateExamAnswer').value = targetList[index].examAnswer;
+        }
+
+        examTr.forEach(item => {
+            item.addEventListener('click', e => {
+                openModal(e)
+                checkExamType(targetList[e.currentTarget.classList[1]].examType)
+            })
+        })
+
+        function checkExamType(examTypeValue) {
+            const examTypeResult = document.querySelector('.examTypeResult');
+
+            if (examTypeValue == 'subjective') {
                 examTypeResult.innerHTML = "<label class='col-md-2'>시험문제 내용(설명)</label>\n" +
                     "<input id='content' class='examContentForResult' type='text' value='null'>";
-            } else if (examTypeValue == 'subjective') {
+            } else if (examTypeValue == 'objective') {
                 examTypeResult.innerHTML = "<label class='col-md-2'>시험문제 내용</label><br>" +
                     "<label class='col-md-2'>1번 보기</label>" +
                     "<input id='content1' class='examContentForResult' type='text'><br>" +
@@ -150,6 +185,11 @@
                     console.log(examContentResult.value)
                 }
             }
+        }
+
+        examTypeSelectBtn.addEventListener('change', function () {
+            const examTypeValue = examTypeSelectBtn.value;
+            checkExamType(examTypeValue)
         })
 
         examRegisterBtn.addEventListener('click', function () {
@@ -182,15 +222,88 @@
                     xhr.setRequestHeader(header, token);
                 }
             })
-            .done(function (fragment) {
-                if (fragment.state == "true") {
-                    swal("등록 성공");
-                    location.reload();
-                } else {
-                    swal("등록 실패");
-                    location.reload();
+                .done(function (fragment) {
+                    if (fragment.state == "true") {
+                        swal("등록 성공");
+                        location.reload();
+                    } else {
+                        swal("등록 실패");
+                        location.reload();
+                    }
+                });
+        })
+
+        //수정을 위한 AJAX문문
+        examUpdateBtn.addEventListener('click', function () {
+            let examUpdateFormDate = new FormData(examUpdateForm);
+
+            if ($("#updateExamTitle").val().length == 0) {
+                alert("문제를 입력하세요");
+                $("#updateExamTitle").focus();
+                return false;
+            }
+            if ($("#updateExamType").val().length == 0) {
+                alert("문제의 종류를 선택하세요");
+                $("#updateExamType").focus();
+                return false;
+            }
+            if ($("#updateExamNumber").val().length == 0) {
+                alert("문제의 종류를 선택하세요");
+                $("#updateExamNumber").focus();
+                return false;
+            }
+            if ($("#updateExamAnswer").val().length == 0) {
+                alert("정답을 입력하세요");
+                $("#updateExamAnswer").focus();
+                return false;
+            }
+
+            $.ajax({
+                url: "/exam/updateExam",
+                data: examUpdateFormDate,
+                method: "post",
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
                 }
-            });
+            })
+                .done(function (fragment) {
+                    if (fragment.state == "true") {
+                        swal("수정 성공");
+                        location.reload();
+                    } else {
+                        swal("수정 실패");
+                        location.reload();
+                    }
+                });
+        })
+
+        //삭제를 위한 AJAX문문
+        examDeleteBtn.addEventListener('click', function () {
+            let examUpdateFormDate = new FormData(examUpdateForm);
+
+            $.ajax({
+                url: "/exam/deleteExam",
+                data: examUpdateFormDate,
+                method: "post",
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            })
+                .done(function (fragment) {
+                    if (fragment.state == "true") {
+                        swal("삭제 성공");
+                        location.reload();
+                    } else {
+                        swal("삭제 실패");
+                        location.reload();
+                    }
+                });
         })
     </script>
 </th:block>

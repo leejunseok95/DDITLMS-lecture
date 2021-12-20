@@ -21,6 +21,13 @@
           AND B.MBER_NO = #{mberNo}
     </select>
 
+    <!--시험지에 해당하는 문제 갯수를 구해서 등록이 가능한지 확인하는 쿼리-->
+    <select id="countExamForExamInfo" parameterType="ExamInfoDTO" resultType="int">
+        select count(*)
+        from exam
+        where exam_info_cd = #{examInfoCd}
+    </select>
+
     <insert id="insertExam" parameterType="ExamDTO">
         insert into exam(EXAM_SN, EXAM_NUMBER, EXAM_TITLE, EXAM_ANSWER, EXAM_TYPE, EXAM_CONTENT, EXAM_INFO_CD)
         values('E'||SEQ_EXAM.nextval, #{examNumber}, #{examTitle}, #{examAnswer}, #{examType}, #{examContent}, #{examInfoCd})
@@ -41,7 +48,23 @@
         WHERE EXAM_INFO_CD = #{examInfoCd}
     </update>
 
+    <!--시험 문제 수정 쿼리-->
+    <update id="updateExam" parameterType="ExamDTO">
+        UPDATE EXAM
+           SET EXAM_TITLE = #{examTitle},
+               EXAM_NUMBER = #{examNumber},
+               EXAM_ANSWER = #{examAnswer},
+               EXAM_TYPE = #{examType},
+               EXAM_CONTENT = #{examContent}
+         WHERE EXAM_SN = #{examSn}
+           AND EXAM_INFO_CD = #{examInfoCd}
+    </update>
+
     <delete id="deleteExamInfo" parameterType="ExamInfoDTO">
         DELETE FROM EXAM_INFO WHERE EXAM_INFO_CD = #{examInfoCd}
+    </delete>
+
+    <delete id="deleteExam" parameterType="ExamDTO">
+        DELETE FROM EXAM WHERE EXAM_SN = #{examSn}
     </delete>
 </mapper>

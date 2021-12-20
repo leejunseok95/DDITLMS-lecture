@@ -20,6 +20,12 @@ public interface ExamMapper {
     int insertExamInfo(ExamInfoDTO examInfoDTO);
     //시험 수정
     int updateExamInfo(ExamInfoDTO examInfoDTO);
+    //시험 문제 삭제
+    int updateExam(ExamDTO examDTO);
     //시험 삭제
     int deleteExamInfo(ExamInfoDTO examInfoDTO);
+    //시험문제 삭제
+    int deleteExam(ExamDTO examDTO);
+    //시험문제 갯수 구하는 쿼리
+    int countExamForExamInfo(ExamInfoDTO examInfoDTO);
 }

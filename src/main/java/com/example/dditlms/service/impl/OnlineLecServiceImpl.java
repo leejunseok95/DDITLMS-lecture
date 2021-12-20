@@ -119,7 +119,6 @@ public class OnlineLecServiceImpl implements OnlineLecService {
         VidoInfoDTO vidoInfoDTO = null; //강의 영상 정보를 입력
         AtnlcLctreDTO atnlcLctreDTO = new AtnlcLctreDTO(tempMberNo, estblCoursCd, 0); // 첨부파일 관련
 
-
         Map<String, Object> putVideoInfo = new HashMap<>(); // 비디오정보 - 매개변수
         putVideoInfo.put("mberNo", tempMberNo);
         putVideoInfo.put("estblCoursCd", estblCoursCd);
