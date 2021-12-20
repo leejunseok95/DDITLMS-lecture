@@ -15,4 +15,8 @@ public interface ExamService {
     int insertExam(ExamDTO examDTO);
     //시험 등록
     int insertExamInfo(ExamInfoDTO examInfoDTO);
+    //시험 수정
+    int updateExamInfo(ExamInfoDTO examInfoDTO);
+    //시험 삭제
+    int deleteExamInfo(ExamInfoDTO examInfoDTO);
 }

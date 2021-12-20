@@ -30,4 +30,18 @@
         insert into exam_info(EXAM_INFO_CD, EXAM_INFO_TITLE, EXAM_INFO_CATEGORY, EXAM_INFO_DATE, EXAM_INFO_CONTENT, ESTBL_COURS_CD, EXAM_INFO_TIMELIMIT)
         values('EF'||SEQ_EXAMINFO.nextval, #{examInfoTitle}, #{examInfoCategory}, #{examInfoDate}, #{examInfoContent}, #{estblCoursCd}, #{examInfoTimelimit})
     </insert>
+
+    <update id="updateExamInfo" parameterType="ExamInfoDTO">
+        UPDATE EXAM_INFO
+        SET EXAM_INFO_TITLE = #{examInfoTitle},
+            EXAM_INFO_CATEGORY = #{examInfoCategory},
+            EXAM_INFO_DATE = #{examInfoDate},
+            EXAM_INFO_CONTENT = #{examInfoContent},
+            EXAM_INFO_TIMELIMIT = #{examInfoTimelimit}
+        WHERE EXAM_INFO_CD = #{examInfoCd}
+    </update>
+
+    <delete id="deleteExamInfo" parameterType="ExamInfoDTO">
+        DELETE FROM EXAM_INFO WHERE EXAM_INFO_CD = #{examInfoCd}
+    </delete>
 </mapper>

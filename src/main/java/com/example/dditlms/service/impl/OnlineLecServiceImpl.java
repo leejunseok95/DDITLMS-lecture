@@ -9,8 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -96,5 +99,115 @@ public class OnlineLecServiceImpl implements OnlineLecService {
     @Override
     public OnlineLecForPrintDTO getOnlineLecInfoForCheckAtendInfo(String onlineLecCd) {
         return onlineLecMapper.getOnlineLecInfoForCheckAtendInfo(onlineLecCd);
+    }
+
+    @Override
+    public void selectGoOnlineLecture(Map<String, Object> paramMap) {
+
+        /** 파라미터 조회 ****************************************************************************************/
+        int tempMberNo = (int) paramMap.get("tempMberNo");
+        int insertVidoInfo = (int) paramMap.get("insertVidoInfo");
+        String estblCoursCd = (String) paramMap.get("estblCoursCd");
+        OnlineLecDTO onlineLecDTO = (OnlineLecDTO) paramMap.get("onlineLecDTO");
+
+        logger.debug("goOnlineLecture{} - {}", insertVidoInfo, estblCoursCd);
+
+        /** 파라미터 생성 */
+        SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        LocalDate now = LocalDate.now();
+        VidoInfoDTO vidoInfoDTO = null; //강의 영상 정보를 입력
+        AtnlcLctreDTO atnlcLctreDTO = new AtnlcLctreDTO(tempMberNo, estblCoursCd, 0); // 첨부파일 관련
+
+
+        Map<String, Object> putVideoInfo = new HashMap<>(); // 비디오정보 - 매개변수
+        putVideoInfo.put("mberNo", tempMberNo);
+        putVideoInfo.put("estblCoursCd", estblCoursCd);
+
+        /** 로직 처리 구간 ***************************************************************************************/
+
+
+        /** 온라인 강의 정보 조회 - 기초자료 정보 입력 등 */
+        List<AtendDTO> atendList = null; // 출석정보
+        List<OnlineLecForPrintDTO> onlineLecForVideoInfo = getOnlineLectureList(atnlcLctreDTO);
+        logger.info("onlineLecForVideoInfo : " + onlineLecForVideoInfo.toString());
+        for(OnlineLecForPrintDTO onlineLecForPrintDTOTest : onlineLecForVideoInfo) {
+
+            /** 온라인 개별 자료 조회 */
+            String onlineLecCd = onlineLecForPrintDTOTest.getOnlineLecCd();
+            logger.debug("goOnlineLecture{} - onlineLecCd ::: {}", onlineLecCd, onlineLecCd);
+
+            /** 영상시간 및 진행률 조회
+             *  ㄴ 비디오 정보 조회  : getVidoInfo(putVideoInfo)
+             *  ㄴ 출석정보 조회    : getAtendInfo(putVideoInfo);
+             * */
+            putVideoInfo.put("onlineLecCd", onlineLecCd); // 온라인 강좌 코드
+            vidoInfoDTO = getVidoInfo(putVideoInfo);
+            atendList = getAtendInfo(putVideoInfo);
+
+            /** null의 경우 출석정보 입력 */
+            if(atendList==null || atendList.isEmpty()) {
+                insertAtendInfo(putVideoInfo);
+            }
+
+            /** 비디오 정보 최초 자료 입력(진행률 등) */
+            if(vidoInfoDTO == null) {
+                vidoInfoDTO = VidoInfoDTO.builder()
+                        .vidoInfoSn(0)
+                        .mberNo(tempMberNo)
+                        .vidoPlaytime(0)
+                        .vidoProgress(0)
+                        .onlineLecCd(onlineLecCd)
+                        .build();
+                /** 비디오 정보 저장 */
+                logger.debug("goOnlineLecture{} - 비디오 정보 저장");
+                insertVidoInfo = saveOnlineLecVideoInfo(vidoInfoDTO);
+            }
+        }
+
+        /** 온라인 강의 정보 조회 */
+        List<OnlineLecForPrintDTO> onlineLecPrintList = getOnlineLectureListVer2(atnlcLctreDTO);
+        onlineLecPrintList = onlineLecPrintList.stream().sorted(Comparator.comparing(OnlineLecForPrintDTO::getOnlineLecWeek)).collect(Collectors.toList());
+        logger.info("goOnlineLecture{} - onlineLecListMap Version 2 : {}", insertVidoInfo, onlineLecPrintList.toString());
+
+        /** 최초 화면 진입 시 일정관련 처리 - (종료, 학습진행, 학습예정) 구분 */
+        for(OnlineLecForPrintDTO onlineLecForPrintDTO : onlineLecPrintList) {
+            AtendDTO atendDTO = null;
+            try {
+                Date startLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecStart().toString());
+                Date endLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecEnd().toString());
+                Date nowDate = dateFormat.parse(now.toString());
+                int videoProgress = onlineLecForPrintDTO.getVidoProgress();
+
+                if(startLectureDay.before(nowDate) && endLectureDay.after(nowDate)) {
+                    logger.info("학습진행");
+                    onlineLecForPrintDTO.setLearningStatus("학습진행");
+                } else if(startLectureDay.after(nowDate)) {
+                    logger.info("학습예정");
+                    onlineLecForPrintDTO.setLearningStatus("학습예정");
+                } else if(endLectureDay.before(nowDate)) {
+                    logger.info("학습종료");
+                    onlineLecForPrintDTO.setLearningStatus("학습종료");
+
+                    if (videoProgress < 50) {
+                        atendDTO =
+                                new AtendDTO("n", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
+                        updateAtendForOnlineLecture(atendDTO);
+                    } else if(videoProgress >= 50 && videoProgress <= 95) {
+                        atendDTO =
+                                new AtendDTO("o", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
+                        updateAtendForOnlineLecture(atendDTO);
+                    }
+                }
+                int onlineLecLearningStatus = updateOnlineLecLearningStatus(onlineLecForPrintDTO);
+            } catch (ParseException e) {
+                logger.error("{}", e);
+            } catch (Exception e) {
+                logger.error("{}", e);
+            }
+        }
+
+        /** 전송자료 */
+        paramMap.put("onlineLecPrintList", onlineLecPrintList);
     }
 }

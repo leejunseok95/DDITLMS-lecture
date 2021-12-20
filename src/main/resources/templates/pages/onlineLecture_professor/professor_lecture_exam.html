@@ -23,15 +23,16 @@
                                     <th scope="col">시험제목</th>
                                     <th scope="col">시험종류</th>
                                     <th scope="col">시험일</th>
+                                    <th scope="col">시험시간</th>
                                     <th scope="col">시험내용</th>
                                     <th scope="col">진행</th>
                                     <th scope="col">문제 등록</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="goExamPaper" th:each="list, i : ${examInfoList}" style="cursor:pointer;"
-                                    th:id="${list.examInfoCd}">
-                                    <td th:text="${i.count}"><span th:text="${i.count}"></span></td>
+                                <tr th:each="list, i : ${examInfoList}" class="goModal" th:classappend="${i.index}" style="cursor:pointer;"
+                                    th:id="${list.examInfoCd}" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg3">
+                                    <td th:text="${i.index}"><span th:text="${i.count}"></span></td>
                                     <td th:text="${list.examInfoTitle}"><span th:text="${list.examInfoTitle}"></span>
                                     </td>
                                     <td th:if="${list.examInfoCategory.equals('final')}">
@@ -43,6 +44,7 @@
                                     <td th:text="${#dates.format(list.examInfoDate, 'yyyy-MM-dd HH:mm')}">
                                         <span th:text="${#dates.format(list.examInfoDate, 'yyyy-MM-dd HH:mm')}"></span>
                                     </td>
+                                    <td th:text="${list.examInfoTimelimit}"><span th:text="${list.examInfoTimelimit}"></span></td>
                                     <td th:text="${list.examInfoContent}"><span th:text="${list.examInfoContent}"></span></td>
                                     <td th:text="${progress.get(list.examInfoCd)}"></td>
                                     <td>X</td>
@@ -75,12 +77,12 @@
                             </select><br>
                             <label class="col-md-2" for="examInfoDate">시험일(공개일)</label>
                             <input id="examInfoDate" name="examInfoDate" type="datetime-local"><br>
-                            <label class="col-md-2" for="examInfoContent">시험 내용(주의사항)</label>
-                            <textarea id="examInfoContent" name="examInfoContent"></textarea><br>
+                            <label class="col-md-2 examInfoContent" for="examInfoContent">시험 내용(주의사항)</label>
+                            <textarea id="examInfoContent" name="examInfoContent" style="resize: none;"></textarea><br>
                             <label class="col-md-2" for="examInfoTimelimit">시험시간</label>
                             <input id="examInfoTimelimit" name="examInfoTimelimit" type="number">
                             <span>분</span>
-                            <input id="EXAM_INFO_CD" name="EXAM_INFO_CD" type="hidden">
+                            <input id="examInfoCd" name="examInfoCd" type="hidden">
                         </div>
                         <div class="modal-footer">
                             <button id="examInfoRegister" class="btn btn-primary float-end" type="button">등록</button>
@@ -89,18 +91,96 @@
                 </div>
             </div>
         </form>
+
+        <!--시험 수정/삭제의 modal창-->
+        <form id="updateAndDeleteExamInfo" method="post">
+            <div class="modal fade bd-example-modal-lg3" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                 style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myLargeModalLabel2">시험 등록</h4>
+                            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body">
+                            <label class="col-md-2" for="updateExamInfoTitle">제목</label>
+                            <input id="updateExamInfoTitle" name="examInfoTitle" type="text" placeholder="제목을 입력하시오"><br>
+                            <label class="col-md-2" for="updateExamInfoCategory">시험종류</label>
+                            <select id="updateExamInfoCategory" name="examInfoCategory">
+                                <option selected disabled>선택</option>
+                                <option value="middle">중간고사</option>
+                                <option value="final">기말고사</option>
+                            </select><br>
+                            <label class="col-md-2" for="updateExamInfoDate">시험일(공개일)</label>
+                            <input id="updateExamInfoDate" name="examInfoDate" type="datetime-local"><br>
+                            <label class="col-md-2" for="updateExamInfoContent">시험 내용(주의사항)</label>
+                            <textarea id="updateExamInfoContent" name="examInfoContent" style="resize: none;"></textarea><br>
+                            <label class="col-md-2" for="examInfoTimelimit">시험시간</label>
+                            <input id="updateExamInfoTimelimit" name="examInfoTimelimit" type="number">
+                            <span>분</span>
+                            <input id="updateExamInfoCd" name="examInfoCd" type="hidden">
+                        </div>
+                        <div class="modal-footer">
+                            <button id="goExamPaper" class="btn btn-primary float-end" type="button">문제 등록</button>
+                            <button id="examInfoUpdate" class="btn btn-primary float-end" type="button">수정</button>
+                            <button id="examInfoDelete" class="btn btn-primary float-end" type="button">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        const targetList = /*[[ ${examInfoList} ]]*/;
+        console.log(targetList)
+        /*]]*/
+
         //시험문제정보(중간/기말) 등록 버튼
         const examInfoRegisterBtn = document.querySelector('#examInfoRegister');
+        //시험문제 수정 버튼
+        const examInfoUpdateBtn = document.querySelector('#examInfoUpdate');
+        //시험문제 삭제 버튼
+        const examInfoDeleteBtn = document.querySelector('#examInfoDelete');
         const examInfoForm = $('#insertExamInfo')[0];
+        const updateExamInfoForm = $('#updateAndDeleteExamInfo')[0];
+        const deleteExamInfoForm = $('#updateAndDeleteExamInfo')[0];
         const makeExam = document.querySelector('.makeExam');
         const exam = document.querySelector('.exam');
         const examTypeResult = document.querySelector('#examTypeResult');
         const content = document.querySelector('#content');
+        //모달창에 값을 전달하기 위한
+        const examTr = document.querySelectorAll('.goModal')
+        moment.DATETIME_LOCAL = "YYYY-MM-DDThh:mm:ss"
+        const openModal = e => {
+            const index = e.currentTarget.classList[1]
+            document.querySelector('#updateExamInfoCd').value = targetList[index].examInfoCd;
+            document.querySelector('#updateExamInfoTitle').value = targetList[index].examInfoTitle;
+            document.querySelector('#updateExamInfoCategory').value = targetList[index].examInfoCategory;
+            document.querySelector('#updateExamInfoDate').value = moment(targetList[index].examInfoDate).format(moment.DATETIME_LOCAL);
+            document.querySelector('#updateExamInfoContent').value = targetList[index].examInfoContent;
+            document.querySelector('#updateExamInfoTimelimit').value = targetList[index].examInfoTimelimit;
 
+            const goExamPapers = document.querySelectorAll('#goExamPaper');
+
+            goExamPapers.forEach(goExamPaper => {
+                goExamPaper.addEventListener('click', function (event) {
+                    location.href = "/exam/examPaper?examInfoCd=" + targetList[index].examInfoCd;
+                })
+            })
+        }
+
+        examTr.forEach(item => {
+            item.addEventListener('click', e => {
+                openModal(e)
+            })
+        })
+
+        //시험 등록
         examInfoRegisterBtn.addEventListener('click', function () {
-            let examInfoFormDate = new FormData(examInfoForm);
+            let examInfoFormData = new FormData(examInfoForm);
 
             if ($("#examInfoTitle").val().length == 0) {
                 alert("제목을 입력하세요");
@@ -130,7 +210,7 @@
 
             $.ajax({
                 url: "/exam/insertExamInfo",
-                data: examInfoFormDate,
+                data: examInfoFormData,
                 method: "post",
                 dataType: "json",
                 processData: false,
@@ -150,11 +230,80 @@
                 })
         })
 
-        const goExamPapers = document.querySelectorAll('.goExamPaper');
+        //시험 수정examInfoDeleteBtn
+        examInfoUpdateBtn.addEventListener('click', function () {
+            let updateExamInfoFormData = new FormData(updateExamInfoForm);
 
-        goExamPapers.forEach(goExamPaper => {
-            goExamPaper.addEventListener('click', function (event) {
-                location.href = "/exam/examPaper?examInfoCd=" + event.currentTarget.id;
+            if ($("#updateExamInfoTitle").val().length == 0) {
+                alert("제목을 입력하세요");
+                $("#updateExamInfoTitle").focus();
+                return false;
+            }
+            if ($("#updateExamInfoCategory").val().length == 0) {
+                alert("문제의 종류를 선택하세요");
+                $("#updateExamInfoCategory").focus();
+                return false;
+            }
+            if ($("#updateExamInfoDate").val().length == 0) {
+                alert("시험일을 입력하세요");
+                $("#updateExamInfoDate").focus();
+                return false;
+            }
+            if ($("#updateExamInfoContent").val().length == 0) {
+                alert("주의 사항을 입력하세요");
+                $("#updateExamInfoContent").focus();
+                return false;
+            }
+            if ($("#updateExamInfoTimelimit").val().length == 0) {
+                alert("시험 시간을 입력하세요");
+                $("#updateExamInfoTimelimit").focus();
+                return false;
+            }
+
+            $.ajax({
+                url: "/exam/updateExamInfo",
+                data: updateExamInfoFormData,
+                method: "post",
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            })
+                .done(function (fragment) {
+                    if (fragment.state == "true") {
+                        swal("등록 성공");
+                        location.reload();
+                    } else {
+                        swal("등록 실패");
+                        location.reload();
+                    }
+                })
+        })
+
+        //시험 삭제
+        examInfoDeleteBtn.addEventListener('click', function () {
+            let deleteExamInfoFormData = new FormData(deleteExamInfoForm);
+
+            $.ajax({
+                url: "/exam/deleteExamInfo",
+                data: deleteExamInfoFormData,
+                method: "post",
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            }).done(function (fragment) {
+                if (fragment.state == "true") {
+                    swal("등록 성공");
+                    location.reload();
+                } else {
+                    swal("등록 실패");
+                    location.reload();
+                }
             })
         })
     </script>

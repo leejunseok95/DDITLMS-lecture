@@ -170,6 +170,84 @@ public class ExamContoller {
         }
     }
 
+    @PostMapping("/exam/updateExamInfo")
+    public void updateExamInfo(HttpServletResponse response, HttpServletRequest request,
+                               @RequestParam Map<String, String> paramMap) {
+        logger.info("updateExamInfo");
+        logger.info("paramMap updateExamInfo : " + paramMap);
+        response.setContentType("text/html; charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        JSONObject jsonObject = new JSONObject();
+
+        //임시 개설교과 pk값
+        String estblCoursCd = "test001";
+        int result = 0;
+
+        //datetime-local 타입 변환
+        String paramDate = paramMap.get("examInfoDate");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        Date examInfoDate = null;
+        try {
+            examInfoDate = format.parse(paramDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        ExamInfoDTO examInfoDTO = ExamInfoDTO.builder()
+                .examInfoCd(paramMap.get("examInfoCd"))
+                .examInfoTitle(paramMap.get("examInfoTitle"))
+                .examInfoCategory(paramMap.get("examInfoCategory"))
+                .examInfoDate(examInfoDate)
+                .examInfoContent(paramMap.get("examInfoContent"))
+                .estblCoursCd(estblCoursCd)
+                .examInfoTimelimit(Integer.parseInt(paramMap.get("examInfoTimelimit")))
+                .build();
+
+        logger.info("examInfoDTO for Update : " + examInfoDTO);
+        result = examService.updateExamInfo(examInfoDTO);
+
+        if (result == 0) {
+            jsonObject.put("state", "false");
+        } else {
+            jsonObject.put("state", "true");
+        }
+
+        try {
+            response.getWriter().print(jsonObject);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @PostMapping("/exam/deleteExamInfo")
+    public void deleteExamInfo(HttpServletResponse response, HttpServletRequest request,
+                               @RequestParam Map<String, String> paramMap) {
+        logger.info("deleteExamInfo");
+        logger.info("paramMap deleteExamInfo : " + paramMap);
+        response.setContentType("text/html; charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        JSONObject jsonObject = new JSONObject();
+
+        //임시 개설교과 pk값
+        int result = 0;
+
+        ExamInfoDTO examInfoDTO = ExamInfoDTO.builder().examInfoCd(paramMap.get("examInfoCd")).build();
+
+        result = examService.deleteExamInfo(examInfoDTO);
+
+        if (result == 0) {
+            jsonObject.put("state", "false");
+        } else {
+            jsonObject.put("state", "true");
+        }
+
+        try {
+            response.getWriter().print(jsonObject);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @GetMapping("/exam/examPaper")
     public ModelAndView goExamPaper(@RequestParam("examInfoCd") String examInfoCd) {
         logger.info("examPaper");

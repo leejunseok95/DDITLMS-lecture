@@ -48,7 +48,7 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="myLargeModalLabelUpdate">시험문제 등록</h4>
+                            <h4 class="modal-title" id="myLargeModalLabelRegister">시험문제 등록</h4>
                             <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"/>
                         </div>
                         <div class="modal-body">
@@ -87,25 +87,25 @@
                             <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"/>
                         </div>
                         <div class="modal-body">
-                            <label class="col-md-2" for="examTitle">시험문제</label>
-                            <input id="examTitle" type="text" name="examTitle"><br>
-                            <label class="col-md-2" for="examNumber">시험문제 번호</label>
-                            <input id="examNumber" type="number" name="examNumber"><br>
-                            <label class="col-md-2" for="examType">시험문제 종류</label>
-                            <select id="examType" name="examType">
+                            <label class="col-md-2" for="updateExamTitle">시험문제</label>
+                            <input id="updateExamTitle" type="text" name="examTitle"><br>
+                            <label class="col-md-2" for="updateExamNumber">시험문제 번호</label>
+                            <input id="updateExamNumber" type="number" name="examNumber"><br>
+                            <label class="col-md-2" for="updateExamType">시험문제 종류</label>
+                            <select id="updateExamType" name="examType">
                                 <option selected disabled>선택</option>
                                 <option value="objective">객관식</option>
                                 <option value="subjective">주관식</option>
                             </select><br>
-                            <div id="examTypeResult">
+                            <div id="updateExamTypeResult">
                             </div>
-                            <input id="examContent" type="hidden" name="examContent">
-                            <label class="col-md-2" for="examAnswer">시험문제 정답</label>
-                            <input id="examAnswer" type="text" name="examAnswer">
-                            <input id="examInfoCd" name="examInfoCd" type="hidden" th:value="${examInfoCd}">
+                            <input id="updateExamContent" type="hidden" name="examContent">
+                            <label class="col-md-2" for="updateExamAnswer">시험문제 정답</label>
+                            <input id="updateExamAnswer" type="text" name="examAnswer">
+                            <input id="updateExamInfoCd" name="examInfoCd" type="hidden" th:value="${examInfoCd}">
                         </div>
                         <div class="modal-footer">
-                            <button id="examRegister" class="btn btn-primary float-end" type="button">등록</button>
+                            <button id="examUpdate" class="btn btn-primary float-end" type="button">수정</button>
                         </div>
                     </div>
                 </div>

@@ -39,4 +39,14 @@ public class ExamServiceImpl implements ExamService {
         logger.info("insertExamInfo ExamServiceImpl examInfoDTO : " + examInfoDTO);
         return examMapper.insertExamInfo(examInfoDTO);
     }
+
+    @Override
+    public int updateExamInfo(ExamInfoDTO examInfoDTO) {
+        return examMapper.updateExamInfo(examInfoDTO);
+    }
+
+    @Override
+    public int deleteExamInfo(ExamInfoDTO examInfoDTO) {
+        return examMapper.deleteExamInfo(examInfoDTO);
+    }
 }

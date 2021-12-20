@@ -32,4 +32,7 @@ public interface OnlineLecService {
     void updateAtendForOnlineLecture(AtendDTO atendDTO);
     //출결체크 관리를 위해 온라인강의 진행률과 시간 정보를 가지고 오기
     OnlineLecForPrintDTO getOnlineLecInfoForCheckAtendInfo(String onlineLecCd);
+
+    /** 온라인 강의 페이지 이동 */
+    void selectGoOnlineLecture(Map<String, Object> paramMap);
 }

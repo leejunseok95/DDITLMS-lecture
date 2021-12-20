@@ -18,4 +18,8 @@ public interface ExamMapper {
     int insertExam(ExamDTO examDTO);
     // 시험 등록(중간/기말)하는 쿼리
     int insertExamInfo(ExamInfoDTO examInfoDTO);
+    //시험 수정
+    int updateExamInfo(ExamInfoDTO examInfoDTO);
+    //시험 삭제
+    int deleteExamInfo(ExamInfoDTO examInfoDTO);
 }

@@ -31,102 +31,131 @@ import java.util.stream.Collectors;
 public class OnlineLecController {
     private static final Logger logger = LoggerFactory.getLogger(OnlineLecController.class);
 
-    private final OnlineLecService onlineLecService;
+    private final OnlineLecService service;
 
     //학생 강의 목록
     @GetMapping("/onlineLecture")
-    public ModelAndView goOnlineLecture(Model model, OnlineLecDTO onlineLecDTO) {
+    public ModelAndView goOnlineLecture(ModelAndView mv, OnlineLecDTO onlineLecDTO) {
         logger.info("lectureList");
-        ModelAndView mv = new ModelAndView("pages/onlineLecture_student/student_lecture_list");
-        SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        LocalDate now = LocalDate.now();
-        //수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
-        int insertVidoInfo = 0;
+
+        /** 1.파라미터 조회(함수 파라미터, 세션 속성, 시스템변수) ****************************************************************/
+
+        /** TODO 테스트용 코드 */
         int tempMberNo = 201401449;
+        int insertVidoInfo = 0; // 수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
         String estblCoursCd = "test001";
-        //강의 영상 정보를 입력
-        VidoInfoDTO vidoInfoDTO = null;
-        Map<String, Object> putVideoInfo = new HashMap<>();
-        AtnlcLctreDTO atnlcLctreDTO = new AtnlcLctreDTO(tempMberNo, estblCoursCd, 0);
-        List<AtendDTO> atendList = null;
 
-        List<OnlineLecForPrintDTO> onlineLecForVideoInfo =
-                onlineLecService.getOnlineLectureList(atnlcLctreDTO);
-        logger.info("onlineLecForVideoInfo : " + onlineLecForVideoInfo.toString());
+        /** 2.파라미터 검증(주요파라미터) */
+        /** 3.서비스 처리 */
+        /** 3-1. 서비스 호출 파라미터 구성 */
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("tempMberNo", tempMberNo);
+        paramMap.put("insertVidoInfo", insertVidoInfo);
+        paramMap.put("estblCoursCd", estblCoursCd);
+        paramMap.put("onlineLecDTO", onlineLecDTO);
 
-        for(OnlineLecForPrintDTO onlineLecForPrintDTOTest : onlineLecForVideoInfo) {
-            putVideoInfo.put("mberNo", tempMberNo);
-            putVideoInfo.put("estblCoursCd", estblCoursCd);
-            putVideoInfo.put("onlineLecCd", onlineLecForPrintDTOTest.getOnlineLecCd());
-            vidoInfoDTO = onlineLecService.getVidoInfo(putVideoInfo);
+        /** 3-2. 서비스 호출 */
+        service.selectGoOnlineLecture(paramMap); // save, select, get, update, delete, merge
 
-            atendList = onlineLecService.getAtendInfo(putVideoInfo);
-
-            if(atendList.isEmpty()) {
-                onlineLecService.insertAtendInfo(putVideoInfo);
-            }
-
-            if(vidoInfoDTO == null) {
-                vidoInfoDTO = VidoInfoDTO.builder()
-                        .vidoInfoSn(0)
-                        .mberNo(tempMberNo)
-                        .vidoPlaytime(0)
-                        .vidoProgress(0)
-                        .onlineLecCd(onlineLecForPrintDTOTest.getOnlineLecCd())
-                        .build();
-                insertVidoInfo = onlineLecService.saveOnlineLecVideoInfo(vidoInfoDTO);
-            }
-        }
-
-        List<OnlineLecForPrintDTO> onlineLecPrintList =
-                onlineLecService.getOnlineLectureListVer2(atnlcLctreDTO);
-        onlineLecPrintList =
-                onlineLecPrintList.stream().sorted(Comparator.comparing(OnlineLecForPrintDTO::getOnlineLecWeek)).collect(Collectors.toList());
-
-        logger.info("onlineLecListMap Version 2 : " + onlineLecPrintList.toString());
-
-        int updateLearningStaResult = 0;
-        AtendDTO atendDTO = null;
-        for(OnlineLecForPrintDTO onlineLecForPrintDTO : onlineLecPrintList) {
-            try {
-                Date startLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecStart().toString());
-                Date endLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecEnd().toString());
-                Date nowDate = dateFormat.parse(now.toString());
-                int videoProgress = onlineLecForPrintDTO.getVidoProgress();
-
-                if(startLectureDay.before(nowDate) && endLectureDay.after(nowDate)) {
-                    logger.info("학습진행");
-                    onlineLecForPrintDTO.setLearningStatus("학습진행");
-                } else if(startLectureDay.after(nowDate)) {
-                    logger.info("학습예정");
-                    onlineLecForPrintDTO.setLearningStatus("학습예정");
-                } else if(endLectureDay.before(nowDate)) {
-                    logger.info("학습종료");
-                    onlineLecForPrintDTO.setLearningStatus("학습종료");
-
-                    if (videoProgress < 50) {
-                        atendDTO =
-                                new AtendDTO("n", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
-                        onlineLecService.updateAtendForOnlineLecture(atendDTO);
-                    } else if(videoProgress >= 50 && videoProgress <= 95) {
-                        atendDTO =
-                                new AtendDTO("o", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
-                        onlineLecService.updateAtendForOnlineLecture(atendDTO);
-                    }
-                }
-                updateLearningStaResult = onlineLecService.updateOnlineLecLearningStatus(onlineLecForPrintDTO);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        mv.addObject("onlineLecPrintList", onlineLecPrintList);
+        /** 4. 클라이언트 자료구성 */
+        mv.addObject("onlineLecPrintList", paramMap.get("onlineLecPrintList"));
         mv.addObject("mberNo", tempMberNo);
+        mv.setViewName("pages/onlineLecture_student/student_lecture_list");
 
         return mv;
+
+//        logger.info("lectureList");
+//        ModelAndView mv = new ModelAndView("pages/onlineLecture_student/student_lecture_list");
+//        SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        LocalDate now = LocalDate.now();
+//        //수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
+//        int insertVidoInfo = 0;
+//        int tempMberNo = 201401449;
+//        String estblCoursCd = "test001";
+//        //강의 영상 정보를 입력
+//        VidoInfoDTO vidoInfoDTO = null;
+//        Map<String, Object> putVideoInfo = new HashMap<>();
+//        AtnlcLctreDTO atnlcLctreDTO = new AtnlcLctreDTO(tempMberNo, estblCoursCd, 0);
+//        List<AtendDTO> atendList = null;
+//
+//        List<OnlineLecForPrintDTO> onlineLecForVideoInfo =
+//                onlineLecService.getOnlineLectureList(atnlcLctreDTO);
+//        logger.info("onlineLecForVideoInfo : " + onlineLecForVideoInfo.toString());
+//
+//        for(OnlineLecForPrintDTO onlineLecForPrintDTOTest : onlineLecForVideoInfo) {
+//            putVideoInfo.put("mberNo", tempMberNo);
+//            putVideoInfo.put("estblCoursCd", estblCoursCd);
+//            putVideoInfo.put("onlineLecCd", onlineLecForPrintDTOTest.getOnlineLecCd());
+//            vidoInfoDTO = onlineLecService.getVidoInfo(putVideoInfo);
+//
+//            atendList = onlineLecService.getAtendInfo(putVideoInfo);
+//
+//            if(atendList.isEmpty()) {
+//                onlineLecService.insertAtendInfo(putVideoInfo);
+//            }
+//
+//            if(vidoInfoDTO == null) {
+//                vidoInfoDTO = VidoInfoDTO.builder()
+//                        .vidoInfoSn(0)
+//                        .mberNo(tempMberNo)
+//                        .vidoPlaytime(0)
+//                        .vidoProgress(0)
+//                        .onlineLecCd(onlineLecForPrintDTOTest.getOnlineLecCd())
+//                        .build();
+//                insertVidoInfo = onlineLecService.saveOnlineLecVideoInfo(vidoInfoDTO);
+//            }
+//        }
+//
+//        List<OnlineLecForPrintDTO> onlineLecPrintList =
+//                onlineLecService.getOnlineLectureListVer2(atnlcLctreDTO);
+//        onlineLecPrintList =
+//                onlineLecPrintList.stream().sorted(Comparator.comparing(OnlineLecForPrintDTO::getOnlineLecWeek)).collect(Collectors.toList());
+//
+//        logger.info("onlineLecListMap Version 2 : " + onlineLecPrintList.toString());
+//
+//        int updateLearningStaResult = 0;
+//        AtendDTO atendDTO = null;
+//        for(OnlineLecForPrintDTO onlineLecForPrintDTO : onlineLecPrintList) {
+//            try {
+//                Date startLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecStart().toString());
+//                Date endLectureDay = sdf.parse(onlineLecForPrintDTO.getOnlineLecEnd().toString());
+//                Date nowDate = dateFormat.parse(now.toString());
+//                int videoProgress = onlineLecForPrintDTO.getVidoProgress();
+//
+//                if(startLectureDay.before(nowDate) && endLectureDay.after(nowDate)) {
+//                    logger.info("학습진행");
+//                    onlineLecForPrintDTO.setLearningStatus("학습진행");
+//                } else if(startLectureDay.after(nowDate)) {
+//                    logger.info("학습예정");
+//                    onlineLecForPrintDTO.setLearningStatus("학습예정");
+//                } else if(endLectureDay.before(nowDate)) {
+//                    logger.info("학습종료");
+//                    onlineLecForPrintDTO.setLearningStatus("학습종료");
+//
+//                    if (videoProgress < 50) {
+//                        atendDTO =
+//                                new AtendDTO("n", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
+//                        onlineLecService.updateAtendForOnlineLecture(atendDTO);
+//                    } else if(videoProgress >= 50 && videoProgress <= 95) {
+//                        atendDTO =
+//                                new AtendDTO("o", nowDate, tempMberNo, onlineLecForPrintDTO.getOnlineLecCd());
+//                        onlineLecService.updateAtendForOnlineLecture(atendDTO);
+//                    }
+//                }
+//                updateLearningStaResult = onlineLecService.updateOnlineLecLearningStatus(onlineLecForPrintDTO);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        mv.addObject("onlineLecPrintList", onlineLecPrintList);
+//        mv.addObject("mberNo", tempMberNo);
+//
+//        return mv;
+
     }
 
     @GetMapping("/goOnlineLecVideoPlayer")
@@ -139,8 +168,8 @@ public class OnlineLecController {
         Map<String, Object> putVideoInfo = new HashMap<>();
         putVideoInfo.put("mberNo", mberNo);
         putVideoInfo.put("onlineLecCd", onlineLecCd);
-        AtchmnflDTO atchmnflDTO = onlineLecService.getOnlineLectureVideoName(onlineLecCd);
-        VidoInfoDTO vidoInfoDTO = onlineLecService.getVidoInfo(putVideoInfo);
+        AtchmnflDTO atchmnflDTO = service.getOnlineLectureVideoName(onlineLecCd);
+        VidoInfoDTO vidoInfoDTO = service.getVidoInfo(putVideoInfo);
 
         logger.info("atchmnflDTO : " + atchmnflDTO);
 
@@ -165,7 +194,7 @@ public class OnlineLecController {
         int mberNo = Integer.parseInt(paramMap.get("mberNo"));
         String onlineLecCd = paramMap.get("onlineLecCd");
         OnlineLecForPrintDTO onlineLecForPrintDTO
-                = onlineLecService.getOnlineLecInfoForCheckAtendInfo(onlineLecCd);
+                = service.getOnlineLecInfoForCheckAtendInfo(onlineLecCd);
         VidoInfoDTO vidoInfoDTO = null;
 
         Map<String, Object> putVideoInfo = new HashMap<>();
@@ -174,13 +203,13 @@ public class OnlineLecController {
         putVideoInfo.put("estblCoursCd", "");
         logger.info("putvideoInfo : " + putVideoInfo);
 
-        List<AtendDTO> atendDTOList = onlineLecService.getAtendInfo(putVideoInfo);
+        List<AtendDTO> atendDTOList = service.getAtendInfo(putVideoInfo);
         SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date now = new Date();
         logger.info("오늘날 date now : " + now);
 
-        int getVidoInfoSn = onlineLecService.getVidoInfo(putVideoInfo).getVidoInfoSn();
+        int getVidoInfoSn = service.getVidoInfo(putVideoInfo).getVidoInfoSn();
         int vidoInfoSn = Integer.parseInt(paramMap.get("vidoInfoSn"));
         int videoProgress = Integer.parseInt(paramMap.get("vidoProgress"));
         Date startDay = onlineLecForPrintDTO.getOnlineLecStart();
@@ -189,7 +218,7 @@ public class OnlineLecController {
         if(videoProgress == 100) {
             logger.info("영상 100% 시청 완료");
             if(startDay.before(now) && endDay.after(now)) {
-                onlineLecService.updateAtendForOnlineLecture(
+                service.updateAtendForOnlineLecture(
                         new AtendDTO("y", now, mberNo, onlineLecCd));
             }
         }
@@ -203,7 +232,7 @@ public class OnlineLecController {
                     .onlineLecCd(paramMap.get("onlineLecCd"))
                     .build();
 
-            onlineLecService.updateVideoInfo(vidoInfoDTO);
+            service.updateVideoInfo(vidoInfoDTO);
         }
         logger.info("vidoInfoDTO : " + vidoInfoDTO);
     }
@@ -243,7 +272,7 @@ public class OnlineLecController {
         int tempMberNo = 1;
         String estblCoursCd = "test001";
 
-        List<OnlineLecDTO> list = onlineLecService.getProgessorOnlineLecutreList(new EstblCoursDTO(estblCoursCd, tempMberNo));
+        List<OnlineLecDTO> list = service.getProgessorOnlineLecutreList(new EstblCoursDTO(estblCoursCd, tempMberNo));
         list = list.stream().sorted(Comparator.comparing(OnlineLecDTO::getOnlineLecWeek)).collect(Collectors.toList());
         mv.addObject("onlineLecList", list);
 
@@ -321,7 +350,7 @@ public class OnlineLecController {
                     atchmnflDTO = new AtchmnflDTO(0, 1, videoFilePath, saveName, file.getOriginalFilename(),
                             extension, file.getSize(), "강의", 0);
 
-                    atchResult = onlineLecService.insertAtchmnfl(atchmnflDTO);
+                    atchResult = service.insertAtchmnfl(atchmnflDTO);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -362,7 +391,7 @@ public class OnlineLecController {
                     paramMap.get("onlineLecTitle").toString(), startDay, endDay, "-", atchmnflDTO.getAtchmnflSn(),
                     estblCoursCd, "0", endTimeBuilder.toString());
 
-            onlineLecService.insertOnlineLecture(onlineLecDTO);
+            service.insertOnlineLecture(onlineLecDTO);
         }
 
         try {
