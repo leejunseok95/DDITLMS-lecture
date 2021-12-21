@@ -4,7 +4,10 @@ import com.example.dditlms.domain.dto.BoardPager;
 import com.example.dditlms.domain.dto.ExamDTO;
 import com.example.dditlms.domain.dto.ExamInfoDTO;
 import com.example.dditlms.mapper.ExamMapper;
+import com.example.dditlms.mapper.PagingMapper;
 import com.example.dditlms.service.ExamService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.RequiredArgsConstructor;
 
 import org.slf4j.Logger;
@@ -15,16 +18,17 @@ import org.springframework.ui.Model;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ExamServiceImpl implements ExamService {
     private static final Logger logger = LoggerFactory.getLogger(ExamServiceImpl.class);
     private final ExamMapper examMapper;
+    private final PagingMapper pagingMapper;
 
     @Override
     public List<ExamInfoDTO> getExamInfoList(Map<String, Object> paramMap) {
-        List<ExamInfoDTO> examInfoList = examMapper.getExamInfoList(paramMap); // 시험(중간/기말) 정보 출력
         /**파라미터 생성*/
         /**날짜를 계산, 비교해서 현재 시험이 진행 중인지 아닌지 설정*/
         String today = null;
@@ -35,6 +39,8 @@ public class ExamServiceImpl implements ExamService {
         int countExam = 0;
 
         /**로직 처리 구간*/
+        List<ExamInfoDTO> examInfoList = examMapper.getExamInfoList(paramMap); // 시험(중간/기말) 정보 출력
+
         if (!examInfoList.isEmpty()) {
             for (ExamInfoDTO examInfoDTO : examInfoList) {
                 Date examEndTime = null;
@@ -75,24 +81,97 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public List<ExamDTO> getExamList(String examInfoCd) {
-        return examMapper.getExamList(examInfoCd);
+    public Page<ExamDTO> searchAndGetExamList(Map<String, Object> paramsMap) {
+        int pageNo = Integer.parseInt(paramsMap.get("pagNo").toString());
+
+        PageHelper.startPage(pageNo, 5);
+
+        Page<ExamDTO> list = pagingMapper.searchAndGetExamList(paramsMap);
+
+        for (ExamDTO examDTO : list) {
+            String examContent = null;
+            String examType = examDTO.getExamType();
+            try {
+                examContent = examDTO.getExamContent();
+            } catch (NullPointerException e) {
+
+            }
+            if (examType.equals("objective")) {
+                String[] examContentList = examContent.split("/");
+                paramsMap.put(examDTO.getExamSn() + "1", examContentList[0]);
+                paramsMap.put(examDTO.getExamSn() + "2", examContentList[1]);
+                paramsMap.put(examDTO.getExamSn() + "3", examContentList[2]);
+                paramsMap.put(examDTO.getExamSn() + "4", examContentList[3]);
+            }
+        }
+
+        return list;
+    }
+
+    ////이거 지울거
+    @Override
+    public void getExamList(Map<String, Object> paramMap) {
+        String examInfoCd = paramMap.get("examInfoCd").toString();
+        checkExamNumber(examInfoCd);
+
+
     }
 
     @Override
-    public int insertExam(ExamDTO examDTO) {
-        logger.info("insertExam ExamServiceImpl examDTO : " + examDTO.toString());
+    public int insertExam(Map<String, Object> paramMap) {
+        ExamDTO examDTO = ExamDTO.builder()
+                .examSn(null)
+                .examNumber(Integer.parseInt(paramMap.get("examNumber").toString()))
+                .examTitle(paramMap.get("examTitle").toString())
+                .examAnswer(paramMap.get("examAnswer").toString())
+                .examType(paramMap.get("examType").toString())
+                .examContent(paramMap.get("examContent").toString())
+                .examInfoCd(paramMap.get("examInfoCd").toString())
+                .build();
+
         return examMapper.insertExam(examDTO);
     }
 
     @Override
-    public int insertExamInfo(ExamInfoDTO examInfoDTO) {
-        logger.info("insertExamInfo ExamServiceImpl examInfoDTO : " + examInfoDTO);
+    public int insertExamInfo(Map<String, Object> paramMap) {
+        String estblCoursCd = paramMap.get("estblCoursCd").toString();
+        String paramDate = paramMap.get("examInfoDate").toString();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        Date examInfoDate = null;
+
+        //datetime-local 타입 변환
+        try {
+            examInfoDate = format.parse(paramDate);
+        } catch (ParseException e) {
+            logger.error("{}",e);
+        }
+
+        ExamInfoDTO examInfoDTO = ExamInfoDTO.builder()
+                .examInfoCd(null)
+                .examInfoTitle(paramMap.get("examInfoTitle").toString())
+                .examInfoCategory(paramMap.get("examInfoCategory").toString())
+                .examInfoDate(examInfoDate)
+                .examInfoContent(paramMap.get("examInfoContent").toString())
+                .estblCoursCd(estblCoursCd)
+                .examInfoTimelimit(Integer.parseInt(paramMap.get("examInfoTimelimit").toString()))
+                .build();
+
+
         return examMapper.insertExamInfo(examInfoDTO);
     }
 
     @Override
-    public int updateExam(ExamDTO examDTO) {
+    public int updateExam(Map<String, Object> paramMap) {
+        ExamDTO examDTO = ExamDTO.builder()
+                .examSn(paramMap.get("examSn").toString())
+                .examNumber(Integer.parseInt(paramMap.get("examNumber").toString()))
+                .examTitle(paramMap.get("examTitle").toString())
+                .examAnswer(paramMap.get("examAnswer").toString())
+                .examType(paramMap.get("examType").toString())
+                .examContent(paramMap.get("examContent").toString())
+                .examInfoCd(paramMap.get("examInfoCd").toString())
+                .build();
+
         return examMapper.updateExam(examDTO);
     }
 
@@ -114,5 +193,10 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public int countExamForExamInfo(ExamInfoDTO examInfoDTO) {
         return examMapper.countExamForExamInfo(examInfoDTO);
+    }
+
+    @Override
+    public List checkExamNumber(String examInfoCd) {
+        return examMapper.checkExamNumber(examInfoCd);
     }
 }

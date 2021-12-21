@@ -2,14 +2,14 @@ package com.example.dditlms.controller;
 
 import com.example.dditlms.domain.dto.ExamDTO;
 import com.example.dditlms.domain.dto.ExamInfoDTO;
+import com.example.dditlms.domain.dto.SearchDTO;
 import com.example.dditlms.service.ExamService;
+import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -58,38 +58,32 @@ public class ExamContoller {
     }
 
     @PostMapping("/exam/insertExam")
-    public void insertExam(HttpServletResponse response, HttpServletRequest request,
-                           @RequestParam Map<String, Object> paramMap) {
+    public void insertExam(HttpServletResponse response, @RequestParam Map<String, Object> paramMap) {
         logger.info("insertExam");
         logger.info("paramMap : " + paramMap);
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
 
-        ExamDTO examDTO = ExamDTO.builder()
-                .examSn(null)
-                .examNumber(Integer.parseInt(paramMap.get("examNumber").toString()))
-                .examTitle(paramMap.get("examTitle").toString())
-                .examAnswer(paramMap.get("examAnswer").toString())
-                .examType(paramMap.get("examType").toString())
-                .examContent(paramMap.get("examContent").toString())
-                .examInfoCd(paramMap.get("examInfoCd").toString())
-                .build();
+        /** 1.파라미터 조회*/
+        /** 2.파라미터 검증(주요파라미터) */
+        /** 3.서비스 처리 */
+        /** 3-1.서비스 호출 파라미터 구성 */
 
-        int result = examService.insertExam(examDTO);
+        /** 3-2. 서비스 호출 */
+        int result = examService.insertExam(paramMap);
 
-        if (result == 0) {
-            jsonObject.put("state", "false");
-        } else {
-            jsonObject.put("state", "true");
-        }
+        /** 4. 클라이언트 자료구성 */
+        if (result == 0) jsonObject.put("state", "false");
+        else jsonObject.put("state", "true");
 
         try {
             response.getWriter().print(jsonObject.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("{}", e);
         }
     }
+
     //문제 수정  controller
     @PostMapping("/exam/updateExam")
     public void updateExam(HttpServletResponse response, @RequestParam Map<String, Object> paramMap) {
@@ -100,23 +94,10 @@ public class ExamContoller {
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
 
-        ExamDTO examDTO = ExamDTO.builder()
-                .examSn(paramMap.get("examSn").toString())
-                .examNumber(Integer.parseInt(paramMap.get("examNumber").toString()))
-                .examTitle(paramMap.get("examTitle").toString())
-                .examAnswer(paramMap.get("examAnswer").toString())
-                .examType(paramMap.get("examType").toString())
-                .examContent(paramMap.get("examContent").toString())
-                .examInfoCd(paramMap.get("examInfoCd").toString())
-                .build();
+        int result = examService.updateExam(paramMap);
 
-        int result = examService.updateExam(examDTO);
-
-        if (result == 0) {
-            jsonObject.put("state", "false");
-        } else {
-            jsonObject.put("state", "true");
-        }
+        if (result == 0) jsonObject.put("state", "false");
+        else jsonObject.put("state", "true");
 
         try {
             response.getWriter().print(jsonObject.toString());
@@ -126,51 +107,31 @@ public class ExamContoller {
     }
 
     @PostMapping("/exam/insertExamInfo")
-    public void insertExamInfo(HttpServletResponse response, HttpServletRequest request,
-                               @RequestParam Map<String, String> paramMap) {
+    public void insertExamInfo(HttpServletResponse response, @RequestParam Map<String, Object> paramMap) {
         logger.info("insertExamInfo");
         logger.info("paramMap : " + paramMap);
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
 
-        //임시 개설교과 pk값
+        /** 1.파라미터 조회*/
+        /** TODO 테스트용 코드 */
         String estblCoursCd = "test001";
-        int result = 0;
+        paramMap.put("estblCoursCd", estblCoursCd);
 
-        //datetime-local 타입 변환
-        String paramDate = paramMap.get("examInfoDate");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-        Date examInfoDate = null;
-        try {
-            examInfoDate = format.parse(paramDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        /** 2.파라미터 검증(주요파라미터) */
+        /** 3.서비스 처리 */
+        /** 3-1.서비스 호출 파라미터 구성 */
 
-        ExamInfoDTO examInfoDTO = ExamInfoDTO.builder()
-                .examInfoCd(null)
-                .examInfoTitle(paramMap.get("examInfoTitle"))
-                .examInfoCategory(paramMap.get("examInfoCategory"))
-                .examInfoDate(examInfoDate)
-                .examInfoContent(paramMap.get("examInfoContent"))
-                .estblCoursCd(estblCoursCd)
-                .examInfoTimelimit(Integer.parseInt(paramMap.get("examInfoTimelimit")))
-                .build();
+        int result = examService.insertExamInfo(paramMap);
 
-        logger.info("examInfoDTO : " + examInfoDTO);
-        result = examService.insertExamInfo(examInfoDTO);
-
-        if (result == 0) {
-            jsonObject.put("state", "false");
-        } else {
-            jsonObject.put("state", "true");
-        }
+        if (result == 0) jsonObject.put("state", "false");
+        else jsonObject.put("state", "true");
 
         try {
             response.getWriter().print(jsonObject);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("{}", e);
         }
     }
 
@@ -279,38 +240,27 @@ public class ExamContoller {
     }
 
     @GetMapping("/exam/examPaper")
-    public ModelAndView goExamPaper(@RequestParam("examInfoCd") String examInfoCd) {
+    public ModelAndView goExamPaper(ModelAndView mv,
+                                    @ModelAttribute SearchDTO search,
+                                    @RequestParam(required = false, defaultValue = "1") int pageNum,
+                                    @RequestParam("examInfoCd") String examInfoCd) {
         logger.info("examPaper");
-        logger.info("examInfoCd : " + examInfoCd);
-
-        ModelAndView mv = new ModelAndView("pages/onlineLecture_professor/professor_lecture_examPaper");
-        List<ExamDTO> examList = examService.getExamList(examInfoCd);
-        examList = examList.stream().sorted(Comparator.comparing(ExamDTO::getExamNumber)).collect(Collectors.toList());
+        /** 1.파라미터 조회*/
         Map<String, Object> examContentMap = new HashMap<>();
+        examContentMap.put("pagNo", pageNum);
+        examContentMap.put("examInfoCd", examInfoCd);
+        examContentMap.put("search", search.getSearch());
+        examContentMap.put("keyword", search.getKeyword());
 
-        for (ExamDTO examDTO : examList) {
-            String examContent = null;
-            String examType = examDTO.getExamType();
-            try {
-                examContent = examDTO.getExamContent();
-                logger.info("examContent : " + examContent);
-            } catch (NullPointerException e) {
-
-            }
-            if (examType.equals("objective")) {
-                String[] examContentList = examContent.split("/");
-                logger.info("examcontentList : " + examContentList);
-                examContentMap.put(examDTO.getExamSn() + "1", examContentList[0]);
-                examContentMap.put(examDTO.getExamSn() + "2", examContentList[1]);
-                examContentMap.put(examDTO.getExamSn() + "3", examContentList[2]);
-                examContentMap.put(examDTO.getExamSn() + "4", examContentList[3]);
-                logger.info("examContentMap : " + examContentMap);
-            }
-        }
+        PageInfo<ExamDTO> paging = new PageInfo<>(examService.searchAndGetExamList(examContentMap), 5);
+        logger.info("paging : " + paging);
 
         mv.addObject("examContentMap", examContentMap);
         mv.addObject("examInfoCd", examInfoCd);
-        mv.addObject("examList", examList);
+        mv.addObject("examList", paging.getList());
+        mv.addObject("users", paging);
+        mv.addObject("search", search);
+        mv.setViewName("pages/onlineLecture_professor/professor_lecture_examPaper");
 
         return mv;
     }

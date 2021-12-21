@@ -14,6 +14,18 @@
                     <button class="btn btn-primary float-end" data-bs-toggle="modal"
                             data-bs-target=".bd-example-modal-lg">시험문제 생성
                     </button>
+                    <!-- 검색 -->
+                    <form action="/exam/examPaper" method="get">
+                        <div>
+                            <select name="keyword" id="keyword">
+                                <option value="examTitle">문제</option>
+                                <option value="examAnswer">정답</option>
+                            </select>
+                            <input type="hidden" name="examInfoCd" th:value="${examInfoCd}">
+                            <input type="text" id="search" name="search">
+                            <button type="submit">검색</button>
+                        </div>
+                    </form>
                     <table class="table table-hover">
                         <thead>
                         <tr>
@@ -25,7 +37,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="list,i : ${examList}" th:id="${list.examSn}" class="goModal"
+                        <tr th:each="list,i : ${users.getList()}" th:id="${list.examSn}" class="goModal"
                             th:classappend="${i.index}"
                             data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg3" style="cursor: pointer">
                             <td class="examList col-md-1" th:text="${list.examNumber}"></td>
@@ -46,6 +58,25 @@
                     </table>
                 </div>
             </div>
+            <nav>
+                <ul class="pagination pagination-primary justify-content-center">
+                    <!-- getPrePage : 이전 페이지 -->
+                    <li class="page-item" th:classappend="${users.getPrePage() == 0} ? 'disabled'">
+                        <!-- href: /page?pageNum=이전페이지&keyword=검색분류&search=검색어 -->
+                        <a class="page-link" th:href="@{/exam/examPaper(pageNum=${users.getPrePage()}, examInfoCd=${examInfoCd} ,keyword=${search.getKeyword()}, search=${search.getSearch()})}">Previous</a>
+                    </li>
+                    <!-- getNavigateFirstPage() : 페이징의 처음 숫자 getNavigateLastPage : 페이징의 마지막 숫자를 이용해 페이징 숫자 출력 -->
+                    <!-- href : /page?pageNum=선택한 페이지&keyword=검색분류&search=검색어 -->
+                    <li class="page-item" th:each="page: ${#numbers.sequence(users.getNavigateFirstPage(), users.getNavigateLastPage())}" th:classappend="${page == users.getPageNum()} ? 'active'">
+                        <a class="page-link" th:text="${page}" th:href="@{/exam/examPaper(pageNum=${page}, examInfoCd=${examInfoCd} , keyword=${search.getKeyword()}, search=${search.getSearch()})}"></a>
+                    </li>
+                    <!-- getPrePage : 다음 페이지 -->
+                    <li class="page-item" th:classappend="${users.getNextPage() == 0} ? 'disabled'">
+                        <!-- href: /page?pageNum=다음페이지&keyword=검색분류&search=검색어 -->
+                        <a class="page-link" th:href="@{/exam/examPaper(pageNum=${users.getNextPage()}, examInfoCd=${examInfoCd} , keyword=${search.getKeyword()}, search=${search.getSearch()})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
         <!--시험 문제 등록의 modal창-->
         <form id="insertExam" method="post">

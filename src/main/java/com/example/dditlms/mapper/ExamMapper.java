@@ -28,4 +28,10 @@ public interface ExamMapper {
     int deleteExam(ExamDTO examDTO);
     //시험문제 갯수 구하는 쿼리
     int countExamForExamInfo(ExamInfoDTO examInfoDTO);
+    /**
+     * 문제를 추가할때 선택할 수 있는 문항의 제한을 두기 위해 사용하는 쿼리
+     * @param examInfoCd
+     * @return 선택할 수 있는 문제 번호
+     */
+    List checkExamNumber(String examInfoCd);
 }

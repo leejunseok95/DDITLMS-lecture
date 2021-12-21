@@ -28,6 +28,17 @@
         where exam_info_cd = #{examInfoCd}
     </select>
 
+    <!--문제 등록 시, 등록할 수 있는 문제를 출력하는 쿼리-->
+    <select id="checkExamNumber" parameterType="string" resultType="int">
+        select level num
+        from dual
+        connect by level &lt; 21
+        minus
+        select exam_number ext
+        from exam
+        where exam_info_cd = #{examInfoCd}
+    </select>
+
     <insert id="insertExam" parameterType="ExamDTO">
         insert into exam(EXAM_SN, EXAM_NUMBER, EXAM_TITLE, EXAM_ANSWER, EXAM_TYPE, EXAM_CONTENT, EXAM_INFO_CD)
         values('E'||SEQ_EXAM.nextval, #{examNumber}, #{examTitle}, #{examAnswer}, #{examType}, #{examContent}, #{examInfoCd})

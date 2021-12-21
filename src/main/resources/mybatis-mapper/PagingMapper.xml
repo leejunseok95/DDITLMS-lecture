@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.dditlms.mapper.PagingMapper">
+    <select id="searchAndGetExamList" parameterType="hashmap" resultType="ExamDTO">
+        SELECT A.EXAM_SN, A.EXAM_NUMBER, A.EXAM_TITLE, A.EXAM_ANSWER,
+               A.EXAM_TYPE, A.EXAM_CONTENT, A.EXAM_INFO_CD
+          FROM EXAM A, EXAM_INFO B
+         WHERE A.EXAM_INFO_CD = B.EXAM_INFO_CD
+           AND A.EXAM_INFO_CD = #{examInfoCd}
+        <if test="keyword == 'examTitle'">
+           AND EXAM_TITLE LIKE concat('%',concat(#{search},'%'))
+        </if>
+        <if test="keyword == 'examAnswer'">
+           AND EXAM_ANSWER LIKE concat('%',concat(#{search},'%'))
+        </if>
+        ORDER BY EXAM_NUMBER ASC
+    </select>
+</mapper>
