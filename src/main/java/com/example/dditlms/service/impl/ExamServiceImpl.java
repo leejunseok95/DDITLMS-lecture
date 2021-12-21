@@ -85,9 +85,14 @@ public class ExamServiceImpl implements ExamService {
         int pageNo = Integer.parseInt(paramsMap.get("pagNo").toString());
 
         PageHelper.startPage(pageNo, 5);
-
         Page<ExamDTO> list = pagingMapper.searchAndGetExamList(paramsMap);
-
+        List checkExamNumberList = null;
+        try {
+            checkExamNumberList = checkExamNumber(paramsMap.get("examInfoCd").toString());
+        }catch (NullPointerException e) {
+            checkExamNumberList.add(0);
+            logger.error("{}",e);
+        }
         for (ExamDTO examDTO : list) {
             String examContent = null;
             String examType = examDTO.getExamType();
@@ -105,6 +110,8 @@ public class ExamServiceImpl implements ExamService {
             }
         }
 
+        paramsMap.put("checkExamNumber", checkExamNumberList);
+
         return list;
     }
 
@@ -112,9 +119,6 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public void getExamList(Map<String, Object> paramMap) {
         String examInfoCd = paramMap.get("examInfoCd").toString();
-        checkExamNumber(examInfoCd);
-
-
     }
 
     @Override

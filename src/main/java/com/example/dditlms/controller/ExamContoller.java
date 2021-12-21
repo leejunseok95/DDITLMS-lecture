@@ -260,6 +260,7 @@ public class ExamContoller {
         mv.addObject("examList", paging.getList());
         mv.addObject("users", paging);
         mv.addObject("search", search);
+        mv.addObject("checkExamNumber", examContentMap.get("checkExamNumber"));
         mv.setViewName("pages/onlineLecture_professor/professor_lecture_examPaper");
 
         return mv;
