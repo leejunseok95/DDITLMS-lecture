@@ -1,6 +1,5 @@
 package com.example.dditlms.service.impl;
 
-import com.example.dditlms.domain.dto.BoardPager;
 import com.example.dditlms.domain.dto.ExamDTO;
 import com.example.dditlms.domain.dto.ExamInfoDTO;
 import com.example.dditlms.mapper.ExamMapper;
@@ -13,12 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,7 +81,7 @@ public class ExamServiceImpl implements ExamService {
     public Page<ExamDTO> searchAndGetExamList(Map<String, Object> paramsMap) {
         int pageNo = Integer.parseInt(paramsMap.get("pagNo").toString());
 
-        PageHelper.startPage(pageNo, 5);
+        PageHelper.startPage(pageNo, 20);
         Page<ExamDTO> list = pagingMapper.searchAndGetExamList(paramsMap);
         List checkExamNumberList = null;
         try {
@@ -202,5 +199,49 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List checkExamNumber(String examInfoCd) {
         return examMapper.checkExamNumber(examInfoCd);
+    }
+
+    @Override
+    public void getStudentExamInfo(Map<String, Object> paramMap) {
+        /**날짜를 계산, 비교해서 현재 시험이 진행 중인지 아닌지 설정*/
+        String today = null;
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+        Map<String, Object> progress = new HashMap<>();
+
+        /**로직 처리 구간*/
+        List<ExamInfoDTO> studentExamList = examMapper.getStudentExamInfo(mberNo);
+
+        if (!studentExamList.isEmpty() || studentExamList != null) {
+            for (ExamInfoDTO examInfoDTO : studentExamList) {
+                Date examEndTime = null;
+                Date examStartTime = examInfoDTO.getExamInfoDate();
+                cal.add(Calendar.MINUTE, examInfoDTO.getExamInfoTimelimit());
+                today = sdf.format(cal.getTime());
+
+
+                try {
+                    examEndTime = sdf.parse(today);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (date.compareTo(examStartTime) > 0) {
+                    progress.put(examInfoDTO.getExamInfoCd(), "종료");
+                } else if (date.compareTo(examStartTime) < 0 && examEndTime.compareTo(examStartTime) > 0) {
+                    progress.put(examInfoDTO.getExamInfoCd(), "진행중");
+                } else {
+                    progress.put(examInfoDTO.getExamInfoCd(), "진행전");
+                }
+            }
+            paramMap.put("progress", progress);
+            paramMap.put("state", true);
+        } else {
+            paramMap.put("state", false);
+        }
+
+        paramMap.put("studentExamInfo", studentExamList);
     }
 }

@@ -7,39 +7,117 @@
     <div class="container-fluid">
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-header">
-                    <h5>시험</h5>
+                <div class="card-header pb-0">
+<!--                    <h5>몇년도 몇학기 시험인지 출력</h5>-->
+                    <h5>2021년도 2학기 시험</h5>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">주차</th>
-                            <th scope="col">제목</th>
-                            <th scope="col">기간</th>
-                            <th scope="col">학습현황</th>
-                            <th scope="col">시간</th>
-                            <th scope="col">진행률</th>
-                            <th scope="col">출결</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                            <td>test</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <hr>
+                <div class="card-body examDiv" th:each="list,i : ${studentExamInfo}" th:id="${list.examInfoCd}" th:classappend="${i.index}">
+                    <div class="row">
+                        <div class="card-title">
+                            <h2 th:if="${list.examInfoCategory.equals('middle')}" th:text="'중간고사'"></h2>
+                            <h2 th:if="${list.examInfoCategory.equals('final')}" th:text="'기말고사'"></h2>
+                        </div>
+                        <div class="col-xl-6 col-sm-12">
+                            <form>
+                                <div class="row">
+                                    <div class="mb-6">
+                                        <label for="examInfoTitle">시험 제목</label>
+                                        <input class="form-control examInfoTitle" id="examInfoTitle" type="text"
+                                               th:value="${list.examInfoTitle}" style="background-color: white" disabled>
+                                    </div>
+                                    <div class="mb-6">
+                                        <label th:if="${list.examInfoCategory.equals('middle')}" for="examInfoCategoryMiddle">시험 종류</label>
+                                        <input class="form-control examInfoCategory" id="examInfoCategoryMiddle" type="text" style="background-color: white"
+                                               th:if="${list.examInfoCategory.equals('middle')}" th:value="'중간고사'" disabled>
+                                        <label th:if="${list.examInfoCategory.equals('final')}" for="examInfoCategoryMiddle">시험 종류</label>
+                                        <input class="form-control examInfoCategory" id="examInfoCategoryfinal" type="text" style="background-color: white"
+                                               th:if="${list.examInfoCategory.equals('final')}" th:value="'기말고사'" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="examInfoDate">시험일</label>
+                                        <input class="form-control examInfoDate" id="examInfoDate" type="text" style="background-color: white"
+                                               th:value="${#dates.format(list.examInfoDate, 'yyyy-MM-dd HH:mm')}" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="examInfoTimelimit">시험 시간</label>
+                                        <input class="form-control examInfoTimelimit" id="examInfoTimelimit" type="text"
+                                               th:value="${list.examInfoTimelimit}+'분'" style="background-color: white" disabled/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="examProgress">시험 진행</label>
+                                        <input class="form-control examProgress" id="examProgress" type="text"
+                                               th:value="${progress.get(list.examInfoCd)}" style="background-color: white" disabled>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-xl-6 col-sm-12">
+                            <div class="checkout-details">
+                                <div class="order-box">
+                                    <div class="title-box">
+                                        <div class="checkbox-title">
+                                            <h4 class="mb-0">시험 내용 </h4>
+                                        </div>
+                                    </div>
+                                    <div class="animate-chk">
+                                        <div class="row">
+                                            <label for="examInfoContent" class="form-label"><p class="font-weight-bold">주의사항</p></label>
+                                            <textarea class="form-control examInfoContent" id="examInfoContent" rows="5" style="resize: none;background-color: white;"
+                                            th:text="${list.examInfoContent}" disabled/>
+                                        </div>
+                                        <br><br>
+<!--                                        <div class="order-place" th:if="${progress.get(list.examInfoCd).equals('진행중')}">-->
+                                        <div class="order-place">
+                                            <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                                    data-original-title="test" th:attr="data-bs-target='#exampleModal'+${list.examInfoCd}">
+                                                시험 시작(시험 시간일때만 표시도록
+                                            </button>
+                                        </div>
+                                        <div class="modal fade" th:id="${'exampleModal'+list.examInfoCd}" tabindex="-1" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">시험 응시</h5>
+                                                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        제한 시간 안에 문제 풀이를 마감하셔야 합니다.<br>
+                                                        시험 도중에 나갔다 들어오게 된다면 다시 입장이 불가능 합니다.<br>
+                                                        지금 퀴즈에 응시하시겠습니까?<br>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input class="mberNo" type="hidden" name="mberNo" th:value="${mberNo}">
+                                                        <button class="btn btn-danger goExamTest" type="button" th:value="${list.examInfoCd}">응시</button>
+                                                        <button class="btn btn-primary" type="button" data-bs-dismiss="modal" data-bs-original-title="" title="">취소</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+        const goExamTests = document.querySelectorAll('.goExamTest');
+        const mberNo = document.querySelector('.mberNo').value;
+
+        const goTest = e => {
+            const examInfoCd = e.currentTarget.value
+            // location.href = "/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo;
+            window.open("/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo, 'popup', 'location=no, tollbasrs=no, status=no');
+        }
+
+        goExamTests.forEach(item => {
+            item.addEventListener('click', e=> {
+                goTest(e)
+            })
+        })
+    </script>
 </th:block>
 </html>

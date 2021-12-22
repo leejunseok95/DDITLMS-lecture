@@ -34,4 +34,11 @@ public interface ExamMapper {
      * @return 선택할 수 있는 문제 번호
      */
     List checkExamNumber(String examInfoCd);
+
+    /**
+     * 학생이 보는 시험 정보를 가져오기 위한 mapper
+     * @param mberNo 접속한 학생의 학번
+     * @return 학생 시험 정보
+     */
+    List<ExamInfoDTO> getStudentExamInfo(int mberNo);
 }

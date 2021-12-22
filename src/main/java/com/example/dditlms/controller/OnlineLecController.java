@@ -158,13 +158,6 @@ public class OnlineLecController {
         return "pages/onlineLecture_student/student_lecture_assignment";
     }
 
-    //학생 시험
-    @GetMapping("/onlineLecture/exam")
-    public String goOnlineLectureExam() {
-        logger.info("onlineExam");
-        return "pages/onlineLecture_student/student_lecture_exam";
-    }
-
     //-----------------------------------------------------------------------------
     //교수 페이지
     //-----------------------------------------------------------------------------

@@ -31,4 +31,6 @@ public interface ExamService {
     Page<ExamDTO> searchAndGetExamList(Map<String, Object> paramsMap);
     //문제를 추가할때 선택할 수 있는 문항의 제한을 두기 위해 사용하는 쿼리
     List checkExamNumber(String examInfoCd);
+    //학생 시험 정보
+    void getStudentExamInfo(Map<String, Object> paramMap);
 }

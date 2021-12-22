@@ -252,7 +252,7 @@ public class ExamContoller {
         examContentMap.put("search", search.getSearch());
         examContentMap.put("keyword", search.getKeyword());
 
-        PageInfo<ExamDTO> paging = new PageInfo<>(examService.searchAndGetExamList(examContentMap), 5);
+        PageInfo<ExamDTO> paging = new PageInfo<>(examService.searchAndGetExamList(examContentMap), 1);
         logger.info("paging : " + paging);
 
         mv.addObject("examContentMap", examContentMap);
@@ -262,6 +262,50 @@ public class ExamContoller {
         mv.addObject("search", search);
         mv.addObject("checkExamNumber", examContentMap.get("checkExamNumber"));
         mv.setViewName("pages/onlineLecture_professor/professor_lecture_examPaper");
+
+        return mv;
+    }
+
+
+
+    /**------------------------------------------------------------------------------------------------------------------------------
+     * 학생 part
+     * ------------------------------------------------------------------------------------------------------------------------------*/
+    //학생 시험
+    @GetMapping("/onlineLecture/exam")
+    public ModelAndView goOnlineLectureExam(ModelAndView mv) {
+        logger.info("onlineExam");
+        
+        /**TODO 테스트 코드*/
+        int mberNo = 201401449;
+
+        /**변수 선언*/
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("mberNo", mberNo);
+
+        /**서비스 호출*/
+        examService.getStudentExamInfo(paramMap);
+        logger.info("studentExamInfo : " + paramMap.get("studentExamInfo"));
+
+        /**값 전달*/
+        mv.addObject("studentExamInfo", paramMap.get("studentExamInfo"));
+        mv.addObject("progress", paramMap.get("progress"));
+        mv.addObject("state", paramMap.get("state"));
+        mv.addObject("mberNo", mberNo);
+        mv.setViewName("pages/onlineLecture_student/student_lecture_exam");
+
+        return mv;
+    }
+
+    //학생 시험 응시
+    @GetMapping("/onlineLecture/examTest")
+    public ModelAndView doOnlineExam(ModelAndView mv,
+                                     @RequestParam("examInfoCd") String examInfoCd,
+                                     @RequestParam("mberNo") int mberNo) {
+        logger.info("doOnlineExam");
+        logger.info("examInfoCd : {}, mberNo : {}",examInfoCd, mberNo);
+
+        mv.setViewName("pages/onlineLecture_student/student_lecture_examProgress");
 
         return mv;
     }

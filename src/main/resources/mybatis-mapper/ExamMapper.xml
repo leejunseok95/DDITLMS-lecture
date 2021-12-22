@@ -28,6 +28,17 @@
         where exam_info_cd = #{examInfoCd}
     </select>
 
+    <!--학생의 시험 페이지 목록을 출력하기 위한 쿼리-->
+    <select id="getStudentExamInfo" parameterType="int" resultType="ExamInfoDTO">
+        SELECT A.EXAM_INFO_CD, A.EXAM_INFO_TITLE, A.EXAM_INFO_CATEGORY, A.EXAM_INFO_DATE,
+               A.EXAM_INFO_CONTENT, A.ESTBL_COURS_CD, A.EXAM_INFO_TIMELIMIT
+        FROM EXAM_INFO A, STDNT B, MAJOR C, ESTBL_COURS D
+        WHERE A.ESTBL_COURS_CD = D.ESTBL_COURS_CD
+          AND D.MAJOR_CODE = C.MAJOR_CODE
+          AND C.MAJOR_CODE = B.MAJOR_CODE
+          AND B.MBER_NO = #{mberNo}
+    </select>
+
     <!--문제 등록 시, 등록할 수 있는 문제를 출력하는 쿼리-->
     <select id="checkExamNumber" parameterType="string" resultType="int">
         select level num

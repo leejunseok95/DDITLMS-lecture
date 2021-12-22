@@ -37,8 +37,8 @@
                                               th:if="${list.examType.equals('objective')}" th:text="'객관식'"></span>
                                         <span class="badge badge-secondary examList"
                                               th:if="${list.examType.equals('subjective')}" th:text="'주관식'"></span>
-                                        <h6 class="examList" th:text="${list.examNumber}" style="display: inline"></h6>
-                                        <h6 class="examList" th:text="${' : ' + list.examTitle}" style="display: inline"></h6>
+                                        <h5 class="examList" th:text="${list.examNumber}" style="display: inline"></h5>
+                                        <h5 class="examList" th:text="${' : ' + list.examTitle}" style="display: inline"></h5>
                                         <div class="media">
                                             <div class="media-body">
                                                 <p class="examList" th:if="${list.examType.equals('subjective')}"

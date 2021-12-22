@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout/layout_for_exam}">
+<th:block layout:fragment="content">
+    <div class="container-fluid">
+        <div class="container">
+            <div class="question ml-sm-2 pl-sm-2 pt-2">
+                <div class="py-2 h4"><b>Q. which option best describes your job role?</b></div>
+                <div class="ml-md-3 ml-sm-3 pl-md-5 pt-sm-0 pt-3" id="options">
+                    <label class="options">
+                        Small Business Owner or Employee
+                        <input type="radio" name="radio">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="options">
+                        Nonprofit Owner or Employee
+                        <input type="radio" name="radio">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="options">
+                        Journalist or Activist
+                        <input type="radio" name="radio">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="options">Othersdfsdfs
+                        <input type="radio" name="radio">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+
+        document.addEventListener("visibilitychange", e => {
+            console.log(e)
+        })
+
+        console.log("111111")
+        console.log(document)
+
+
+
+
+        // document.addEventListener('keydown', function () {
+        //     //tab 9, alt 18, ctrl 17, f1~12 112~123
+        //     // event.keyCode ==
+        // })
+        //
+        // $(document).bind("mouseleave", function(){
+        //     alert("test")
+        // })
+    </script>
+</th:block>
+</html>

@@ -4,12 +4,9 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:fragment="headerFragment">
     <header>
-        <nav class="navbar navbar-dark bg-dark" aria-label="First navbar example">
+        <nav class="navbar navbar-dark bg-primary" aria-label="First navbar example">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">온라인 강의(교수)</a>
-                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <a class="navbar-brand" th:href="@{/professorOnlineLecture}">온라인 강의(교수)</a>
 
                 <div class="navbar-collapse collapse" id="navbarsExample01" style="">
                     <ul class="navbar-nav me-auto mb-2">

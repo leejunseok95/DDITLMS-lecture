@@ -6,11 +6,14 @@
 
 <body id="page-top">
 <th:block th:replace="/fragment/loader.html :: loaderFragment"></th:block>
-<th:block th:replace="/fragment/header_student_lecture :: headerFragment"></th:block>
 <div id="wrapper">
     <div id="pageWrapper" class="page-wrapper compact-wrapper">
-        <div class="page-body">
-            <th:block layout:fragment="content"></th:block>
+        <th:block th:replace="/fragment/header_student_lecture :: headerFragment"></th:block>
+        <div class="page-body-wrapper sidebar-icon">
+            <th:block th:replace="/fragment/sidebar_student_lecture.html :: sidebarFragment"></th:block>
+            <div class="page-body">
+                <th:block layout:fragment="content"></th:block>
+            </div>
         </div>
         <th:block th:replace="/fragment/footer.html :: footerFragment"></th:block>
     </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<th:block th:fragment="sidebarFragment">
+<th:block th:fragment="sidebar">
     <header class="main-nav">
         <div class="sidebar-user text-center"><a class="setting-primary" href="javascript:void(0)"><i data-feather="settings"></i></a><img class="img-90 rounded-circle" th:src="@{/static/images/memberImg/} + ${session.memberImg} + @{.png}" alt="">
             <div class="badge-bottom"><span class="badge badge-primary">New</span></div><a href="user-profile.html">
