@@ -9,13 +9,16 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -318,6 +321,29 @@ public class ExamContoller {
         mv.setViewName("pages/onlineLecture_student/student_lecture_examProgress");
 
         return mv;
+    }
+
+    @ResponseBody
+    @PostMapping("/exam/finishExam")
+    public void submitExamTest(ModelAndView mv,
+                               HttpServletRequest req) throws IOException {
+        logger.info("finishExam");
+        logger.info("req : " + readBody(req));
+
+        JSONObject jsonObject = new JSONObject();
+    }
+
+    public static String readBody(HttpServletRequest request) throws IOException {
+        BufferedReader input = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String buffer;
+        while ((buffer = input.readLine()) != null) {
+            if (builder.length() > 0) {
+                builder.append("\n");
+            }
+            builder.append(buffer);
+        }
+        return builder.toString();
     }
 }
 

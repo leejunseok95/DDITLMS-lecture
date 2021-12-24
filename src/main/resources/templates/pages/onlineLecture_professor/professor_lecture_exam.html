@@ -244,15 +244,15 @@
                     xhr.setRequestHeader(header, token);
                 }
             })
-                .done(function (fragment) {
-                    if (fragment.state == "true") {
-                        swal("등록 성공");
-                        location.reload();
-                    } else {
-                        swal("등록 실패");
-                        location.reload();
-                    }
-                })
+            .done(function (fragment) {
+                if (fragment.state == "true") {
+                    swal("등록 성공");
+                    location.reload();
+                } else {
+                    swal("등록 실패");
+                    location.reload();
+                }
+            })
         })
 
         //시험 수정examInfoDeleteBtn

@@ -52,7 +52,7 @@
         <div class="container">
             <div class="row no-gutters">
                 <div class="bg-secondary wrap-exam">
-                    <div th:each="list : ${examList}" th:id="${list.examSn}" class="question bg-primary" style="margin: 5px">
+                    <div th:each="list : ${examList}" class="question bg-primary" style="margin: 5px">
                         <div class="py-2 h4">
                             <b th:text="${list.examNumber+'. '}"></b>
                             <b th:text="${list.examTitle}"></b>
@@ -61,7 +61,7 @@
                              th:if="${list.examType.equals('subjective')}">
                             <div class="input-group">
                                 <span class="input-group-text btn btn-danger">정답</span>
-                                <input th:id="${list.examSn + 'answer'}" class="form-control btn-square" placeholder="입력" type="text">
+                                <input th:id="${list.examSn}" class="form-control btn-square studentAnswer" placeholder="입력" type="text">
                             </div>
                         </div>
                         <div class="ml-md-3 ml-sm-3 pl-md-5 pt-sm-0 pt-3" th:if="${list.examType.equals('objective')}">
@@ -69,8 +69,8 @@
                                 <b th:text="${num + '. ' + examContentMap.get(list.examSn+num)}"/>
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text btn btn-danger">prepend</span>
-                                <input th:id="${list.examSn + 'answer'}" class="form-control btn-square" placeholder="번호 입력" type="text">
+                                <span class="input-group-text btn btn-danger">정답</span>
+                                <input th:id="${list.examSn}" class="form-control btn-square studentAnswer" placeholder="번호 입력" type="text">
                             </div>
                         </div>
                     </div>
@@ -85,15 +85,16 @@
         const mberNo = /*[[ ${mberNo} ]]*/;
         const examInfoTimelimit = /*[[ ${examInfoTimelimit} ]]*/;
         /*]]*/
-        const container = document.querySelector('.container')
-        const clock = document.querySelector('.h3-clock');
-
-        var time = examInfoTimelimit * 60; //기준시간 작성
-        var min = ""; //분
-        var sec = ""; //초
+        const inputBtn = document.querySelectorAll('.studentAnswer')
+        const checkBoxBtn = document.querySelectorAll('.checkbox_animated')
+        const clock = document.querySelector('.h3-clock')
+        const submissionExam = document.querySelector('.submission')
+        let time = examInfoTimelimit * 60 //기준시간 작성
+        let min = "" //분
+        let sec = "" //초
 
         //setInterval(함수, 시간) : 주기적인 실행
-        var x = setInterval(function() {
+        let x = setInterval(function() {
             //parseInt() : 정수를 반환
             min = parseInt(time/60); //몫을 계산
             sec = time%60; //나머지를 계산
@@ -126,24 +127,78 @@
             }
         })
 
-        container.addEventListener('keyup', function (event) {
-            for (var i = 0; i <=20; i++) {
-                let inputAnswerId = examList[i].examSn+'answer';
-                let inputAnswerRadio = mberNo+':'+examList[i].examSn;
+        inputBtn.forEach(item => {
+            item.addEventListener('keyup', e => {
+                checkInput(e)
+            })
+        })
 
-                let answerId = document.getElementById(inputAnswerId)
-                let answerRadio = document.getElementById(inputAnswerRadio)
+        var jsonArray = new Array()
+        const checkInput = e => {
+            var jsonObj = new Object()
 
-                console.log(answerId.value)
-                console.log(answerRadio)
+            const index = e.currentTarget.id
+            console.log(index)
+            const answerForCheckId = mberNo+':'+index;
+            const answerForValue = document.getElementById(index)
+            const answerForCheck = document.getElementById(answerForCheckId)
 
-                if(answerId.value != 0) {
-                    answerRadio.setAttribute('checked', 'checked')
-                } else if (answerId.value == 0) {
-                    answerRadio.removeAttribute('checked')
+            if(answerForValue.value != 0) {
+                answerForCheck.setAttribute('checked', 'checked')
+            } else if (answerForValue.value == 0) {
+                answerForCheck.removeAttribute('checked')
+            }
+
+            jsonObj.examSn = index
+            jsonObj.examInput = answerForValue.value;
+
+            jsonObj = JSON.stringify(jsonObj)
+            jsonArray.push(JSON.parse(jsonObj))
+        }
+
+        submissionExam.addEventListener('click', function() {
+            let count = 0
+            console.log(JSON.stringify(jsonArray))
+
+            checkBoxBtn.forEach(item => {
+                const checkCheckBoxAnswer = document.getElementById(item.id)
+
+                if(checkCheckBoxAnswer.hasAttribute('checked')) {
+                    count++
+                } else {
+                    count--
                 }
+            })
+
+            if(count != 20) {
+                alert("아직 풀지 않은 문제가 있습니다.")
+                $.ajax({
+                    url:"/exam/finishExam",
+                    data : JSON.stringify(jsonArray),
+                    method : 'post',
+                    dataType : 'json',
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    beforeSend : function (xhr) {
+                        xhr.setRequestHeader(header, token)
+                    }
+                })
+            } else {
+                // $.ajax({
+                //     url:"/exam/finishExam",
+                //     data : JSON.stringify(jsonArray),
+                //     method : 'post',
+                //     headers : {
+                //         'Content-Type' : 'application/json'
+                //     },
+                //     beforeSend : function (xhr) {
+                //         xhr.setRequestHeader(header, token)
+                //     }
+                // })
             }
         })
+
 
         //특정 키값 입력 방지
         // window.addEventListener('keydown', function (event) {
