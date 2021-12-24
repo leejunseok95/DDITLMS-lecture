@@ -305,6 +305,16 @@ public class ExamContoller {
         logger.info("doOnlineExam");
         logger.info("examInfoCd : {}, mberNo : {}",examInfoCd, mberNo);
 
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("mberNo", mberNo);
+        paramMap.put("examInfoCd", examInfoCd);
+
+        examService.getExamTestForStudent(paramMap);
+
+        mv.addObject("examContentMap", paramMap.get("examContentMap"));
+        mv.addObject("examInfoTimelimit", paramMap.get("examInfoTimelimit"));
+        mv.addObject("mberNo", mberNo);
+        mv.addObject("examList", paramMap.get("examList"));
         mv.setViewName("pages/onlineLecture_student/student_lecture_examProgress");
 
         return mv;

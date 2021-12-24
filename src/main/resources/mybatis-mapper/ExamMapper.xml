@@ -50,6 +50,32 @@
         where exam_info_cd = #{examInfoCd}
     </select>
 
+    <!--학생이 시험볼 문제 출력 쿼리-->
+    <select id="getExamTestForStudent" parameterType="hashmap" resultType="ExamDTO">
+        SELECT E.EXAM_SN, E.EXAM_NUMBER, E.EXAM_TITLE, E.EXAM_ANSWER, E.EXAM_TYPE, E.EXAM_CONTENT, E.EXAM_INFO_CD
+        FROM EXAM_INFO A, STDNT B, MAJOR C, ESTBL_COURS D, EXAM E
+        WHERE A.ESTBL_COURS_CD = D.ESTBL_COURS_CD
+          AND D.MAJOR_CODE = C.MAJOR_CODE
+          AND C.MAJOR_CODE = B.MAJOR_CODE
+          AND A.EXAM_INFO_CD = E.EXAM_INFO_CD
+          AND B.MBER_NO = #{mberNo}
+          AND E.EXAM_INFO_CD = #{examInfoCd}
+        ORDER BY EXAM_NUMBER ASC
+    </select>
+
+    <select id="checkExamResult" parameterType="ExamResultDTO" resultType="ExamResultDTO">
+        select *
+        from exam_result
+        where exam_sn = #{examSn}
+          and mber_no = #{mberNo}
+    </select>
+
+    <select id="getExamTimeLimit" parameterType="string" resultType="int">
+        SELECT EXAM_INFO_TIMELIMIT
+        FROM EXAM_INFO
+        WHERE EXAM_INFO_CD = #{examInfoCd}
+    </select>
+
     <insert id="insertExam" parameterType="ExamDTO">
         insert into exam(EXAM_SN, EXAM_NUMBER, EXAM_TITLE, EXAM_ANSWER, EXAM_TYPE, EXAM_CONTENT, EXAM_INFO_CD)
         values('E'||SEQ_EXAM.nextval, #{examNumber}, #{examTitle}, #{examAnswer}, #{examType}, #{examContent}, #{examInfoCd})
@@ -82,6 +108,14 @@
            AND EXAM_INFO_CD = #{examInfoCd}
     </update>
 
+    <!--등록되어 있는 문제에 대해 답을 입력/수정 할때 필요한 쿼리-->
+    <update id="updateExamResult" parameterType="ExamResultDTO">
+        UPDATE EXAM_RESULT
+           SET EXAM_INPUT = #{examInput}
+         WHERE EXAM_RESULT_SN = #{examResultSn}
+           AND MBER_NO = #{mberNo}
+    </update>
+
     <delete id="deleteExamInfo" parameterType="ExamInfoDTO">
         DELETE FROM EXAM_INFO WHERE EXAM_INFO_CD = #{examInfoCd}
     </delete>
@@ -89,4 +123,10 @@
     <delete id="deleteExam" parameterType="ExamDTO">
         DELETE FROM EXAM WHERE EXAM_SN = #{examSn}
     </delete>
+
+    <!--시험지에 접혹하면 모든 문제에 대해 값을 생성하기 위한 쿼리-->
+    <insert id="insertExamResult" parameterType="ExamResultDTO">
+        INSERT INTO EXAM_RESULT(EXAM_RESULT_SN, EXAM_INPUT, MBER_NO, EXAM_NUMBER, EXAM_SN)
+        VALUES(SEQ_EXAMRESULT.nextval, #{examInput}, #{mberNo}, #{examNumber}, #{examSn})
+    </insert>
 </mapper>

@@ -2,6 +2,7 @@ package com.example.dditlms.service;
 
 import com.example.dditlms.domain.dto.ExamDTO;
 import com.example.dditlms.domain.dto.ExamInfoDTO;
+import com.example.dditlms.domain.dto.ExamResultDTO;
 import com.github.pagehelper.Page;
 import org.springframework.ui.Model;
 
@@ -33,4 +34,12 @@ public interface ExamService {
     List checkExamNumber(String examInfoCd);
     //학생 시험 정보
     void getStudentExamInfo(Map<String, Object> paramMap);
+    //학생 시험 문제
+    void getExamTestForStudent(Map<String, Object> paramMap);
+    //학생 문제 정답지
+    void insertExamResult(ExamResultDTO examResultDTO);
+    //학생이 입력한 정답
+    void updateExamResult(Map<String, Object> paramMap);
+
+    ExamResultDTO checkExamResult(ExamResultDTO examResultDTO);
 }

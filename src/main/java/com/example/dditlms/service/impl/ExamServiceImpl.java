@@ -2,6 +2,7 @@ package com.example.dditlms.service.impl;
 
 import com.example.dditlms.domain.dto.ExamDTO;
 import com.example.dditlms.domain.dto.ExamInfoDTO;
+import com.example.dditlms.domain.dto.ExamResultDTO;
 import com.example.dditlms.mapper.ExamMapper;
 import com.example.dditlms.mapper.PagingMapper;
 import com.example.dditlms.service.ExamService;
@@ -243,5 +244,64 @@ public class ExamServiceImpl implements ExamService {
         }
 
         paramMap.put("studentExamInfo", studentExamList);
+    }
+
+    @Override
+    public void getExamTestForStudent(Map<String, Object> paramMap) {
+        String examInfoCd = paramMap.get("examInfoCd").toString();
+        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+        Map<String, Object> examContentMap = new HashMap<>();
+
+        List<ExamDTO> examList = examMapper.getExamTestForStudent(paramMap);
+        int examInfoTimelimit = examMapper.getExamTimeLimit(examInfoCd);
+        logger.info("시간 : "+examInfoTimelimit);
+
+        for (ExamDTO examDTO : examList) {
+            String examContent = null;
+            String examType = examDTO.getExamType();
+
+            ExamResultDTO examResultDTO = ExamResultDTO.builder()
+                    .examResultSn(0)
+                    .examInput("ready")
+                    .mberNo(mberNo)
+                    .examNumber(examDTO.getExamNumber())
+                    .examSn(examDTO.getExamSn())
+                    .build();
+
+            if (checkExamResult(examResultDTO) == null) {
+                insertExamResult(examResultDTO);
+            }
+
+            try {
+                examContent = examDTO.getExamContent();
+            } catch (NullPointerException e) {
+                logger.error("{}", e);
+            }
+            if (examType.equals("objective")) {
+                String[] examContentList = examContent.split("/");
+                examContentMap.put(examDTO.getExamSn() + "1", examContentList[0]);
+                examContentMap.put(examDTO.getExamSn() + "2", examContentList[1]);
+                examContentMap.put(examDTO.getExamSn() + "3", examContentList[2]);
+                examContentMap.put(examDTO.getExamSn() + "4", examContentList[3]);
+            }
+        }
+        paramMap.put("examContentMap", examContentMap);
+        paramMap.put("examList", examList);
+        paramMap.put("examInfoTimelimit", examInfoTimelimit);
+    }
+
+    @Override
+    public void insertExamResult(ExamResultDTO examResultDTO) {
+        examMapper.insertExamResult(examResultDTO);
+    }
+
+    @Override
+    public void updateExamResult(Map<String, Object> paramMap) {
+
+    }
+
+    @Override
+    public ExamResultDTO checkExamResult(ExamResultDTO examResultDTO) {
+        return examMapper.checkExamResult(examResultDTO);
     }
 }

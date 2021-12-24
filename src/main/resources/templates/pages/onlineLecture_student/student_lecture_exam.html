@@ -110,7 +110,8 @@
         const goTest = e => {
             const examInfoCd = e.currentTarget.value
             // location.href = "/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo;
-            window.open("/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo, 'popup', 'location=no, tollbasrs=no, status=no');
+            window.open("/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo, 'popup',
+                'location=no, tollbasrs=no, status=no, fullscreen=yes, width='+screen.width+',height='+screen.height+',fullscreen=yes');
         }
 
         goExamTests.forEach(item => {
