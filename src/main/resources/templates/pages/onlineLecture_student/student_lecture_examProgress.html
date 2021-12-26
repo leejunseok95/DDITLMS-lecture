@@ -133,12 +133,8 @@
             })
         })
 
-        var jsonArray = new Array()
         const checkInput = e => {
-            var jsonObj = new Object()
-
             const index = e.currentTarget.id
-            console.log(index)
             const answerForCheckId = mberNo+':'+index;
             const answerForValue = document.getElementById(index)
             const answerForCheck = document.getElementById(answerForCheckId)
@@ -148,30 +144,35 @@
             } else if (answerForValue.value == 0) {
                 answerForCheck.removeAttribute('checked')
             }
-
-            jsonObj.examSn = index
-            jsonObj.examInput = answerForValue.value;
-
-            jsonObj = JSON.stringify(jsonObj)
-            jsonArray.push(JSON.parse(jsonObj))
         }
 
+        var jsonArray = new Array()
         submissionExam.addEventListener('click', function() {
             let count = 0
-            console.log(JSON.stringify(jsonArray))
 
-            checkBoxBtn.forEach(item => {
-                const checkCheckBoxAnswer = document.getElementById(item.id)
+            inputBtn.forEach(item => {
+                var jsonObj = new Object()
+                console.log('check')
+                console.log(item.id)
+                const checkBoxId = mberNo+":"+item.id
+                const checkCheckBoxAnswer = document.getElementById(checkBoxId)
+                const studentAnswer = document.getElementById(item.id)
 
                 if(checkCheckBoxAnswer.hasAttribute('checked')) {
                     count++
                 } else {
                     count--
                 }
+                jsonObj.examSn = item.id
+                jsonObj.examInput = studentAnswer.value;
+
+                jsonObj = JSON.stringify(jsonObj)
+                jsonArray.push(JSON.parse(jsonObj))
             })
 
             if(count != 20) {
                 alert("아직 풀지 않은 문제가 있습니다.")
+                console.log(jsonArray)
                 $.ajax({
                     url:"/exam/finishExam",
                     data : JSON.stringify(jsonArray),

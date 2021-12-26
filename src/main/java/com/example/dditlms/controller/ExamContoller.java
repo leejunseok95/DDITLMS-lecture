@@ -329,10 +329,12 @@ public class ExamContoller {
                                HttpServletRequest req) throws IOException {
         logger.info("finishExam");
         logger.info("req : " + readBody(req));
+        String examInput = readBody(req);
 
-        JSONObject jsonObject = new JSONObject();
+        //여기서 받은 json 형태를 어떻게 해결할 것인지를 확인]
+        //map 형식으로 받아올 수 있는 지 다시 한번 점검하고
+        //그걸 확인해서 학생이 입력한 정답을 이용용
     }
-
     public static String readBody(HttpServletRequest request) throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(request.getInputStream()));
         StringBuilder builder = new StringBuilder();
