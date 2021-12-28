@@ -3,41 +3,47 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:fragment="sidebarFragment">
     <header class="main-nav bg-primary">
-        <div class="flex-shrink-0 p-3 bg-primary text-center" style="width: 280px;">
-            <a th:href="@{/onlineLecture}" class="d-flex align-items-center pb-3 mb-3 link-dark border-bottom">
-                <span class="fs-3 fw-semibold text-white">전체</span>
-            </a>
-<!--            <ul class=" navbar-nav me-auto mb-2list-unstyled ps-0">-->
-            <ul class="text-center navbar-nav me-auto mb-2">
-                <li class="nav-item">
-                    <a th:href="@{/onlineLecture}" class="link-dark rounded text-white nav-link">강의실</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/onlineLecture/board}" class="link-dark rounded text-white nav-link">게시판</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/onlineLecture/assignment}" class="link-dark rounded text-white nav-link">과제</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/onlineLecture/exam}" class="link-dark rounded text-white nav-linkitem">시험</a>
-                </li>
-                <li class="border-top my-3"></li>
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#account-collapse" aria-expanded="false">
-                        Account
-                    </button>
-                    <div class="collapse" id="account-collapse" style="">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="#" class="link-dark rounded">New...</a></li>
-                            <li><a href="#" class="link-dark rounded">Profile</a></li>
-                            <li><a href="#" class="link-dark rounded">Settings</a></li>
-                            <li><a href="#" class="link-dark rounded">Sign out</a></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
+        <nav>
+            <div class="main-navbar">
+                <div class="flex-shrink-0 p-3 bg-primary text-center" style="width: 280px;">
+                    <a th:href="@{/onlineLecture}" class="d-flex align-items-center pb-3 mb-3 link-dark border-bottom">
+                        <span class="fs-3 fw-semibold text-white">전체</span>
+                    </a>
+                    <!--            <ul class=" navbar-nav me-auto mb-2list-unstyled ps-0">-->
+                    <ul class="text-center navbar-nav me-auto mb-2">
+                        <li class="nav-item">
+                            <a th:href="@{/onlineLecture}" class="link-dark rounded text-white nav-link">강의실</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/onlineLecture/board}" class="link-dark rounded text-white nav-link">게시판</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/onlineLecture/assignment}"
+                               class="link-dark rounded text-white nav-link">과제</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/onlineLecture/exam}" class="link-dark rounded text-white nav-linkitem">시험</a>
+                        </li>
+                        <li class="border-top my-3"></li>
+                        <li class="mb-1">
+                            <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#account-collapse" aria-expanded="false">
+                                Account
+                            </button>
+                            <div class="collapse" id="account-collapse" style="">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="#" class="link-dark rounded">New...</a></li>
+                                    <li><a href="#" class="link-dark rounded">Profile</a></li>
+                                    <li><a href="#" class="link-dark rounded">Settings</a></li>
+                                    <li><a href="#" class="link-dark rounded">Sign out</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
 </th:block>
 </html>

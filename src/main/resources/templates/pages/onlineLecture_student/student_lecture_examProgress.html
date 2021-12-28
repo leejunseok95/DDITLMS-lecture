@@ -39,7 +39,7 @@
             <div class="row">
                 <div class="wrap">
                     <label class="d-block"th:each="examNumber : ${examList}" th:for="${mberNo + ':' + examNumber.examNumber}" >
-                        <input class="checkbox_animated" th:id="${mberNo + ':' + examNumber.examSn}" type="checkbox" disabled>
+                        <input class="checkbox_animated" th:id="${mberNo + ':' + examNumber.examSn}" th:value="${examNumber.examNumber}" type="checkbox" disabled>
                         <span th:text="${examNumber.examNumber}"></span>
                     </label>
                 </div>
@@ -70,6 +70,13 @@
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text btn btn-danger">정답</span>
+<!--                                <select th:id="${list.examSn}" class="form-control btn-square studentAnswer">-->
+<!--                                    <option checked disabled>선택</option>-->
+<!--                                    <option value="1">1</option>-->
+<!--                                    <option value="2">2</option>-->
+<!--                                    <option value="3">3</option>-->
+<!--                                    <option value="4">4</option>-->
+<!--                                </select>-->
                                 <input th:id="${list.examSn}" class="form-control btn-square studentAnswer" placeholder="번호 입력" type="text">
                             </div>
                         </div>
@@ -149,54 +156,55 @@
         var jsonArray = new Array()
         submissionExam.addEventListener('click', function() {
             let count = 0
-
+            let answerList = []; //new Array();
             inputBtn.forEach(item => {
-                var jsonObj = new Object()
-                console.log('check')
-                console.log(item.id)
                 const checkBoxId = mberNo+":"+item.id
                 const checkCheckBoxAnswer = document.getElementById(checkBoxId)
                 const studentAnswer = document.getElementById(item.id)
+                const studentAnswerNumber = checkCheckBoxAnswer.value
 
                 if(checkCheckBoxAnswer.hasAttribute('checked')) {
                     count++
                 } else {
                     count--
                 }
-                jsonObj.examSn = item.id
-                jsonObj.examInput = studentAnswer.value;
 
-                jsonObj = JSON.stringify(jsonObj)
-                jsonArray.push(JSON.parse(jsonObj))
+                let answerObj = {
+                    examSn : item.id,
+                    examNumber : studentAnswerNumber,
+                    examInput : studentAnswer.value
+                }
+                answerList.push(answerObj);
             })
 
             if(count != 20) {
                 alert("아직 풀지 않은 문제가 있습니다.")
-                console.log(jsonArray)
+            } else {
+                const params = {
+                    answerList : answerList
+                }
+                console.log(params)
                 $.ajax({
                     url:"/exam/finishExam",
-                    data : JSON.stringify(jsonArray),
+                    data : JSON.stringify(params),
                     method : 'post',
-                    dataType : 'json',
-                    headers : {
-                        'Content-Type' : 'application/json'
-                    },
+                    contentType : "application/json; charset=UTF-8",
+                    dataType: "json",
                     beforeSend : function (xhr) {
                         xhr.setRequestHeader(header, token)
                     }
                 })
-            } else {
-                // $.ajax({
-                //     url:"/exam/finishExam",
-                //     data : JSON.stringify(jsonArray),
-                //     method : 'post',
-                //     headers : {
-                //         'Content-Type' : 'application/json'
-                //     },
-                //     beforeSend : function (xhr) {
-                //         xhr.setRequestHeader(header, token)
-                //     }
-                // })
+                .done(function (fragment) {
+                    console.log(fragment.state)
+                    if (fragment.state == "성공") {
+                        swal("시험이 종료되었습니다.")
+                        setTimeout(function () {
+                            window.close()
+                        }, 1000)
+                    } else {
+                        swal("시험 종료")
+                    }
+                })
             }
         })
 

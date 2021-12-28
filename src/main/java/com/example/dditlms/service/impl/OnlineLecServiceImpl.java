@@ -3,6 +3,7 @@ package com.example.dditlms.service.impl;
 import com.example.dditlms.domain.dto.*;
 import com.example.dditlms.mapper.AtchmnflMapper;
 import com.example.dditlms.mapper.OnlineLecMapper;
+import com.example.dditlms.mapper.ScoreMapper;
 import com.example.dditlms.service.OnlineLecService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public class OnlineLecServiceImpl implements OnlineLecService {
     private static final Logger logger = LoggerFactory.getLogger(OnlineLecServiceImpl.class);
 
     private final OnlineLecMapper onlineLecMapper;
+    private final ScoreMapper scoreMapper;
 
     @Override
     public List<OnlineLecForPrintDTO> getOnlineLectureList(AtnlcLctreDTO atnlcLctreDTO) {
@@ -103,7 +105,6 @@ public class OnlineLecServiceImpl implements OnlineLecService {
 
     @Override
     public void selectGoOnlineLecture(Map<String, Object> paramMap) {
-
         /** 파라미터 조회 ****************************************************************************************/
         int tempMberNo = (int) paramMap.get("tempMberNo");
         int insertVidoInfo = (int) paramMap.get("insertVidoInfo");
@@ -123,8 +124,20 @@ public class OnlineLecServiceImpl implements OnlineLecService {
         putVideoInfo.put("mberNo", tempMberNo);
         putVideoInfo.put("estblCoursCd", estblCoursCd);
 
-        /** 로직 처리 구간 ***************************************************************************************/
+        ScoreDTO scoreDTO = ScoreDTO.builder()
+                .screSn(0)
+                .atendScore(0)
+                .tasksCore(0)
+                .middleExprScore(0)
+                .trmendExprScore(0)
+                .estblCoursCd(estblCoursCd)
+                .mberNo(tempMberNo)
+                .build();
 
+        /** 로직 처리 구간 ***************************************************************************************/
+        if(scoreMapper.checkStudentScore(scoreDTO) == null) {
+            scoreMapper.insertStudentScore(scoreDTO);
+        }
 
         /** 온라인 강의 정보 조회 - 기초자료 정보 입력 등 */
         List<AtendDTO> atendList = null; // 출석정보
@@ -208,5 +221,39 @@ public class OnlineLecServiceImpl implements OnlineLecService {
 
         /** 전송자료 */
         paramMap.put("onlineLecPrintList", onlineLecPrintList);
+    }
+
+    @Override
+    public void checkAtendInfo(Map<String, Object> paramMap) {
+        int mberNo = Integer.parseInt(paramMap.get("tempMberNo").toString());
+        String estblCoursCd = paramMap.get("estblCoursCd").toString();
+        AtendDTO atendDTO = AtendDTO.builder()
+                .mberNo(mberNo)
+                .estblCoursCd(estblCoursCd)
+                .build();
+        ScoreDTO scoreDTO = ScoreDTO.builder()
+                .mberNo(mberNo)
+                .estblCoursCd(estblCoursCd)
+                .build();
+
+        List<AtendDTO> atendList = scoreMapper.checkAtendInfo(atendDTO);
+        ScoreDTO scoreInfo = scoreMapper.checkStudentScore(scoreDTO);
+        int atendScore = 0;
+
+        for (AtendDTO atend : atendList) {
+            String atendStus = atend.getAtendSttus();
+
+            if(atendStus.equals("y")) {
+                atendScore += 6;
+            } else if(atendStus.equals("n")) {
+                //결석일 경우 점수가 없다.
+            } else if(atendStus.equals("o")) {
+                atendScore += 3;
+            }
+        }
+        logger.info("scoreInfo L: " + scoreInfo);
+        scoreInfo.setAtendScore(atendScore);
+        logger.info("scoreInfo E: " + scoreInfo);
+        scoreMapper.updateScoreForOther(scoreInfo);
     }
 }

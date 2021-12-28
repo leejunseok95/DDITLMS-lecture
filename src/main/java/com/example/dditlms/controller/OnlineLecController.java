@@ -1,6 +1,7 @@
 package com.example.dditlms.controller;
 
 import com.example.dditlms.domain.dto.*;
+import com.example.dditlms.mapper.ScoreMapper;
 import com.example.dditlms.service.OnlineLecService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -43,7 +44,8 @@ public class OnlineLecController {
         /** TODO 테스트용 코드 */
         int tempMberNo = 201401449;
         int insertVidoInfo = 0; // 수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
-        String estblCoursCd = "test001";
+//        String estblCoursCd = "test001";
+        String estblCoursCd = "MR033.20012A";
 
         /** 2.파라미터 검증(주요파라미터) */
         /** 3.서비스 처리 */
@@ -56,6 +58,7 @@ public class OnlineLecController {
 
         /** 3-2. 서비스 호출 */
         service.selectGoOnlineLecture(paramMap); // save, select, get, update, delete, merge
+        service.checkAtendInfo(paramMap);
 
         /** 4. 클라이언트 자료구성 */
         mv.addObject("onlineLecPrintList", paramMap.get("onlineLecPrintList"));
@@ -169,8 +172,9 @@ public class OnlineLecController {
         ModelAndView mv = new ModelAndView("pages/onlineLecture_professor/professor_lecture_list");
         JSONObject jsonObject = new JSONObject();
         //수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
-        int tempMberNo = 1;
-        String estblCoursCd = "test001";
+        int tempMberNo = 14132133;
+//        String estblCoursCd = "test001";
+        String estblCoursCd = "MR033.20012A";
 
         List<OnlineLecDTO> list = service.getProgessorOnlineLecutreList(new EstblCoursDTO(estblCoursCd, tempMberNo));
         list = list.stream().sorted(Comparator.comparing(OnlineLecDTO::getOnlineLecWeek)).collect(Collectors.toList());
@@ -218,7 +222,8 @@ public class OnlineLecController {
 
         JSONObject jsonObject = new JSONObject();
 
-        String estblCoursCd = "test001";
+        /**TODO 임시 변수*/
+        String estblCoursCd = "MR033.20012A";
         AtchmnflDTO atchmnflDTO = null;
         OnlineLecDTO onlineLecDTO = null;
 

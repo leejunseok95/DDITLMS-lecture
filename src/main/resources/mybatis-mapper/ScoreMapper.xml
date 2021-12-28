@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.dditlms.mapper.ScoreMapper">
+
+    <select id="checkStudentScore" parameterType="ScoreDTO" resultType="ScoreDTO">
+        SELECT *
+          FROM SCORE
+         WHERE MBER_NO = #{mberNo}
+           AND ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <select id="checkAtendInfo" parameterType="AtendDTO" resultType="AtendDTO">
+        SELECT ATEND_STTUS
+        FROM ATEND
+        WHERE MBER_NO = #{mberNo}
+          AND ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <!--학생이 수강 신청을 했으면 성적 테이블에 생성되어지는 것-->
+    <insert id="insertStudentScore" parameterType="ScoreDTO">
+        insert into score(SCRE_SN, ATEND_SCORE, TASKS_CORE, MIDDLE_EXPR_SCORE, TRMEND_EXPR_SCORE, ESTBL_COURS_CD, MBER_NO)
+        values(SEQ_SCORE.nextval, #{atendScore}, #{tasksCore}, #{middleExprScore}, #{trmendExprScore},#{estblCoursCd} , #{mberNo})
+    </insert>
+
+    <!--학생 성적이 갱신될 때 사용되는 쿼리-->
+    <update id="updateScore" parameterType="ScoreDTO">
+        UPDATE SCORE
+            <if test="atendScore!=''">
+                set ATEND_SCORE = #{atendScore}
+            </if>
+            <if test="tasksCore!=''">
+               set TASKS_CORE = #{tasksCore}
+            </if>
+            <if test="middleExprScore!=''">
+               set MIDDLE_EXPR_SCORE = #{middleExprScore}
+            </if>
+            <if test="trmendExprScore!=''">
+                set TRMEND_EXPR_SCORE = #{trmendExprScore}
+            </if>
+        WHERE MBER_NO = #{mberNo}
+          AND ESTBL_COURS_CD = #{estblCoursCd}
+    </update>
+
+    <update id="updateScoreForOther" parameterType="ScoreDTO">
+        UPDATE SCORE
+            set ATEND_SCORE = #{atendScore},
+                TASKS_CORE = #{tasksCore},
+                MIDDLE_EXPR_SCORE = #{middleExprScore},
+                TRMEND_EXPR_SCORE = #{trmendExprScore}
+        WHERE MBER_NO = #{mberNo}
+        AND ESTBL_COURS_CD = #{estblCoursCd}
+    </update>
+</mapper>

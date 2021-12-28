@@ -3,29 +3,30 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:fragment="headerFragment">
-    <header>
-        <nav class="navbar navbar-dark bg-primary" aria-label="First navbar example">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">온라인 강의(학생)</a>
-
-                <div class="navbar-collapse collapse" id="navbarsExample01" style="">
-                    <ul class="navbar-nav me-auto mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" th:href="@{/onlineLecture}">강의실</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/onlineLecture/board}">게시판</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/onlineLecture/assignment}">과제</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:href="@{/onlineLecture/exam}">시험</a>
-                        </li>
-                    </ul>
+    <div class="page-main-header">
+        <div class="main-header-right row m-0">
+            <nav class="navbar navbar-dark bg-primary" aria-label="First navbar example">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">온라인 강의(학생)</a>
+                    <div class="navbar-collapse collapse" id="navbarsExample01" style="">
+                        <ul class="navbar-nav me-auto mb-2">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" th:href="@{/onlineLecture}">강의실</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/onlineLecture/board}">게시판</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/onlineLecture/assignment}">과제</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" th:href="@{/onlineLecture/exam}">시험</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </div>
+    </div>
 </th:block>
 </html>

@@ -95,7 +95,7 @@
     </insert>
 
     <insert id="insertOnlineLecture" parameterType="OnlineLecDTO">
-        INSERT INTO ONLINE_LEC
+        INSERT INTO ONLINE_LEC(ONLINE_LEC_CD, ONLINE_LEC_WEEK, ONLINE_LEC_TITLE, ONLINE_LEC_START, ONLINE_LEC_END, LEARNING_STATUS, ATCHMNFL_SN, ESTBL_COURS_CD, VIDO_STARTTIME, VIDO_ENDTIME)
         VALUES('O'||SEQ_ONLINE.NEXTVAL, #{onlineLecWeek},#{onlineLecTitle}, #{onlineLecStart}, #{onlineLecEnd}, #{learningStatus}, #{atchmnflSn}, #{estblCoursCd}, #{vidoStarttime},#{vidoEndtime})
     </insert>
 

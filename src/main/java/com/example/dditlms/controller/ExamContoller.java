@@ -9,20 +9,16 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,8 +33,9 @@ public class ExamContoller {
 
         /** 1.파라미터 조회*/
         /** TODO 테스트용 코드 */
-        String estblCoursCd = "test001";
-        int mberNo = 1;
+//        String estblCoursCd = "test001";
+        String estblCoursCd = "MR033.20012A";
+        int mberNo = 14132133;
 
         /** 2.파라미터 검증(주요파라미터) */
         /** 3.서비스 처리 */
@@ -60,6 +57,7 @@ public class ExamContoller {
         return mv;
     }
 
+    //시험(중간/기말) 등록 메소드
     @PostMapping("/exam/insertExam")
     public void insertExam(HttpServletResponse response, @RequestParam Map<String, Object> paramMap) {
         logger.info("insertExam");
@@ -119,7 +117,8 @@ public class ExamContoller {
 
         /** 1.파라미터 조회*/
         /** TODO 테스트용 코드 */
-        String estblCoursCd = "test001";
+//        String estblCoursCd = "test001";
+        String estblCoursCd = "MR033.20012A";
         paramMap.put("estblCoursCd", estblCoursCd);
 
         /** 2.파라미터 검증(주요파라미터) */
@@ -138,6 +137,7 @@ public class ExamContoller {
         }
     }
 
+    //시험 (중간/기말) 시험 수정
     @PostMapping("/exam/updateExamInfo")
     public void updateExamInfo(HttpServletResponse response, HttpServletRequest request,
                                @RequestParam Map<String, String> paramMap) {
@@ -148,7 +148,8 @@ public class ExamContoller {
         JSONObject jsonObject = new JSONObject();
 
         //임시 개설교과 pk값
-        String estblCoursCd = "test001";
+//        String estblCoursCd = "test001";
+        String estblCoursCd = "MR033.20012A";
         int result = 0;
 
         //datetime-local 타입 변환
@@ -187,6 +188,7 @@ public class ExamContoller {
         }
     }
 
+    //시험 (기말/중간) 삭제 메소드
     @PostMapping("/exam/deleteExamInfo")
     public void deleteExamInfo(HttpServletResponse response, HttpServletRequest request,
                                @RequestParam Map<String, String> paramMap) {
@@ -242,6 +244,7 @@ public class ExamContoller {
         }
     }
 
+    //
     @GetMapping("/exam/examPaper")
     public ModelAndView goExamPaper(ModelAndView mv,
                                     @ModelAttribute SearchDTO search,
@@ -323,29 +326,44 @@ public class ExamContoller {
         return mv;
     }
 
+    //학생 시험 제출
     @ResponseBody
     @PostMapping("/exam/finishExam")
     public void submitExamTest(ModelAndView mv,
-                               HttpServletRequest req) throws IOException {
+                               HttpServletResponse response,
+                               HttpServletRequest request,
+                               @RequestBody Map<String, Object> paramMap) {
         logger.info("finishExam");
-        logger.info("req : " + readBody(req));
-        String examInput = readBody(req);
+        logger.info("paramMap : " + paramMap);
+        response.setContentType("text/html; charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Object> paramToService = new HashMap<>();
 
-        //여기서 받은 json 형태를 어떻게 해결할 것인지를 확인]
-        //map 형식으로 받아올 수 있는 지 다시 한번 점검하고
-        //그걸 확인해서 학생이 입력한 정답을 이용용
-    }
-    public static String readBody(HttpServletRequest request) throws IOException {
-        BufferedReader input = new BufferedReader(new InputStreamReader(request.getInputStream()));
-        StringBuilder builder = new StringBuilder();
-        String buffer;
-        while ((buffer = input.readLine()) != null) {
-            if (builder.length() > 0) {
-                builder.append("\n");
-            }
-            builder.append(buffer);
+        /**
+         * TODO 임시 학생 번호
+         */
+        int mberNo = 201401449;
+//        String estblCoursCd = "test001";
+        String estblCoursCd = "MR033.20012A";
+        paramToService.put("mberNo", mberNo);
+        paramToService.put("estblCoursCd", estblCoursCd);
+        paramToService.put("paramFromPage", paramMap);
+
+        examService.insertExamResult(paramToService);
+
+        int result = Integer.parseInt(paramToService.get("result").toString());
+
+        logger.info("result : " + result);
+
+        if (result == 0) jsonObject.put("state", "실패");
+        else jsonObject.put("state", "성공");
+
+        try {
+            response.getWriter().print(jsonObject);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return builder.toString();
     }
 }
 

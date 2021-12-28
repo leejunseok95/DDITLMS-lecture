@@ -9,7 +9,7 @@
                A.EXAM_TYPE, A.EXAM_CONTENT, A.EXAM_INFO_CD
         FROM EXAM A, EXAM_INFO B
         WHERE A.EXAM_INFO_CD = B.EXAM_INFO_CD
-          AND A.EXAM_INFO_CD = #{examInfoCd}
+          AND A.EXAM_SN = #{examSn}
     </select>
 
     <select id="getExamInfoList" parameterType="hashmap" resultType="ExamInfoDTO">
@@ -19,6 +19,12 @@
         WHERE A.ESTBL_COURS_CD = B.ESTBL_COURS_CD
           AND A.ESTBL_COURS_CD = #{estblCoursCd}
           AND B.MBER_NO = #{mberNo}
+    </select>
+
+    <select id="getExamInfo" parameterType="string" resultType="ExamInfoDTO">
+        SELECT *
+          FROM EXAM_INFO
+         WHERE EXAM_INFO_CD = #{examInfoCd}
     </select>
 
     <!--시험지에 해당하는 문제 갯수를 구해서 등록이 가능한지 확인하는 쿼리-->

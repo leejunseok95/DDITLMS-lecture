@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="~{layout/layout_student_main}">
+<th:block layout:fragment="content">
+    <div class="page-body">
+        <div class="container-fluid faq-section">
+            <div class="row">
+
+                <div class="col-xl-4 xl-50 col-lg-6 box-col-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>수강 과목</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">교과명</th>
+                                    <th scope="col">학점</th>
+                                    <th scope="col">전공구분</th>
+                                    <th scope="col">교수님</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="estbList, i :${studentEstbList}" th:if="${estbList.get('LCTRE_KND').equals('O')}">
+                                    <th scope="row" th:text="${i.count}"></th>
+                                    <td th:text="${estbList.get('SBJECT_NM')}"></td>
+                                    <td th:text="${estbList.get('SBJECT_PNT')}"></td>
+                                    <td th:text="${estbList.get('LCTRE_SE')}"></td>
+                                    <td th:text="${estbList.get('MBER_NM')}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 xl-50 col-lg-6 box-col-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>스케줄</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">날짜</th>
+                                    <th scope="col">과목</th>
+                                    <th scope="col">교시</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="estbSchedule, i : ${studentEstbSchedule}" th:if="${estbSchedule.get('today').equals('o')}">
+                                    <th scope="row" th:text="${i.count}"></th>
+                                    <td th:text="${#calendars.format(#calendars.createNow(), 'yyyy년 MM 월dd일 ')}"></td>
+                                    <td th:text="${estbSchedule.get('SBJECT_NM')}"></td>
+                                    <td th:text="${estbSchedule.get('LCTRUM_RESVE_USE_PD')}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-12 xl-100 box-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>이건 게시판</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Role</th>
+                                <th scope="col">Country</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Alexander</td>
+                                <td>Orton</td>
+                                <td>@mdorton</td>
+                                <td>Admin</td>
+                                <td>USA</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</th:block>
+</html>

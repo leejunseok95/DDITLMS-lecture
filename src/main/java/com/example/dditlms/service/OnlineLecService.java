@@ -35,4 +35,7 @@ public interface OnlineLecService {
 
     /** 온라인 강의 페이지 이동 */
     void selectGoOnlineLecture(Map<String, Object> paramMap);
+
+    /**출석 점수 업데이트를 위한 쿼리*/
+    void checkAtendInfo(Map<String, Object> paramMap);
 }

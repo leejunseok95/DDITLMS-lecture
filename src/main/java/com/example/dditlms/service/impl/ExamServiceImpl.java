@@ -3,9 +3,13 @@ package com.example.dditlms.service.impl;
 import com.example.dditlms.domain.dto.ExamDTO;
 import com.example.dditlms.domain.dto.ExamInfoDTO;
 import com.example.dditlms.domain.dto.ExamResultDTO;
+import com.example.dditlms.domain.dto.ScoreDTO;
 import com.example.dditlms.mapper.ExamMapper;
 import com.example.dditlms.mapper.PagingMapper;
+import com.example.dditlms.mapper.ScoreMapper;
 import com.example.dditlms.service.ExamService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ public class ExamServiceImpl implements ExamService {
     private static final Logger logger = LoggerFactory.getLogger(ExamServiceImpl.class);
     private final ExamMapper examMapper;
     private final PagingMapper pagingMapper;
+    private final ScoreMapper scoreMapper;
 
     @Override
     public List<ExamInfoDTO> getExamInfoList(Map<String, Object> paramMap) {
@@ -111,12 +116,6 @@ public class ExamServiceImpl implements ExamService {
         paramsMap.put("checkExamNumber", checkExamNumberList);
 
         return list;
-    }
-
-    ////이거 지울거
-    @Override
-    public void getExamList(Map<String, Object> paramMap) {
-        String examInfoCd = paramMap.get("examInfoCd").toString();
     }
 
     @Override
@@ -260,18 +259,6 @@ public class ExamServiceImpl implements ExamService {
             String examContent = null;
             String examType = examDTO.getExamType();
 
-            ExamResultDTO examResultDTO = ExamResultDTO.builder()
-                    .examResultSn(0)
-                    .examInput("ready")
-                    .mberNo(mberNo)
-                    .examNumber(examDTO.getExamNumber())
-                    .examSn(examDTO.getExamSn())
-                    .build();
-
-            if (checkExamResult(examResultDTO) == null) {
-                insertExamResult(examResultDTO);
-            }
-
             try {
                 examContent = examDTO.getExamContent();
             } catch (NullPointerException e) {
@@ -291,8 +278,73 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public void insertExamResult(ExamResultDTO examResultDTO) {
-        examMapper.insertExamResult(examResultDTO);
+    public void insertExamResult(Map<String, Object> paramMap) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> paramFromPage = (Map<String, Object>) paramMap.get("paramFromPage");
+        List<ExamResultDTO> examResultList =
+                mapper.convertValue(paramFromPage.get("answerList"), new TypeReference<List<ExamResultDTO>>() {});
+        ScoreDTO scoreDTO = new ScoreDTO();
+
+        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+        String estblCoursCd = paramMap.get("estblCoursCd").toString();
+        String examInfoCategory = null;
+        logger.info("estblCoursCd : ", estblCoursCd);
+        int middleScore = 0;
+        int finalScore = 0;
+
+        logger.info("examResultList : " + examResultList);
+
+        for (ExamResultDTO examResultDTO : examResultList) {
+
+            ExamDTO examDTO = examMapper.getExamList(examResultDTO.getExamSn());
+            ExamInfoDTO examInfoDTO = examMapper.getExamInfo(examDTO.getExamInfoCd());
+            examInfoCategory = examInfoDTO.getExamInfoCategory();
+
+            examResultDTO = ExamResultDTO.builder()
+                    .examResultSn(0)
+                    .examInput(examResultDTO.getExamInput())
+                    .mberNo(mberNo)
+                    .examNumber(examResultDTO.getExamNumber())
+                    .examSn(examResultDTO.getExamSn())
+                    .build();
+
+            if (checkExamResult(examResultDTO) == null) {
+                examMapper.insertExamResult(examResultDTO);
+            }
+
+            logger.info("examDTO.getExamSn() : {}, examResultDTO.getExamSn : {}", examDTO.getExamSn(), examResultDTO.getExamSn());
+            logger.info("examAnswer : {}, examInput : {}", examDTO.getExamAnswer(), examResultDTO.getExamInput());
+            if(examDTO.getExamSn().equals(examResultDTO.getExamSn())) {
+                if (examDTO.getExamAnswer().equals(examResultDTO.getExamInput()) && examInfoDTO.getExamInfoCategory().equals("middle")) {
+                    middleScore += 5;
+                } else if(examDTO.getExamAnswer().equals(examResultDTO.getExamInput()) && examInfoDTO.getExamInfoCategory().equals("final")){
+                    finalScore += 5;
+                }
+            }
+        }
+
+        logger.info("middleScore : {}", middleScore);
+        logger.info("finalScore : {}", finalScore);
+        if(examInfoCategory.equals("middle")) {
+            scoreDTO = ScoreDTO.builder()
+                    .middleExprScore(middleScore)
+                    .estblCoursCd(estblCoursCd)
+                    .mberNo(mberNo)
+                    .build();
+        } else if(examInfoCategory.equals("final")) {
+            scoreDTO = ScoreDTO.builder()
+                    .trmendExprScore(finalScore)
+                    .estblCoursCd(estblCoursCd)
+                    .mberNo(mberNo)
+                    .build();
+        }
+
+        logger.info("scoreDTO : " + scoreDTO.toString());
+
+        int result = scoreMapper.updateScore(scoreDTO);
+
+        paramMap.put("result", result);
+
     }
 
     @Override

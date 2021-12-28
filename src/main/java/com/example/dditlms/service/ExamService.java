@@ -12,8 +12,6 @@ import java.util.Map;
 public interface ExamService {
     //시험 (중간/기말) 정보를 가져오는 쿼리
     List<ExamInfoDTO> getExamInfoList(Map<String, Object> paramMap);
-    //시험 문제 정보를 가지고 오는 쿼리
-    void getExamList(Map<String, Object> paramMap);
     //문제 등록
     int insertExam(Map<String, Object> paramMap);
     //시험 등록
@@ -37,7 +35,7 @@ public interface ExamService {
     //학생 시험 문제
     void getExamTestForStudent(Map<String, Object> paramMap);
     //학생 문제 정답지
-    void insertExamResult(ExamResultDTO examResultDTO);
+    void insertExamResult(Map<String, Object> paramMap);
     //학생이 입력한 정답
     void updateExamResult(Map<String, Object> paramMap);
 

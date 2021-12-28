@@ -8,8 +8,9 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header pb-0">
-<!--                    <h5>몇년도 몇학기 시험인지 출력</h5>-->
-                    <h5>2021년도 2학기 시험</h5>
+                    <h5>몇년도 몇학기 시험인지 출력</h5>
+<!--                    <h5 th:if="${#calendars.format('20210601', 'yyyy-MM-dd').before(#dates.createNow())}">2021년도 1학기 시험</h5>-->
+<!--                    <h5 th:if="${#calendars.format('20210601', 'yyyy-MM-dd').after(#dates.createNow())}">2021년도 2학기 시험</h5>-->
                 </div>
                 <hr>
                 <div class="card-body examDiv" th:each="list,i : ${studentExamInfo}" th:id="${list.examInfoCd}" th:classappend="${i.index}">
@@ -67,7 +68,6 @@
                                             th:text="${list.examInfoContent}" disabled/>
                                         </div>
                                         <br><br>
-<!--                                        <div class="order-place" th:if="${progress.get(list.examInfoCd).equals('진행중')}">-->
                                         <div class="order-place">
                                             <button class="btn btn-primary" type="button" data-bs-toggle="modal"
                                                     data-original-title="test" th:attr="data-bs-target='#exampleModal'+${list.examInfoCd}">
@@ -89,7 +89,7 @@
                                                     <div class="modal-footer">
                                                         <input class="mberNo" type="hidden" name="mberNo" th:value="${mberNo}">
                                                         <button class="btn btn-danger goExamTest" type="button" th:value="${list.examInfoCd}">응시</button>
-                                                        <button class="btn btn-primary" type="button" data-bs-dismiss="modal" data-bs-original-title="" title="">취소</button>
+                                                        <button class="btn btn-primary cancelBtn" type="button" th:id="${list.examInfoCd +'btn'}" data-bs-dismiss="modal">취소</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -105,11 +105,18 @@
     </div>
     <script th:inline="javascript">
         const goExamTests = document.querySelectorAll('.goExamTest');
+        const cancelBtn = document.querySelectorAll('.cancelBtn');
         const mberNo = document.querySelector('.mberNo').value;
+        const event = document.createEvent('Events')
+        event.initEvent('keydown', true, true)
+        event.keyCode = 27
 
         const goTest = e => {
             const examInfoCd = e.currentTarget.value
-            // location.href = "/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo;
+            const cancelBtn = e.currentTarget.value + 'btn'
+
+            document.getElementById(cancelBtn).click()
+
             window.open("/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo, 'popup',
                 'location=no, tollbasrs=no, status=no, fullscreen=yes, width='+screen.width+',height='+screen.height+',fullscreen=yes');
         }
