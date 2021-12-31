@@ -2,16 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="~{layout/layout_student_main}">
+      layout:decorator="~{layout/layout_professor_main}">
 <th:block layout:fragment="content">
     <div class="page-body">
         <div class="container-fluid faq-section">
             <div class="row">
-
                 <div class="col-xl-4 xl-50 col-lg-6 box-col-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5>수강 과목</h5>
+                            <h5>강의 과목</h5>
                         </div>
                         <div class="table-responsive">
                             <table class="table">
@@ -21,19 +20,20 @@
                                     <th scope="col">교과명</th>
                                     <th scope="col">학점</th>
                                     <th scope="col">전공구분</th>
-                                    <th scope="col">교수님</th>
+                                    <th scope="col">온라인/오프라인</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="goStudentOnlineLec" style="cursor: pointer"
-                                    th:each="estbList, i :${studentEstbList}"
-                                    th:if="${estbList.get('LCTRE_KND').equals('O')}"
-                                    th:id="${estbList.get('ESTBL_COURS_CD')}">
+                                <tr class="goProfessorOnlineLec" style="cursor: pointer"
+                                    th:each="estbList, i :${professorEstbList}"
+                                    th:id="${estbList.get('ESTBL_COURS_CD')}"
+                                    th:classappend="${estbList.get('LCTRE_KND')}">
                                     <th scope="row" th:text="${i.count}"></th>
                                     <td th:text="${estbList.get('SBJECT_NM')}"></td>
                                     <td th:text="${estbList.get('SBJECT_PNT')}"></td>
                                     <td th:text="${estbList.get('LCTRE_SE')}"></td>
-                                    <td th:text="${estbList.get('MBER_NM')}"></td>
+                                    <td th:if="${estbList.get('LCTRE_KND').equals('F')}" th:text="'오프라인'"></td>
+                                    <td th:if="${estbList.get('LCTRE_KND').equals('O')}" th:text="'온라인'"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -57,14 +57,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="estbSchedule, i : ${studentEstbSchedule}"
-                                    th:if="${estbSchedule.get('today').equals('o')}">
-                                    <th scope="row" th:text="${i.count}"></th>
-                                    <td th:text="${#calendars.format(#calendars.createNow(), 'yyyy년 MM 월dd일 ')}"></td>
-                                    <td th:text="${estbSchedule.get('SBJECT_NM')}"></td>
-                                    <td th:text="${estbSchedule.get('LCTRUM_RESVE_USE_PD')}"></td>
-                                </tr>
-                                <tr th:each="estbSchedule, i : ${studentEstbSchedule}"
+                                <tr th:each="estbSchedule : ${professorEstbSchedule}"
                                     th:unless="${estbSchedule.get('today').equals('o')}">
                                     <th scope="row">1</th>
                                     <td colspan="3">일정이 없습니다.</td>
@@ -108,18 +101,24 @@
         </div>
     </div>
     <script th:inline="javascript">
-        const goOnlineLec = document.querySelectorAll('.goStudentOnlineLec')
+        const goOnlineLec = document.querySelectorAll('.goProfessorOnlineLec')
 
-        sessionStorage.removeItem("stuEstblCoursCd")
+        sessionStorage.removeItem("proEstblCoursCd")
 
         goOnlineLec.forEach(item => {
             item.addEventListener('click', e=> {
-                goOnlineLecList(e)
+                const checkOnOff = e.currentTarget.classList[1]
+                console.log(checkOnOff)
+                console.log(e.currentTarget.id)
+                if(checkOnOff == 'O') {
+                    goOnlineLecList(e)
+                }
             })
         })
 
         const goOnlineLecList = e => {
             const estblCoursCd = e.currentTarget.id;
+            console.log(estblCoursCd)
             // const csrf = document.querySelector("meta[name='_csrf']");
             // const csrf_header = document.querySelector("meta[name='_csrf_header']");
             // const request = new XMLHttpRequest();
@@ -133,8 +132,8 @@
             // request.open('POST', '/onlineLecture', true);
             // request.send(form)
             // console.log(request)
-            sessionStorage.setItem("stuEstblCoursCd", estblCoursCd);
-            window.location.href = "/onlineLecture?estblCoursCd=" + estblCoursCd;
+            sessionStorage.setItem("proEstblCoursCd", estblCoursCd);
+            window.location.href = "/professorOnlineLecture?estblCoursCd=" + estblCoursCd;
         }
     </script>
 </th:block>

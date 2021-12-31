@@ -23,8 +23,8 @@
 
     <select id="getExamInfo" parameterType="string" resultType="ExamInfoDTO">
         SELECT *
-          FROM EXAM_INFO
-         WHERE EXAM_INFO_CD = #{examInfoCd}
+         FROM EXAM_INFO
+        WHERE EXAM_INFO_CD = #{examInfoCd}
     </select>
 
     <!--시험지에 해당하는 문제 갯수를 구해서 등록이 가능한지 확인하는 쿼리-->

@@ -1,11 +1,9 @@
 package com.example.dditlms.controller;
 
 import com.example.dditlms.domain.dto.*;
-import com.example.dditlms.mapper.ScoreMapper;
 import com.example.dditlms.service.OnlineLecService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.model.Model;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,16 +32,24 @@ public class OnlineLecController {
 
     //학생 강의 목록
     @GetMapping("/onlineLecture")
-    public ModelAndView goOnlineLecture(ModelAndView mv, OnlineLecDTO onlineLecDTO) {
-        logger.info("lectureList");
+    public ModelAndView goOnlineLecture(ModelAndView mv,
+                                        HttpSession session,
+                                        OnlineLecDTO onlineLecDTO,
+                                        String estblCoursCd) {
+        //수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
+        logger.info("OnlineLecController - goOnlineLecture - session mberNo : {}", session.getAttribute("stuMberNo"));
+        logger.info("OnlineLecController - goOnlineLecture - estblCoursCd : {}",estblCoursCd);
+
+        if(estblCoursCd != null) {
+            session.setAttribute("stuEstblCoursCd", estblCoursCd);
+        }
 
         /** 1.파라미터 조회(함수 파라미터, 세션 속성, 시스템변수) ****************************************************************/
 
         /** TODO 테스트용 코드 */
-        int tempMberNo = 201401449;
+        int tempMberNo = Integer.parseInt(session.getAttribute("stuMberNo").toString());
         int insertVidoInfo = 0; // 수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
-//        String estblCoursCd = "test001";
-        String estblCoursCd = "MR033.20012A";
+        estblCoursCd = session.getAttribute("stuEstblCoursCd").toString();
 
         /** 2.파라미터 검증(주요파라미터) */
         /** 3.서비스 처리 */
@@ -70,7 +74,7 @@ public class OnlineLecController {
 
     @GetMapping("/goOnlineLecVideoPlayer")
     public ModelAndView goOnlineLecVideoPlayer(@RequestParam("onlineLecCd") String onlineLecCd,
-                                               @RequestParam("mberNo") int mberNo, Model model) {
+                                               @RequestParam("mberNo") int mberNo) {
         logger.info("onlineLecCd : " + onlineLecCd);
         logger.info("mberNo : " + mberNo);
 
@@ -94,7 +98,7 @@ public class OnlineLecController {
 
     //학생 온라인 강의 영상 정보 관리
     @PostMapping("/onlineLecture/uploadVideoInfo")
-    public void saveOnlineLecVideoInfo(HttpServletResponse response, HttpServletRequest request,
+    public void saveOnlineLecVideoInfo(HttpServletResponse response,
                                        @RequestParam Map<String, String> paramMap) {
         logger.info("uploadVideoInfo param :" + paramMap);
         response.setContentType("text/html; charset=utf-8");
@@ -154,32 +158,31 @@ public class OnlineLecController {
         return "pages/onlineLecture_student/student_lecture_board";
     }
 
-    //학생 과제
-    @GetMapping("/onlineLecture/assignment")
-    public String goOnlineLectureAssignment() {
-        logger.info("onlineAssignment");
-        return "pages/onlineLecture_student/student_lecture_assignment";
-    }
-
     //-----------------------------------------------------------------------------
-    //교수 페이지
+    /***********************************************교수 페이지****************************************/
     //-----------------------------------------------------------------------------
 
     //교수 강의 페이지
     @GetMapping("/professorOnlineLecture")
-    public ModelAndView goProfessorOnlineLecture(Model model) {
-        logger.info("professorOnlineLecture");
-        ModelAndView mv = new ModelAndView("pages/onlineLecture_professor/professor_lecture_list");
-        JSONObject jsonObject = new JSONObject();
+    public ModelAndView goProfessorOnlineLecture(ModelAndView mv,
+                                                 HttpSession session,
+                                                 String estblCoursCd) {
+        logger.info("OnlineLecontroller - goProfessorOnlineLecture - mberNo : {}", session.getAttribute("proMberNo"));
+        logger.info("OnlineLecontroller - goProfessorOnlineLecture - proEstblCoursCd session : {}", session.getAttribute("proEstblCoursCd"));
+
+        if(estblCoursCd != null) {
+            session.setAttribute("proEstblCoursCd", estblCoursCd);
+        }
+
         //수강신청 table atnlc_lctre 테이블에 있는 학번과 개설교과목코드를 통해 조회
-        int tempMberNo = 14132133;
-//        String estblCoursCd = "test001";
-        String estblCoursCd = "MR033.20012A";
+        int tempMberNo = Integer.parseInt(session.getAttribute("proMberNo").toString());
+        estblCoursCd = session.getAttribute("proEstblCoursCd").toString();
 
         List<OnlineLecDTO> list = service.getProgessorOnlineLecutreList(new EstblCoursDTO(estblCoursCd, tempMberNo));
         list = list.stream().sorted(Comparator.comparing(OnlineLecDTO::getOnlineLecWeek)).collect(Collectors.toList());
-        mv.addObject("onlineLecList", list);
 
+        mv.setViewName("pages/onlineLecture_professor/professor_lecture_list");
+        mv.addObject("onlineLecList", list);
         return mv;
     }
 
@@ -188,13 +191,6 @@ public class OnlineLecController {
     public String goProfessorOnlineLectureBoard() {
         logger.info("professorBoard");
         return "pages/onlineLecture_professor/professor_lecture_board";
-    }
-
-    //교수 과제
-    @GetMapping("/professorOnlineLecture/assignment")
-    public String goProfessorOnlineLectureAssignment() {
-        logger.info("professorAssignment");
-        return "pages/onlineLecture_professor/professor_lecture_assignment";
     }
 
     //교수 학생 관리
@@ -206,7 +202,8 @@ public class OnlineLecController {
 
     //강의 업로드
     @PostMapping(value = "/uploadLecture", consumes = ("multipart/form-data"))
-    public void uploadFile(HttpServletResponse response, HttpServletRequest request,
+    public void uploadFile(HttpServletResponse response,
+                           HttpSession session,
                            @RequestParam Map<String, Object> paramMap,
                            @RequestParam("onlineLectureFile") MultipartFile[] multipartFile) throws ParseException {
         //파일 경로가 제대로 왔는지 확인
@@ -223,7 +220,7 @@ public class OnlineLecController {
         JSONObject jsonObject = new JSONObject();
 
         /**TODO 임시 변수*/
-        String estblCoursCd = "MR033.20012A";
+        String estblCoursCd = session.getAttribute("proEstblCoursCd").toString();
         AtchmnflDTO atchmnflDTO = null;
         OnlineLecDTO onlineLecDTO = null;
 
@@ -303,7 +300,7 @@ public class OnlineLecController {
             response.getWriter().print(jsonObject.toString());
             logger.info("jsonObject : " + jsonObject.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("{}",e);
         }
     }
 }

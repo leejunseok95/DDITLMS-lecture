@@ -13,27 +13,230 @@
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th scope="col">No</th>
                             <th scope="col">제목</th>
-                            <th scope="col">기간</th>
+                            <th scope="col">내용</th>
+                            <th scope="col">제출여부</th>
                             <th scope="col">등록일</th>
-                            <th scope="col">제출</th>
+                            <th scope="col">마감일</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>과제(1)</td>
-                            <td>2021.11.10 ~ 2021.11.28</td>
-                            <td>2021.11.10</td>
-                            <td>O</td>
+                        <tr class="goDetailAssignModal text-center"
+                            th:classappend="${i.index}" style="cursor: pointer"
+                            th:each="list, i : ${taskList}" th:id="${list.taskSn}"
+                            >
+<!--                            data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg2"-->
+                            <th scope="row" th:text="${i.count}"></th>
+                            <td th:text="${list.taskNm}"></td>
+                            <td th:text="${list.taskCn}"></td>
+                            <td th:id="${list.taskSn + 'submit'}">-</td>
+                            <td th:text="${#dates.format(list.taskDe, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${#dates.format(list.taskPresentnTmlmt, 'yyyy-MM-dd')}"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>내용</h5>
+                    <span class="assignModalSubmitBtn">
+
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <label class="col-md-2" for="taskNmDetail">과제명</label>
+                            <input type="text" id="taskNmDetail" name="taskNm" disabled><br/><br/>
+                            <label class="col-md-2" for="taskDeDetail">등록일</label>
+                            <input type="date" id="taskDeDetail" name="taskDe" disabled><br/><br/>
+                            <label class="col-md-2" for="taskPresentnTmlmtDetail">마감일</label>
+                            <input type="date" id="taskPresentnTmlmtDetail" name="taskPresentnTmlmt" disabled><br>
+                        </div>
+                        <div class="col">
+                            <label class="col-md-2" for="taskCnDetail">과제 내용</label>
+                            <div>
+                                <textarea id="taskCnDetail" name="taskCn" rows="5" cols="50" style="resize: none" disabled></textarea><br>
+                            </div>
+                            <div class="downloadAssignment">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 과제 제출 modal -->
+        <form id="submitAssignment" method="post" enctype="multipart/form-data">
+            <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                 style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myLargeModalLabel2">과제 제출</h4>
+                            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body">
+                            <label class="col-md-2" for="presentnSj">제출 제목</label>
+                            <input type="text" id="presentnSj" name="presentnSj" placeholder="제목을 입력하시오"><br/>
+                            <label class="col-md-2" for="presentnCn">제출 내용</label>
+                            <div>
+                                <label class="col-md-2" for="presentnCn"></label>
+                                <textarea id="presentnCn" name="presentnCn"
+                                          rows="5" cols="40" style="resize: none"
+                                          placeholder="제출 내용을 입력하시오">
+                                </textarea><br>
+                            </div>
+                            <label class="col-md-2" for="assignmentFileDetail">첨부파일</label>
+                            <input type="file" id="assignmentFileDetail" name="assignmentFile"><br>
+
+                            <input type="hidden" id="taskSn" name="taskSn">
+                            <input type="hidden" name="presentnDate" th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd일 ')}">
+                        </div>
+                        <div class="modal-footer">
+                            <button id="submitAssignmentBtn" class="btn btn-danger" type="button"
+                                    style="float: right">제출
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--과제 제출 modal 종료-->
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const taskList = /*[[ ${taskList} ]]*/;
+        const taskAtchmnFileList = /*[[ ${taskAtchmnFileInfo} ]]*/;
+        const presentnList = /*[[ ${presentnList} ]]*/;
+        console.log(taskList)
+        console.log(taskAtchmnFileList)
+        /*]]*/
+
+        const goDetailAssignModal = document.querySelectorAll('.goDetailAssignModal')
+        const assignModalSubmitBtn = document.querySelector('.assignModalSubmitBtn')
+        const submitAssignmentBtn = document.querySelector('#submitAssignmentBtn')
+        let today = new Date()
+
+        goDetailAssignModal.forEach(item => {
+            item.addEventListener('click', e => {
+                openModal(e)
+            })
+        })
+
+        for(let i = 0; i < taskList.length; i++) {
+            const taskSnsubmit = taskList[i].taskSn + 'submit'
+            const taskSnsubmitTr = document.getElementById(taskSnsubmit)
+
+            console.log(taskSnsubmit)
+            console.log(new Date(taskList[i].taskPresentnTmlmt))
+            console.log(today)
+            console.log(new Date(taskList[i].taskPresentnTmlmt) >= today)
+
+            if(new Date(taskList[i].taskPresentnTmlmt) >= today) {
+                for(let j = 0; j < presentnList.length; j++) {
+                    if(taskList[i].taskSn == presentnList[j].taskSn) {
+                        taskSnsubmitTr.innerText = '제출완료'
+                        taskSnsubmitTr.value = 'success'
+                    }
+                }
+            } else {
+                    taskSnsubmitTr.innerText = '미제출'
+                    taskSnsubmitTr.value = 'fail'
+            }
+        }
+
+        const openModal = e => {
+            const index = e.currentTarget.classList[2];
+            const atchmnflId = taskList[index].atchmnflId
+            const taskSnsubmit = taskList[index].taskSn + 'submit'
+            let orignlFileNm = ''
+            moment.DATETIME_LOCAL = "YYYY-MM-DD"
+
+            for (let i = 0; i < taskAtchmnFileList.length; i++) {
+                if (taskAtchmnFileList[i].atchmnflSn == atchmnflId) {
+                    orignlFileNm = taskAtchmnFileList[i].orignlFileNm
+                }
+            }
+            console.log(taskSnsubmit)
+
+            if(document.getElementById(taskSnsubmit).value != 'success') {
+                assignModalSubmitBtn.innerHTML =
+                    "<button class=\"btn btn-danger\" type=\"button\" style=\"float: right\"data-bs-toggle=\"modal\" data-bs-target=\".bd-example-modal-lg\">제출\n" +
+                    "</button>"
+            } else {
+                assignModalSubmitBtn.innerHTML =
+                    "<button class=\"btn btn-warning\" type=\"button\" style=\"float: right\">수정\n" +
+                    "</button>"
+            }
+
+            document.querySelector('#taskSn').value = taskList[index].taskSn
+            document.querySelector('#taskNmDetail').value = taskList[index].taskNm
+            document.querySelector('#taskCnDetail').value = taskList[index].taskCn
+            document.querySelector('#taskPresentnTmlmtDetail').value =
+                moment(taskList[index].taskPresentnTmlmt).format(moment.DATETIME_LOCAL)
+            document.querySelector('#taskDeDetail').value =
+                moment(taskList[index].taskDe).format(moment.DATETIME_LOCAL)
+            // document.querySelector('#assignmentFile').value = taskList[index].atchmnFlSn
+
+            if (atchmnflId == 0) {
+                document.querySelector('.downloadAssignment').innerHTML =
+                    "<label class=\"col-md-2\">첨부파일</label>" +
+                    "첨부파일 없음<br>";
+            } else if (atchmnflId != null || atchmnflId != '') {
+                document.querySelector('.downloadAssignment').innerHTML =
+                    "<label class=\"col-md-2\">첨부파일</label>" +
+                    "<a href='/onlineLecture/assignment/download?atchmnflId=" + atchmnflId + "'>" + orignlFileNm + "</a><br>";
+            }
+        }
+
+        submitAssignmentBtn.addEventListener('click', function () {
+            const submitAssignForm = $('#submitAssignment')[0]
+
+            let formData = new FormData(submitAssignForm)
+
+            if ($("#presentnSj").val().length == 0) {
+                alert("제출 제목을 입력하세요.");
+                $("#presentnSj").focus();
+                return false;
+            }
+            if ($("#presentnCn").val().length == 0) {
+                alert("제추 내용을 입력하세요.");
+                $("#presentnCn").focus();
+                return false;
+            }
+
+            $.ajax({
+                url : '/onlineLecture/assignment/submit',
+                enctype : 'multipart/form-data',
+                cache: false,
+                processData: false,
+                contentType: false,
+                data : formData,
+                method : 'POST',
+                dataType : 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            })
+            .done(function (fragment) {
+                if(fragment.state = true) {
+                    swal("제출 성공")
+                    location.reload()
+                } else {
+                    swal("제출 실패")
+                    location.reload()
+                }
+            })
+        })
+    </script>
 </th:block>
 </html>

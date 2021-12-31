@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,20 +23,22 @@ import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
-public class ExamContoller {
-    private static final Logger logger = LoggerFactory.getLogger(ExamContoller.class);
+public class ExamController {
+    private static final Logger logger = LoggerFactory.getLogger(ExamController.class);
     private final ExamService examService;
 
     //교수 시험 페이지
     @GetMapping("/professorOnlineLecture/exam")
-    public ModelAndView goProfessorOnlineLectureExam(ModelAndView mv) {
-        logger.info("professorExam");
+    public ModelAndView goProfessorOnlineLectureExam(ModelAndView mv, HttpSession session) {
+        logger.info("ExamController - goProfessorOnlineLectureExam - estblCoursCd session : {}", session.getAttribute("proEstblCoursCd"));
+        logger.info("ExamController - goProfessorOnlineLectureExam - mberNo session : {}", session.getAttribute("proMberNo"));
 
         /** 1.파라미터 조회*/
         /** TODO 테스트용 코드 */
-//        String estblCoursCd = "test001";
-        String estblCoursCd = "MR033.20012A";
-        int mberNo = 14132133;
+        String estblCoursCd = session.getAttribute("proEstblCoursCd").toString();
+        int mberNo = Integer.parseInt(session.getAttribute("proMberNo").toString());
+
+        logger.info("Examcontroller - goProfessorOnlineLectureExam - estblCoursCd : {}", estblCoursCd);
 
         /** 2.파라미터 검증(주요파라미터) */
         /** 3.서비스 처리 */
@@ -46,6 +49,8 @@ public class ExamContoller {
 
         /**3-2.서비스 호출*/
         List<ExamInfoDTO> examInfoList = examService.getExamInfoList(paramMap); // 시험(중간/기말) 정보 출력
+
+        logger.info("Examcontroller - goProfessorOnlineLectureExam - examInfoList : {}", examInfoList);
 
         /** 4. 클라이언트 자료구성 */
         mv.addObject("progress", paramMap.get("progress"));
@@ -107,9 +112,11 @@ public class ExamContoller {
         }
     }
 
+    //시험(중간/기말) 등록
     @PostMapping("/exam/insertExamInfo")
-    public void insertExamInfo(HttpServletResponse response, @RequestParam Map<String, Object> paramMap) {
-        logger.info("insertExamInfo");
+    public void insertExamInfo(HttpServletResponse response, HttpSession session,
+                               @RequestParam Map<String, Object> paramMap) {
+        logger.info("ExamController - insertExamInfo - estblCoursCd : {}", session.getAttribute("proEstblCoursCd"));
         logger.info("paramMap : " + paramMap);
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
@@ -118,7 +125,7 @@ public class ExamContoller {
         /** 1.파라미터 조회*/
         /** TODO 테스트용 코드 */
 //        String estblCoursCd = "test001";
-        String estblCoursCd = "MR033.20012A";
+        String estblCoursCd = session.getAttribute("proEstblCoursCd").toString();
         paramMap.put("estblCoursCd", estblCoursCd);
 
         /** 2.파라미터 검증(주요파라미터) */
@@ -139,17 +146,16 @@ public class ExamContoller {
 
     //시험 (중간/기말) 시험 수정
     @PostMapping("/exam/updateExamInfo")
-    public void updateExamInfo(HttpServletResponse response, HttpServletRequest request,
+    public void updateExamInfo(HttpServletResponse response, HttpSession session,
                                @RequestParam Map<String, String> paramMap) {
-        logger.info("updateExamInfo");
+        logger.info("ExamController - updateExamInfo - estblCoursCd : {}", session.getAttribute("proEstblCoursCd"));
         logger.info("paramMap updateExamInfo : " + paramMap);
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
 
-        //임시 개설교과 pk값
-//        String estblCoursCd = "test001";
-        String estblCoursCd = "MR033.20012A";
+        /**TODO 임시 값*/
+        String estblCoursCd = session.getAttribute("proEstblCoursCd").toString();
         int result = 0;
 
         //datetime-local 타입 변환
@@ -190,10 +196,9 @@ public class ExamContoller {
 
     //시험 (기말/중간) 삭제 메소드
     @PostMapping("/exam/deleteExamInfo")
-    public void deleteExamInfo(HttpServletResponse response, HttpServletRequest request,
+    public void deleteExamInfo(HttpServletResponse response,
                                @RequestParam Map<String, String> paramMap) {
-        logger.info("deleteExamInfo");
-        logger.info("paramMap deleteExamInfo : " + paramMap);
+        logger.info("ExamController - deleteExamInfo - paramMap deleteExamInfo : {}", paramMap);
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
@@ -221,8 +226,7 @@ public class ExamContoller {
     //시험문제 삭제 controller
     @PostMapping("/exam/deleteExam")
     public void deleteExam(HttpServletResponse response, @RequestParam Map<String, String> paramMap) {
-        logger.info("deleteExam");
-        logger.info("paramMap deleteExam : " + paramMap);
+        logger.info("ExamController - deleteExamInfo - paramMap deleteExam : {}", paramMap);
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
@@ -279,11 +283,11 @@ public class ExamContoller {
      * ------------------------------------------------------------------------------------------------------------------------------*/
     //학생 시험
     @GetMapping("/onlineLecture/exam")
-    public ModelAndView goOnlineLectureExam(ModelAndView mv) {
-        logger.info("onlineExam");
+    public ModelAndView goOnlineLectureExam(ModelAndView mv, HttpSession session) {
+        logger.info("ExamController - goOnlineLectureExam - mberNo session : {}", session.getAttribute("stuMberNo"));
         
         /**TODO 테스트 코드*/
-        int mberNo = 201401449;
+        int mberNo = Integer.parseInt(session.getAttribute("stuMberNo").toString());
 
         /**변수 선언*/
         Map<String, Object> paramMap = new HashMap<>();
@@ -329,12 +333,12 @@ public class ExamContoller {
     //학생 시험 제출
     @ResponseBody
     @PostMapping("/exam/finishExam")
-    public void submitExamTest(ModelAndView mv,
-                               HttpServletResponse response,
-                               HttpServletRequest request,
+    public void submitExamTest(HttpServletResponse response,
+                               HttpSession session,
                                @RequestBody Map<String, Object> paramMap) {
-        logger.info("finishExam");
-        logger.info("paramMap : " + paramMap);
+        logger.info("ExamController - submitExamTest - paramMap : {}", paramMap);
+        logger.info("ExamController - submitExamTest - mber session : {}", session.getAttribute("stuMberNo"));
+        logger.info("ExamController - submitExamTest - estblCoursCd session : {}", session.getAttribute("stuEstblCoursCd"));
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
         JSONObject jsonObject = new JSONObject();
@@ -343,9 +347,8 @@ public class ExamContoller {
         /**
          * TODO 임시 학생 번호
          */
-        int mberNo = 201401449;
-//        String estblCoursCd = "test001";
-        String estblCoursCd = "MR033.20012A";
+        int mberNo = Integer.parseInt(session.getAttribute("stuMberNo").toString());
+        String estblCoursCd = session.getAttribute("stuEstblCoursCd").toString();
         paramToService.put("mberNo", mberNo);
         paramToService.put("estblCoursCd", estblCoursCd);
         paramToService.put("paramFromPage", paramMap);

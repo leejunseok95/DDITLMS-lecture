@@ -5,7 +5,7 @@
 
 <mapper namespace="com.example.dditlms.mapper.OnlineMainMapper">
     <select id="getStudentEstblCoursList" parameterType="int" resultType="map">
-        SELECT C.SBJECT_NM, C.SBJECT_PNT, A.LCTRE_KND, A.LCTRE_SE, E.MBER_NM
+        SELECT C.SBJECT_NM, C.SBJECT_PNT, A.LCTRE_KND, A.LCTRE_SE, E.MBER_NM, A.ESTBL_COURS_CD
         FROM ESTBL_COURS A, ATNLC_LCTRE B, SBJECT C, PROFSR D, MBER E
         WHERE A.ESTBL_COURS_CD = B.ESTBL_COURS_CD
           AND A.SBJECT_CD = C.SBJECT_CD
@@ -22,5 +22,24 @@
           AND C.ESTBL_COURS_CD = D.ESTBL_COURS_CD
           AND E.SBJECT_CD = C.SBJECT_CD
           AND D.MBER_NO = #{mberNo}
+    </select>
+
+    <select id="getProfessorEstblCoursList" parameterType="int" resultType="map">
+        SELECT D.SBJECT_NM, D.SBJECT_PNT, C.LCTRE_SE , C.LCTRE_KND, C.ESTBL_COURS_CD
+        FROM MBER A, PROFSR B, ESTBL_COURS C, SBJECT D
+        WHERE A.MBER_NO = B.MBER_NO
+          AND B.MBER_NO = C.MBER_NO
+          AND C.SBJECT_CD = D.SBJECT_CD
+          AND B.MBER_NO = #{mberNo}
+    </select>
+
+    <select id="getProfessorEstblcoursSchedule" parameterType="int" resultType="map">
+        SELECT C.LCTRUM_RESVE_USE_DE, C.LCTRUM_RESVE_USE_PD, D.SBJECT_NM
+        FROM ESTBL_COURS A, LCTRUM B, LCTRUM_RESVE C, SBJECT D, PROFSR E
+        WHERE A.LCTRUM_CD = B.LCTRUM_CD
+          AND B.LCTRUM_CD = C.LCTRUM_CD
+          AND A.SBJECT_CD = D.SBJECT_CD
+          AND E.MBER_NO = A.MBER_NO
+          AND E.MBER_NO = #{mberNo}
     </select>
 </mapper>

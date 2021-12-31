@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.dditlms.mapper.Taskmapper">
+    <select id="getProfessorTaskList" parameterType="map" resultType="TaskDTO">
+        SELECT B.TASK_SN, B.TASK_NM, B.TASK_CN, B.TASK_PRESENTN_TMLMT, B.TASK_DE, B.ATCHMNFL_ID
+        FROM ESTBL_COURS A, TASK B, PROFSR C
+        WHERE A.ESTBL_COURS_CD = B.ESTBL_COURS_CD
+          AND A.MBER_NO = C.MBER_NO
+          AND C.MBER_NO = #{mberNo}
+          AND A.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <select id="getStudentTaskList" parameterType="map" resultType="TaskDTO">
+        SELECT B.TASK_SN, B.TASK_NM, B.TASK_CN, b.task_presentn_tmlmt, B.TASK_DE, b.atchmnfl_id
+        FROM ESTBL_COURS A, TASK B, STDNT C, ATNLC_LCTRE D
+        WHERE a.estbl_cours_cd = b.estbl_cours_cd
+          AND a.estbl_cours_cd = d.estbl_cours_cd
+          AND d.mber_no = c.mber_no
+          AND c.mber_no = #{mberNo}
+          AND a.estbl_cours_cd = #{estblCoursCd}
+    </select>
+
+    <select id="getAtchmnflList" resultType="AtchmnflDTO">
+        SELECT *
+        FROM ATCHMNFL
+    </select>
+
+    <select id="getAtchmnflInfo" parameterType="int" resultType="AtchmnflDTO">
+        SELECT *
+          FROM ATCHMNFL
+         WHERE ATCHMNFL_SN = #{atchmnflId}
+    </select>
+
+    <!--학생 과제 제출 확인-->
+    <select id="checkStudentPresentn" parameterType="map" resultType="PresentnDTO">
+        SELECT B.MBER_NO, B.TASK_SN, b.presentn_sj, B.PRESENTN_CN
+        FROM STDNT A, PRESENTN B, TASK C, ESTBL_COURS D
+        WHERE A.MBER_NO = B.MBER_NO
+          AND B.TASK_SN = C.TASK_SN
+          AND A.MBER_NO = #{mberNo}
+          AND D.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <insert id="insertTask" parameterType="TaskDTO">
+        INSERT INTO TASK(TASK_SN, TASK_NM, TASK_CN, TASK_PRESENTN_TMLMT, TASK_DE,ATCHMNFL_ID,ESTBL_COURS_CD)
+        VALUES(SEQ_TASK.nextval, #{taskNm}, #{taskCn}, #{taskPresentnTmlmt}, #{taskDe}, #{atchmnflId}, #{estblCoursCd})
+    </insert>
+
+    <insert id="insertPresentn" parameterType="PresentnDTO">
+        INSERT INTO PRESENTN(MBER_NO, TASK_SN, PRESENTN_SJ, PRESENTN_CN, PRESENTN_DATE, TASK_SCORE, ATCHMNFL_ID)
+        VALUES(#{mberNo},#{taskSn},#{presentnSj},#{presentnCn},#{presentnDate},#{taskScore},#{atchmnflId})
+    </insert>
+
+    <!--등록된 과제를 지우기 위한 쿼리-->
+    <delete id="deleteTask" parameterType="int">
+        DELETE FROM TASK
+        WHERE TASK_SN = #{taskSn}
+    </delete>
+    <delete id="deleteAtchmnfl" parameterType="int">
+        DELETE FROM ATCHMNFL
+        WHERE ATCHMNFL_SN = #{atchmnflSn}
+    </delete>
+</mapper>

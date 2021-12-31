@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import sun.util.resources.LocaleData;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -25,30 +24,56 @@ public class OnlineMainServiceImpl implements OnlineMainService {
 
         List<Map<String, Object>> studentEstbList = mapper.getStudentEstblCoursList(mberNo);
         paramMap.put("studentEstbList", studentEstbList);
-
-
     }
 
     @Override
     public void getStudentEstblcoursSchedule(Map<String, Object> paramMap) {
         int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+
+        List<Map<String, Object>> studentEstbSchedule = mapper.getStudentEstblcoursSchedule(mberNo);
+        studentEstbSchedule = checkDayOfWeek(studentEstbSchedule);
+
+        paramMap.put("studentEstbSchedule", studentEstbSchedule);
+    }
+
+    @Override
+    public void getProfessorEstblCoursList(Map<String, Object> paramMap) {
+        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+
+        List<Map<String, Object>> professorEstbList = mapper.getProfessorEstblCoursList(mberNo);
+        paramMap.put("professorEstbList", professorEstbList);
+    }
+
+    @Override
+    public void getProfessorEstblcoursSchedule(Map<String, Object> paramMap) {
+        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+
+        List<Map<String, Object>> professorEstbSchedule = mapper.getProfessorEstblcoursSchedule(mberNo);
+        professorEstbSchedule = checkDayOfWeek(professorEstbSchedule);
+
+        paramMap.put("professorEstbSchedule",professorEstbSchedule);
+    }
+
+    //교수/학생의 스케줄을 확인하는 메소드
+    public List<Map<String, Object>> checkDayOfWeek(List<Map<String, Object>> schedule) {
         LocalDate now = LocalDate.now();
         DayOfWeek dayOfWeek = now.getDayOfWeek();
 
         String day = dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.KOREAN);
-        List<Map<String, Object>> studentEstbSchedule = mapper.getStudentEstblcoursSchedule(mberNo);
 
-        for(Map<String, Object> map : studentEstbSchedule) {
+        for(Map<String, Object> map : schedule) {
             String[] dayFromDb = map.get("LCTRUM_RESVE_USE_DE").toString().split(",");
 
             for (int i = 0; i < dayFromDb.length; i++) {
                 if (dayFromDb[i].equals(day)) {
                     logger.info("dayFromDb : " + dayFromDb[i]);
                     map.put("today", "o");
+                } else {
+                    map.put("today", "x");
                 }
             }
         }
 
-        paramMap.put("studentEstbSchedule", studentEstbSchedule);
+        return schedule;
     }
 }

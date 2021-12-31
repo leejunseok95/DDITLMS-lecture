@@ -1,72 +1,61 @@
-//package com.example.dditlms.utill;
-//
-//import com.example.dditlms.domain.dto.AtchmnflDTO;
-//import com.example.dditlms.service.AtchmnflService;
-//import com.sun.xml.internal.ws.api.message.Attachment;
-//import org.apache.commons.io.FilenameUtils;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.util.FileCopyUtils;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.io.File;
-//import java.io.IOException;
-//import java.util.Map;
-//import java.util.Optional;
-//import java.util.UUID;
-//
-//public class FileUtil {
-//    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
-//    private final AtchmnflService atchmnflService;
-//
-//
-//    public long uploadFiles(Map<String, MultipartFile> map) {
-//        Optional<AtchmnflDTO> atchmnflDTO =
-//        Optional<Attachment> attachmentWrapper = attachmentRepository.findFirstByOrderByIdDesc();
-//        Attachment topAttachment = attachmentWrapper.orElse(null);
-//        long id = 0;
-//        if (topAttachment != null) {
-//            id = topAttachment.getId() + 1;
-//        }
-//        int order = 0;
-//        for (String key : map.keySet()) {
-//            order++;
-//            copyAndSave(id, order, map.get(key));
-//        }
-//        return id;
-//    }
-//
-//    private void copyAndSave(long id, int order, MultipartFile file) {
-//        String savedName = FileUtil.uuidMake();
-//        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-//        StringBuilder newName = new StringBuilder();
-//        newName.append(savedName);
-//        newName.append(".");
-//        newName.append(extension);
-//        File saveFile = new File(PrivateValue.FILEPATH.getValue(), newName.toString());
-//        if (!new File(PrivateValue.FILEPATH.getValue()).exists()) {
-//            new File(PrivateValue.FILEPATH.getValue()).mkdirs();
-//        }
-//        try {
-//            FileCopyUtils.copy(file.getBytes(), saveFile);
-//        } catch (IOException e) {
-//        }
-//        Attachment attachment = Attachment.builder()
-//                .id(id)
-//                .order(order)
-//                .source(saveFile.getPath())
-//                .savedName(savedName)
-//                .originName(FilenameUtils.getBaseName(file.getOriginalFilename()))
-//                .extension(extension)
-//                .size(file.getSize())
-//                .downloadCount(0L).build();
-//        attachmentRepository.save(attachment);
-//    }
-//
-//    public static String uuidMake() {
-//        UUID uuid = UUID.randomUUID();
-//        return uuid.toString().replaceAll("-", "");
-//    }
-//
-//}
-//
+package com.example.dditlms.utill;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.*;
+
+
+public class FileUtil {
+    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
+    String filePath = "C:\\Users\\LMS\\Desktop\\Ddit\\finalProject\\DDITLMS-lecture\\DDITLMS-lecture\\src\\main\\resources\\static\\assignment";
+
+    public List<Map<String,Object>> parseInsertFileInfo(Map<String,Object> map, HttpServletRequest req) throws Exception{
+        MultipartHttpServletRequest mulReq = (MultipartHttpServletRequest)req;
+
+        String original_Name=null;
+        String original_Extension=null;
+        String stored_Name=null;
+
+        MultipartFile mulFile = null;
+        Iterator<String> iterator= mulReq.getFileNames();
+
+        List<Map<String,Object>> fileList = new ArrayList<Map<String,Object>>();
+        Map<String,Object> fileMap = null;
+
+        String board_IDX = (String) map.get("IDX").toString();
+
+        File file = new File(filePath);
+        if(file.exists()==false) {
+            file.mkdirs();
+        }
+
+        while(iterator.hasNext()) {
+            mulFile=mulReq.getFile(iterator.next());
+
+            if(mulFile.isEmpty()==false) {
+                original_Name=mulFile.getOriginalFilename();
+                original_Extension=mulFile.getOriginalFilename().substring(original_Name.lastIndexOf("."));
+                stored_Name=CommonUtils.getRandomString()+original_Extension;
+
+                file = new File(filePath+stored_Name);
+                mulFile.transferTo(file);
+
+                fileMap = new HashMap<String,Object>();
+
+                fileMap.put("BOARD_IDX", board_IDX);
+                fileMap.put("ORIGINAL_FILE_NAME", original_Name);
+                fileMap.put("STORED_FILE_NAME", stored_Name);
+                fileMap.put("FILE_SIZE", mulFile.getSize());
+                fileList.add(fileMap);
+            }
+        }
+
+        return fileList;
+    }
+}

@@ -9,31 +9,226 @@
             <div class="card">
                 <div class="card-header">
                     <h5>과제</h5>
+                    <button class="btn btn-danger" type="button" style="float: right" data-bs-toggle="modal"
+                            data-bs-target=".bd-example-modal-lg">등록
+                    </button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th scope="col">No</th>
                             <th scope="col">제목</th>
-                            <th scope="col">기간</th>
+                            <th scope="col">내용</th>
                             <th scope="col">등록일</th>
-                            <th scope="col">제출</th>
+                            <th scope="col">마감일</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>과제(1)</td>
-                            <td>2021.11.10 ~ 2021.11.28</td>
-                            <td>2021.11.10</td>
-                            <td>O</td>
+                        <tr class="goDetailAssignModal text-center"
+                            th:classappend="${i.index}" style="cursor: pointer"
+                            th:each="list, i : ${taskList}" th:id="${list.taskSn}"
+                            data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg2">
+                            <th scope="row" th:text="${i.count}"></th>
+                            <td th:text="${list.taskNm}"></td>
+                            <td th:text="${list.taskCn}"></td>
+                            <td th:text="${#dates.format(list.taskDe, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${#dates.format(list.taskPresentnTmlmt, 'yyyy-MM-dd')}"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+        <!-- 과제 등록 modal 창 시작-->
+        <form id="assignRegisterModal" method="post" enctype="multipart/form-data">
+            <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                 style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myLargeModalLabel">강의 등록</h4>
+                            <button class="btn-close" type="button" data-bs-dismiss="modal"
+                                    aria-label="Close"/>
+                        </div>
+                        <div class="modal-body">
+                            <label class="col-md-2" for="taskNm">과제명</label>
+                            <input type="text" id="taskNm" name="taskNm" placeholder="과제명을 입력하시오"><br>
+                            <label class="col-md-2" for="taskCn">과제 내용</label>
+                            <div>
+                                <label class="col-md-2"></label>
+                                <textarea id="taskCn" name="taskCn" placeholder="과제 내용을 입력하세요" rows="5" cols="30" style="resize: none"></textarea><br>
+                            </div>
+                            <label class="col-md-2" for="taskPresentnTmlmt">마감일</label>
+                            <input type="date" id="taskPresentnTmlmt" name="taskPresentnTmlmt" placeholder="과제 기한을 설정"><br>
+                            <label class="col-md-2" for="assignmentFile">첨부파일</label>
+                            <input type="file" id="assignmentFile" name="assignmentFile" placeholder="첨부파일"><br>
+                            <input type="hidden" name="taskDe" th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd일 ')}">
+                        </div>
+                        <div class="modal-footer">
+                            <button id="registerAssign" class="btn btn-primary" type="button"
+                                    style="float: right">등록
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--과제 등록 modal 종료-->
+
+        <!--과제 디테일 페이지-->
+        <form id="assigDetailModal" method="post" enctype="multipart/form-data">
+            <div class="modal fade bd-example-modal-lg2" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                 style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myLargeModalLabel2">강의 등록</h4>
+                            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body">
+                            <label class="col-md-2" for="taskNmDetail">과제명</label>
+                            <input type="text" id="taskNmDetail" name="taskNm"><br>
+                            <label class="col-md-2" for="taskCnDetail">과제 내용</label>
+                            <div>
+                                <label class="col-md-2"></label>
+                                <textarea id="taskCnDetail" name="taskCn" placeholder="과제 내용을 입력하세요" rows="5" cols="30" style="resize: none"></textarea><br>
+                            </div>
+                            <label class="col-md-2" for="taskDeDetail">등록일</label>
+                            <input type="date" id="taskDeDetail" name="taskDe" disabled><br>
+                            <label class="col-md-2" for="taskPresentnTmlmtDetail">마감일</label>
+                            <input type="date" id="taskPresentnTmlmtDetail" name="taskPresentnTmlmt"><br>
+                            <!--수정할 파일 목록을 표시하기 위한 div 영역-->
+                            <div class="modifyFileResult">
+
+                            </div>
+
+                            <input type="hidden" name="taskSn" id="taskSnDetail">
+                            <input type="hidden" name="atchmnflId" id="atchmnflIdDetail">
+                        </div>
+                        <div class="modal-footer">
+                            <button id="updateAssign" class="btn btn-primary" type="button"
+                                    style="float: right">수정
+                            </button>
+                            <button id="deleteAssign" class="btn btn-danger" type="button"
+                                    style="float: right">삭제
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--과제 등록 modal 종료-->
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const taskList = /*[[ ${taskList} ]]*/;
+        console.log(taskList)
+        /*]]*/
+
+        const assignRegisterBtn = document.querySelector('#registerAssign')
+        const assignDeleteBtn = document.querySelector('#deleteAssign')
+        const goDetailAssignModal = document.querySelectorAll('.goDetailAssignModal')
+
+        goDetailAssignModal.forEach(item => {
+            item.addEventListener('click', e => {
+                openModal(e)
+            })
+        })
+
+        const openModal = e => {
+            const index = e.currentTarget.classList[2];
+            const atchmnflId = taskList[index].atchmnflId
+            moment.DATETIME_LOCAL = "YYYY-MM-DD"
+            console.log(atchmnflId)
+
+            document.querySelector('#taskSnDetail').value = taskList[index].taskSn
+            document.querySelector('#taskNmDetail').value = taskList[index].taskNm
+            document.querySelector('#taskCnDetail').value = taskList[index].taskCn
+            document.querySelector('#taskPresentnTmlmtDetail').value =
+                moment(taskList[index].taskPresentnTmlmt).format(moment.DATETIME_LOCAL)
+            document.querySelector('#taskDeDetail').value =
+                moment(taskList[index].taskDe).format(moment.DATETIME_LOCAL)
+            // document.querySelector('#assignmentFile').value = taskList[index].atchmnFlSn
+            if(atchmnflId != null || atchmnflId != '') {
+                document.querySelector('#atchmnflIdDetail').value = atchmnflId
+            }
+        }
+
+        assignDeleteBtn.addEventListener('click', function () {
+            const detailForm = $('#assigDetailModal')[0]
+
+            let formDataForDelete = new FormData(detailForm)
+
+            $.ajax({
+                url : '/assignment/delete',
+                data : formDataForDelete,
+                enctype : 'multipart/form-data',
+                cache: false,
+                processData: false,
+                contentType: false,
+                method : 'POST',
+                dataType : 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            })
+                .done(function (fragment) {
+                    if(fragment.state = true) {
+                        swal("삭제 성공")
+                        location.reload()
+                    } else {
+                        swal("삭제 실패")
+                        location.reload()
+                    }
+                })
+        })
+
+        assignRegisterBtn.addEventListener('click', function () {
+            const registerForm = $('#assignRegisterModal')[0]
+
+            let formDataRegister = new FormData(registerForm)
+
+            if ($("#taskNm").val().length == 0) {
+                alert("과제명을 입력하세요.");
+                $("#taskNm").focus();
+                return false;
+            }
+            if ($("#taskCn").val().length == 0) {
+                alert("과제 내용을 입력하세요.");
+                $("#taskCn").focus();
+                return false;
+            }
+            if ($("#taskPresentnTmlmt").val().length == 0) {
+                alert("마감일을 설정하세요.");
+                $("#taskPresentnTmlmt").focus();
+                return false;
+            }
+
+            $.ajax({
+                url : '/assignment/register',
+                enctype : 'multipart/form-data',
+                cache: false,
+                processData: false,
+                contentType: false,
+                data : formDataRegister,
+                method : 'POST',
+                dataType : 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            })
+            .done(function (fragment) {
+                if(fragment.state = true) {
+                    swal("등록 성공")
+                    location.reload()
+                } else {
+                    swal("등록 실패")
+                    location.reload()
+                }
+            })
+        })
+    </script>
 </th:block>
 </html>

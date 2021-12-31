@@ -3,47 +3,61 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:fragment="sidebarFragment">
     <header class="main-nav bg-primary">
-        <div class="flex-shrink-0 p-3 bg-primary" style="width: 280px;">
-            <a th:href="@{/professorOnlineLecture}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-                <svg class="bi me-2" width="30" height="24">
-                    <use xlink:href="#bootstrap"></use>
-                </svg>
-                <span class="fs-5 fw-semibold text-white">Collapsible</span>
-            </a>
-<!--            <ul class=" navbar-nav me-auto mb-2list-unstyled ps-0">-->
-            <ul class="text-center navbar-nav me-auto mb-2">
-                <li class="nav-item">
-                    <a th:href="@{/professorOnlineLecture}" class="link-dark rounded text-white nav-link">강의실</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/professorOnlineLecture/board}" class="link-dark rounded text-white nav-link">게시판</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/professorOnlineLecture/assignment}" class="link-dark rounded text-white nav-link">과제</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/professorOnlineLecture/exam}" class="link-dark rounded text-white nav-linkitem">시험</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/professorOnlineLecture/management}" class="link-dark rounded text-white nav-link">학생관리</a>
-                </li>
-                <li class="border-top my-3"></li>
-                <li class="mb-1">
-                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#account-collapse" aria-expanded="false">
-                        Account
-                    </button>
-                    <div class="collapse" id="account-collapse" style="">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="#" class="link-dark rounded">New...</a></li>
-                            <li><a href="#" class="link-dark rounded">Profile</a></li>
-                            <li><a href="#" class="link-dark rounded">Settings</a></li>
-                            <li><a href="#" class="link-dark rounded">Sign out</a></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
+        <nav>
+            <div class="main-navbar">
+                <div class="flex-shrink-0 p-3 bg-primary" style="width: 280px;">
+                    <a th:href="@{/professorOnlineLecture}"
+                       class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                        <svg class="bi me-2" width="30" height="24">
+                            <use xlink:href="#bootstrap"></use>
+                        </svg>
+                        <span class="fs-5 fw-semibold text-white">Collapsible</span>
+                    </a>
+                    <!--            <ul class=" navbar-nav me-auto mb-2list-unstyled ps-0">-->
+                    <ul class="text-center navbar-nav me-auto mb-2">
+                        <li class="nav-item">
+                            <a th:href="@{/online/professorMain}"
+                               class="link-dark rounded text-white nav-link">메인페이지</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/professorOnlineLecture}"
+                               class="link-dark rounded text-white nav-link">강의실</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/professorOnlineLecture/board}" class="link-dark rounded text-white nav-link">게시판</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/professorOnlineLecture/assignment}"
+                               class="link-dark rounded text-white nav-link">과제</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/professorOnlineLecture/exam}"
+                               class="link-dark rounded text-white nav-linkitem">시험</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/professorOnlineLecture/management}"
+                               class="link-dark rounded text-white nav-link">학생관리</a>
+                        </li>
+                        <li class="border-top my-3"></li>
+                        <li class="mb-1">
+                            <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#account-collapse" aria-expanded="false">
+                                Account
+                            </button>
+                            <div class="collapse" id="account-collapse" style="">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="#" class="link-dark rounded">New...</a></li>
+                                    <li><a href="#" class="link-dark rounded">Profile</a></li>
+                                    <li><a href="#" class="link-dark rounded">Settings</a></li>
+                                    <li><a href="#" class="link-dark rounded">Sign out</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
 </th:block>
 </html>

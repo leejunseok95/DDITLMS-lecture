@@ -19,7 +19,7 @@
         SELECT C.ONLINE_LEC_CD, C.ONLINE_LEC_WEEK, C.ONLINE_LEC_TITLE, C.ONLINE_LEC_START,
                C.ONLINE_LEC_END, C.LEARNING_STATUS, C.ATCHMNFL_SN, C.ESTBL_COURS_CD,
                C.ESTBL_COURS_CD,C.VIDO_ENDTIME, d.vido_progress, E.ATEND_STTUS
-         FROM ATNLC_LCTRE A, estbl_cours B, ONLINE_LEC C, VIDO_INFO D, ATEND E
+        FROM ATNLC_LCTRE A, estbl_cours B, ONLINE_LEC C, VIDO_INFO D, ATEND E
         WHERE C.ESTBL_COURS_CD = B.ESTBL_COURS_CD
           AND B.ESTBL_COURS_CD = A.ESTBL_COURS_CD
           AND d.online_lec_cd = c.online_lec_cd
@@ -36,7 +36,7 @@
         <if test="!estblCoursCd.equals('') and estblCoursCd!=null">
             and ESTBL_COURS_CD = #{estblCoursCd}
         </if>
-          and ONLINE_LEC_CD = #{onlineLecCd}
+        and ONLINE_LEC_CD = #{onlineLecCd}
     </select>
 
     <!--시청 중인 영상 정보를 가져오는 쿼리-->
@@ -58,8 +58,8 @@
     <select id="getOnlineLectureVideoName" parameterType="string" resultType="AtchmnflDTO">
         select *
         from ATCHMNFL a
-        join online_lec b on(a.ATCHMNFL_SN = b.ATCHMNFL_SN)
-         where b.ONLINE_LEC_CD = #{onlineLecCd}
+                 join online_lec b on(a.ATCHMNFL_SN = b.ATCHMNFL_SN)
+        where b.ONLINE_LEC_CD = #{onlineLecCd}
     </select>
 
     <select id="getProgessorOnlineLecutreList" parameterType="EstblCoursDTO" resultType="OnlineLecDTO">
