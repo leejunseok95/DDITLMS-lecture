@@ -32,10 +32,15 @@ public class TaskServiceImpl implements TaskService {
     //교수 과제 list
     @Override
     public void getProfessorTaskList(Map<String, Object> paramMap) {
+        String estblCoursCd = paramMap.get("estblCoursCd").toString();
+
         List<TaskDTO> taskList = mapper.getProfessorTaskList(paramMap);
-        logger.info("taskList : " + taskList);
+        List<Map<String, Object>> studentCoursTakenList = mapper.getStudentCoursTakenList(estblCoursCd);
+        logger.info("TaskServiceImpl - getProfessorTaskList - taskList : " + taskList);
+        logger.info("TaskServiceImpl - getProfessorTaskList - studentCoursTakenList : {}", studentCoursTakenList);
 
         paramMap.put("taskList", taskList);
+        paramMap.put("studentCoursTakenList",studentCoursTakenList);
     }
 
     //과제 등록
@@ -236,5 +241,18 @@ public class TaskServiceImpl implements TaskService {
         int result = mapper.insertPresentn(presentnDTO);
         logger.info("TaskServiceImpl - insertPresentn - result : {}", result);
         paramMap.put("result", result);
+    }
+
+    //과제를 제출한 학생의 첨부파일을 가져오기 위한 메소드
+    @Override
+    public void getStudentCoursTakenList(Map<String, Object> paramMap) {
+        int taskSn = Integer.parseInt(paramMap.get("taskSn").toString());
+        logger.info("TaskServiceImpl - getStudentCoursTakenList - taskSn : {}", taskSn);
+
+        List<TaskDTO> atchmnflIdList = mapper.getStudentPresentnAtchmnflId(taskSn);
+
+        logger.info("TaskServiceImpl - getStudentCoursTakenList - atchmnflIdList : {}", atchmnflIdList);
+
+        paramMap.put("atchmnflIdList",atchmnflIdList);
     }
 }

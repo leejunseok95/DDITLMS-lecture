@@ -1,6 +1,7 @@
 package com.example.dditlms.controller;
 
 import com.example.dditlms.domain.dto.AtchmnflDTO;
+import com.example.dditlms.domain.dto.TaskDTO;
 import com.example.dditlms.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
@@ -14,12 +15,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 @RequiredArgsConstructor
@@ -45,6 +52,7 @@ public class TaskController {
 
         mv.setViewName("pages/onlineLecture_professor/professor_lecture_assignment");
         mv.addObject("taskList", paramMap.get("taskList"));
+        mv.addObject("studentCoursTakenList", paramMap.get("studentCoursTakenList"));
         return mv;
     }
 
@@ -180,6 +188,85 @@ public class TaskController {
 
         response.getOutputStream().flush();
         response.getOutputStream().close();
+    }
+
+    //학생 과제 알집 다운로드
+    @PostMapping("/assignment/downloadAll")
+    public void downloadAllStudentAssignment(@RequestParam Map<String, Object> paramMap,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            Object handler) {
+        logger.info("TaskController - downloadAllStudentAssignment - paramMap : {}", paramMap);
+        JSONObject jsonObject = new JSONObject();
+
+        String zipFile = "C:\\Users\\LMS\\Downloads\\assignment.zip";
+        String downloadFileName = "result";
+        List<String> sourceFiles = new ArrayList<>();
+        AtchmnflDTO atchmnflDTO = null;
+
+        service.getStudentCoursTakenList(paramMap);
+
+        List<TaskDTO> atchmnflIdList = (List<TaskDTO>)paramMap.get("atchmnflIdList");
+
+        for(TaskDTO taskDTO : atchmnflIdList) {
+            int atchmnflId = taskDTO.getAtchmnflId();
+            atchmnflDTO = service.getAtchmnflInfo(atchmnflId);
+
+            sourceFiles.add(atchmnflDTO.getFileStreCours() + "\\" + atchmnflDTO.getOrignlFileNm());
+        }
+
+        logger.info("TaskController - downloadAllStudentAssignment - atchmnflIdList : {}", atchmnflIdList);
+
+        try {
+            FileOutputStream fout = new FileOutputStream(zipFile);
+            ZipOutputStream zout = new ZipOutputStream(fout);
+
+            for(int i = 0; i< sourceFiles.size(); i++) {
+                ZipEntry zipEntry = new ZipEntry(new File(sourceFiles.get(i)).getName());
+                zout.putNextEntry(zipEntry);
+
+                FileInputStream fin = new FileInputStream(sourceFiles.get(i));
+                byte[] buffer = new byte[1024];
+                int length;
+
+                while((length = fin.read(buffer)) > 0) {
+                    zout.write(buffer, 0, length);
+                }
+
+                zout.closeEntry();
+                fin.close();
+            }
+
+            zout.close();
+
+            response.setContentType("application/zip");
+            response.addHeader("Content-Disposition", "attachment; filename=" + downloadFileName + "zip");
+            jsonObject.put("state", true);
+
+
+            FileInputStream fis = new FileInputStream(zipFile);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            ServletOutputStream so = response.getOutputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(so);
+
+            byte[] data = new byte[2048];
+            int input = 0;
+
+            while((input=bis.read(data)) != -1) {
+                bos.write(data, 0, input);
+                bos.flush();
+            }
+
+            if(bos!=null) bos.close();
+            if(bis!=null) bis.close();
+            if(so!=null) so.close();
+            if(fis!=null) fis.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -72,4 +72,18 @@ public interface Taskmapper {
      * @return 과제 제출 확인을 할 수 있는 결과 값
      */
     List<PresentnDTO> checkStudentPresentn(Map<String, Object> paramMap);
+
+    /**
+     * 수업을 듣는 학생들 list
+     * @param estblCours 개설 과목 primary code
+     * @return 학생 정보
+     */
+    List<Map<String, Object>> getStudentCoursTakenList(String estblCours);
+
+    /**
+     * 과제를 제출한 학생의 첨부파일 번호를 가져오기 위한 쿼리
+     * @param taskSn 과제 번호
+     * @return 과제를 제출한 학생의 정보(첨부파일 정보)
+     */
+    List<TaskDTO> getStudentPresentnAtchmnflId(int taskSn);
 }

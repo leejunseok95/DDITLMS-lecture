@@ -20,4 +20,6 @@ public interface TaskService {
     AtchmnflDTO getAtchmnflInfo(int atchmnflId);
     //과제 제출
     void insertPresentn(Map<String,Object> paramMap);
+    //학생의 첨부파일 정보를 가져오기
+    void getStudentCoursTakenList(Map<String, Object> paramMap);
 }

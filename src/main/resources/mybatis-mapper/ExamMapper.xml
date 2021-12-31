@@ -35,14 +35,15 @@
     </select>
 
     <!--학생의 시험 페이지 목록을 출력하기 위한 쿼리-->
-    <select id="getStudentExamInfo" parameterType="int" resultType="ExamInfoDTO">
+    <select id="getStudentExamInfo" parameterType="map" resultType="ExamInfoDTO">
         SELECT A.EXAM_INFO_CD, A.EXAM_INFO_TITLE, A.EXAM_INFO_CATEGORY, A.EXAM_INFO_DATE,
                A.EXAM_INFO_CONTENT, A.ESTBL_COURS_CD, A.EXAM_INFO_TIMELIMIT
-        FROM EXAM_INFO A, STDNT B, MAJOR C, ESTBL_COURS D
-        WHERE A.ESTBL_COURS_CD = D.ESTBL_COURS_CD
-          AND D.MAJOR_CODE = C.MAJOR_CODE
-          AND C.MAJOR_CODE = B.MAJOR_CODE
+        FROM EXAM_INFO A, STDNT B, ESTBL_COURS C, ATNLC_LCTRE D
+        WHERE A.ESTBL_COURS_CD = C.ESTBL_COURS_CD
+          AND B.MBER_NO = D.MBER_NO
+          AND C.ESTBL_COURS_CD = D.ESTBL_COURS_CD
           AND B.MBER_NO = #{mberNo}
+          AND C.ESTBL_COURS_CD = #{estblCoursCd}
     </select>
 
     <!--문제 등록 시, 등록할 수 있는 문제를 출력하는 쿼리-->
@@ -59,10 +60,10 @@
     <!--학생이 시험볼 문제 출력 쿼리-->
     <select id="getExamTestForStudent" parameterType="hashmap" resultType="ExamDTO">
         SELECT E.EXAM_SN, E.EXAM_NUMBER, E.EXAM_TITLE, E.EXAM_ANSWER, E.EXAM_TYPE, E.EXAM_CONTENT, E.EXAM_INFO_CD
-        FROM EXAM_INFO A, STDNT B, MAJOR C, ESTBL_COURS D, EXAM E
+        FROM EXAM_INFO A, STDNT B, ATNLC_LCTRE C, ESTBL_COURS D, EXAM E
         WHERE A.ESTBL_COURS_CD = D.ESTBL_COURS_CD
-          AND D.MAJOR_CODE = C.MAJOR_CODE
-          AND C.MAJOR_CODE = B.MAJOR_CODE
+          AND d.estbl_cours_cd = c.estbl_cours_cd
+          AND C.MBER_NO = B.MBER_NO
           AND A.EXAM_INFO_CD = E.EXAM_INFO_CD
           AND B.MBER_NO = #{mberNo}
           AND E.EXAM_INFO_CD = #{examInfoCd}

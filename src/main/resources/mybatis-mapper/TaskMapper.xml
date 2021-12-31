@@ -43,6 +43,26 @@
           AND A.MBER_NO = #{mberNo}
           AND D.ESTBL_COURS_CD = #{estblCoursCd}
     </select>
+    
+    <!--그 수업을 듣는 학생을 조회하는 쿼리-->
+    <select id="getStudentCoursTakenList" parameterType="string" resultType="map">
+        SELECT B.MBER_NO, A.MBER_NM, E.MAJOR_NM_KR, B.GRADE, D.ESTBL_COURS_CD
+        FROM MBER A, STDNT B, ATNLC_LCTRE C, ESTBL_COURS D, MAJOR E
+        WHERE A.MBER_NO = B.MBER_NO
+          AND B.MBER_NO = C.MBER_NO
+          AND C.ESTBL_COURS_CD = D.ESTBL_COURS_CD
+          AND B.MAJOR_CODE = E.MAJOR_CODE
+          AND D.ESTBL_COURS_CD = #{estblcoursCd}
+    </select>
+
+    <!--과제를 제출한 학생들의 첨부파일 번호를 가져오기 위한 쿼리-->
+    <select id="getStudentPresentnAtchmnflId" parameterType="int" resultType="TaskDTO">
+        SELECT A.MBER_NO, A.TASK_SN, A.ATCHMNFL_ID
+        FROM PRESENTN A, TASK B, ESTBL_COURS C
+        WHERE C.ESTBL_COURS_CD = B.ESTBL_COURS_CD
+          AND B.TASK_SN = A.TASK_SN
+          AND A.TASK_SN = #{taskSn}
+    </select>
 
     <insert id="insertTask" parameterType="TaskDTO">
         INSERT INTO TASK(TASK_SN, TASK_NM, TASK_CN, TASK_PRESENTN_TMLMT, TASK_DE,ATCHMNFL_ID,ESTBL_COURS_CD)

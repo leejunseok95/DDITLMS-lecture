@@ -285,24 +285,27 @@ public class ExamController {
     @GetMapping("/onlineLecture/exam")
     public ModelAndView goOnlineLectureExam(ModelAndView mv, HttpSession session) {
         logger.info("ExamController - goOnlineLectureExam - mberNo session : {}", session.getAttribute("stuMberNo"));
-        
+        logger.info("ExamController - goOnlineLectureExam - mberNo session : {}", session.getAttribute("stuEstblCoursCd"));
+
         /**TODO 테스트 코드*/
         int mberNo = Integer.parseInt(session.getAttribute("stuMberNo").toString());
+        String estblCoursCd = session.getAttribute("stuEstblCoursCd").toString();
 
         /**변수 선언*/
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("mberNo", mberNo);
+        paramMap.put("estblCoursCd", estblCoursCd);
 
         /**서비스 호출*/
         examService.getStudentExamInfo(paramMap);
         logger.info("studentExamInfo : " + paramMap.get("studentExamInfo"));
 
         /**값 전달*/
+        mv.setViewName("pages/onlineLecture_student/student_lecture_exam");
         mv.addObject("studentExamInfo", paramMap.get("studentExamInfo"));
         mv.addObject("progress", paramMap.get("progress"));
         mv.addObject("state", paramMap.get("state"));
         mv.addObject("mberNo", mberNo);
-        mv.setViewName("pages/onlineLecture_student/student_lecture_exam");
 
         return mv;
     }
@@ -312,8 +315,7 @@ public class ExamController {
     public ModelAndView doOnlineExam(ModelAndView mv,
                                      @RequestParam("examInfoCd") String examInfoCd,
                                      @RequestParam("mberNo") int mberNo) {
-        logger.info("doOnlineExam");
-        logger.info("examInfoCd : {}, mberNo : {}",examInfoCd, mberNo);
+        logger.info("ExamController - doOnlineExam - examInfoCd : {}, mberNo : {}",examInfoCd, mberNo);
 
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("mberNo", mberNo);

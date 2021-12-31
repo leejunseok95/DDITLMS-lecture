@@ -212,7 +212,7 @@ public class ExamServiceImpl implements ExamService {
         Map<String, Object> progress = new HashMap<>();
 
         /**로직 처리 구간*/
-        List<ExamInfoDTO> studentExamList = examMapper.getStudentExamInfo(mberNo);
+        List<ExamInfoDTO> studentExamList = examMapper.getStudentExamInfo(paramMap);
 
         if (!studentExamList.isEmpty() || studentExamList != null) {
             for (ExamInfoDTO examInfoDTO : studentExamList) {

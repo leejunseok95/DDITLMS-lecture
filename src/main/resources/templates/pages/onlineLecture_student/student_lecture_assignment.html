@@ -126,12 +126,6 @@
         const submitAssignmentBtn = document.querySelector('#submitAssignmentBtn')
         let today = new Date()
 
-        goDetailAssignModal.forEach(item => {
-            item.addEventListener('click', e => {
-                openModal(e)
-            })
-        })
-
         for(let i = 0; i < taskList.length; i++) {
             const taskSnsubmit = taskList[i].taskSn + 'submit'
             const taskSnsubmitTr = document.getElementById(taskSnsubmit)
@@ -149,10 +143,16 @@
                     }
                 }
             } else {
-                    taskSnsubmitTr.innerText = '미제출'
-                    taskSnsubmitTr.value = 'fail'
+                taskSnsubmitTr.innerText = '미제출'
+                taskSnsubmitTr.value = 'fail'
             }
         }
+
+        goDetailAssignModal.forEach(item => {
+            item.addEventListener('click', e => {
+                openModal(e)
+            })
+        })
 
         const openModal = e => {
             const index = e.currentTarget.classList[2];
@@ -166,16 +166,18 @@
                     orignlFileNm = taskAtchmnFileList[i].orignlFileNm
                 }
             }
-            console.log(taskSnsubmit)
+            console.log(document.getElementById(taskSnsubmit).value)
 
-            if(document.getElementById(taskSnsubmit).value != 'success') {
+            if(document.getElementById(taskSnsubmit).value == null) {
                 assignModalSubmitBtn.innerHTML =
                     "<button class=\"btn btn-danger\" type=\"button\" style=\"float: right\"data-bs-toggle=\"modal\" data-bs-target=\".bd-example-modal-lg\">제출\n" +
                     "</button>"
-            } else {
+            } else if(document.getElementById(taskSnsubmit).value == 'success' && new Date(taskList[index].taskPresentnTmlmt) >= today) {
                 assignModalSubmitBtn.innerHTML =
                     "<button class=\"btn btn-warning\" type=\"button\" style=\"float: right\">수정\n" +
                     "</button>"
+            } else if(document.getElementById(taskSnsubmit).value == 'fail'){
+                assignModalSubmitBtn.innerHTML = ''
             }
 
             document.querySelector('#taskSn').value = taskList[index].taskSn

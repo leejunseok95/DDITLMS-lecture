@@ -39,10 +39,10 @@ public interface ExamMapper {
 
     /**
      * 학생이 보는 시험 정보를 가져오기 위한 mapper
-     * @param mberNo 접속한 학생의 학번
+     * @paramMap paramMap 접속한 학생의 학번, 개설교과 번호
      * @return 학생 시험 정보
      */
-    List<ExamInfoDTO> getStudentExamInfo(int mberNo);
+    List<ExamInfoDTO> getStudentExamInfo(Map<String, Object> paramMap);
 
     /**
      * 학생이 보는 시험 문제를 가져오기 위한 mapper

@@ -22,6 +22,7 @@
                             <th scope="col">내용</th>
                             <th scope="col">등록일</th>
                             <th scope="col">마감일</th>
+                            <th scope="col">마감</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -34,12 +35,15 @@
                             <td th:text="${list.taskCn}"></td>
                             <td th:text="${#dates.format(list.taskDe, 'yyyy-MM-dd')}"></td>
                             <td th:text="${#dates.format(list.taskPresentnTmlmt, 'yyyy-MM-dd')}"></td>
+                            <td th:if="${list.taskPresentnTmlmt.before(#calendars.createNow())}">O</td>
+                            <td th:if="${list.taskPresentnTmlmt.after(#calendars.createNow())}">X</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
         <!-- 과제 등록 modal 창 시작-->
         <form id="assignRegisterModal" method="post" enctype="multipart/form-data">
             <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
@@ -57,13 +61,16 @@
                             <label class="col-md-2" for="taskCn">과제 내용</label>
                             <div>
                                 <label class="col-md-2"></label>
-                                <textarea id="taskCn" name="taskCn" placeholder="과제 내용을 입력하세요" rows="5" cols="30" style="resize: none"></textarea><br>
+                                <textarea id="taskCn" name="taskCn" placeholder="과제 내용을 입력하세요" rows="5" cols="30"
+                                          style="resize: none"></textarea><br>
                             </div>
                             <label class="col-md-2" for="taskPresentnTmlmt">마감일</label>
-                            <input type="date" id="taskPresentnTmlmt" name="taskPresentnTmlmt" placeholder="과제 기한을 설정"><br>
+                            <input type="date" id="taskPresentnTmlmt" name="taskPresentnTmlmt"
+                                   placeholder="과제 기한을 설정"><br>
                             <label class="col-md-2" for="assignmentFile">첨부파일</label>
                             <input type="file" id="assignmentFile" name="assignmentFile" placeholder="첨부파일"><br>
-                            <input type="hidden" name="taskDe" th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd일 ')}">
+                            <input type="hidden" name="taskDe"
+                                   th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
                         </div>
                         <div class="modal-footer">
                             <button id="registerAssign" class="btn btn-primary" type="button"
@@ -92,7 +99,8 @@
                             <label class="col-md-2" for="taskCnDetail">과제 내용</label>
                             <div>
                                 <label class="col-md-2"></label>
-                                <textarea id="taskCnDetail" name="taskCn" placeholder="과제 내용을 입력하세요" rows="5" cols="30" style="resize: none"></textarea><br>
+                                <textarea id="taskCnDetail" name="taskCn" placeholder="과제 내용을 입력하세요" rows="5" cols="30"
+                                          style="resize: none"></textarea><br>
                             </div>
                             <label class="col-md-2" for="taskDeDetail">등록일</label>
                             <input type="date" id="taskDeDetail" name="taskDe" disabled><br>
@@ -107,6 +115,9 @@
                             <input type="hidden" name="atchmnflId" id="atchmnflIdDetail">
                         </div>
                         <div class="modal-footer">
+                            <span class="downaloadStudentsAssignment">
+
+                            </span>
                             <button id="updateAssign" class="btn btn-primary" type="button"
                                     style="float: right">수정
                             </button>
@@ -130,6 +141,9 @@
         const assignRegisterBtn = document.querySelector('#registerAssign')
         const assignDeleteBtn = document.querySelector('#deleteAssign')
         const goDetailAssignModal = document.querySelectorAll('.goDetailAssignModal')
+        const downloadAssignmentDiv = document.querySelector('.downaloadStudentsAssignment')
+        let downloadAllAssignment = null
+        let today = new Date()
 
         goDetailAssignModal.forEach(item => {
             item.addEventListener('click', e => {
@@ -140,6 +154,7 @@
         const openModal = e => {
             const index = e.currentTarget.classList[2];
             const atchmnflId = taskList[index].atchmnflId
+            const taskPresentnTmlmt = new Date(taskList[index].taskPresentnTmlmt)
             moment.DATETIME_LOCAL = "YYYY-MM-DD"
             console.log(atchmnflId)
 
@@ -151,9 +166,52 @@
             document.querySelector('#taskDeDetail').value =
                 moment(taskList[index].taskDe).format(moment.DATETIME_LOCAL)
             // document.querySelector('#assignmentFile').value = taskList[index].atchmnFlSn
-            if(atchmnflId != null || atchmnflId != '') {
+            if (atchmnflId != null || atchmnflId != '') {
                 document.querySelector('#atchmnflIdDetail').value = atchmnflId
             }
+
+            console.log(taskPresentnTmlmt >= today)
+            if(!(taskPresentnTmlmt < today)) {
+                downloadAssignmentDiv.innerHTML = ""
+            } else {
+                downloadAssignmentDiv.innerHTML = "<button id=\"downloadAssign\" class=\"btn btn-primary\" type=\"button\"\n" +
+                    "style=\"float: right\">과제 다운로드</button>"
+                downloadAllAssignment = document.querySelector('#downloadAssign')
+
+                downloadAllAssignment.addEventListener('click', function () {
+                    const detailForm = $('#assigDetailModal')[0]
+
+                    let formDataForDownload = new FormData(detailForm)
+
+                    $.ajax({
+                        url: '/assignment/downloadAll',
+                        data : formDataForDownload,
+                        enctype: 'multipart/form-data',
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        method: 'POST',
+                        dataType: 'json',
+                        success : function (data) {
+                            alert("다운로드 성공")
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(header, token);
+                        }
+                    })
+                    // .done(function (fragment) {
+                    //     console.log(fragment)
+                    //     if (fragment.state = true) {
+                    //         swal("다운로드 성공")
+                    //         location.reload()
+                    //     } else {
+                    //         swal("다운로드 실패")
+                    //         location.reload()
+                    //     }
+                    // })
+                })
+            }
+
         }
 
         assignDeleteBtn.addEventListener('click', function () {
@@ -162,27 +220,27 @@
             let formDataForDelete = new FormData(detailForm)
 
             $.ajax({
-                url : '/assignment/delete',
-                data : formDataForDelete,
-                enctype : 'multipart/form-data',
+                url: '/assignment/delete',
+                data: formDataForDelete,
+                enctype: 'multipart/form-data',
                 cache: false,
                 processData: false,
                 contentType: false,
-                method : 'POST',
-                dataType : 'json',
+                method: 'POST',
+                dataType: 'json',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader(header, token);
                 }
             })
-                .done(function (fragment) {
-                    if(fragment.state = true) {
-                        swal("삭제 성공")
-                        location.reload()
-                    } else {
-                        swal("삭제 실패")
-                        location.reload()
-                    }
-                })
+            .done(function (fragment) {
+                if (fragment.state = true) {
+                    swal("삭제 성공")
+                    location.reload()
+                } else {
+                    swal("삭제 실패")
+                    location.reload()
+                }
+            })
         })
 
         assignRegisterBtn.addEventListener('click', function () {
@@ -207,27 +265,27 @@
             }
 
             $.ajax({
-                url : '/assignment/register',
-                enctype : 'multipart/form-data',
+                url: '/assignment/register',
+                enctype: 'multipart/form-data',
                 cache: false,
                 processData: false,
                 contentType: false,
-                data : formDataRegister,
-                method : 'POST',
-                dataType : 'json',
+                data: formDataRegister,
+                method: 'POST',
+                dataType: 'json',
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader(header, token);
                 }
             })
-            .done(function (fragment) {
-                if(fragment.state = true) {
-                    swal("등록 성공")
-                    location.reload()
-                } else {
-                    swal("등록 실패")
-                    location.reload()
-                }
-            })
+                .done(function (fragment) {
+                    if (fragment.state = true) {
+                        swal("등록 성공")
+                        location.reload()
+                    } else {
+                        swal("등록 실패")
+                        location.reload()
+                    }
+                })
         })
     </script>
 </th:block>
