@@ -193,13 +193,6 @@ public class OnlineLecController {
         return "pages/onlineLecture_professor/professor_lecture_board";
     }
 
-    //교수 학생 관리
-    @GetMapping("/professorOnlineLecture/management")
-    public String goProfessorOnlineLectureStudManagement() {
-        logger.info("professorStudentManagement");
-        return "pages/onlineLecture_professor/professor_lecture_management";
-    }
-
     //강의 업로드
     @PostMapping(value = "/uploadLecture", consumes = ("multipart/form-data"))
     public void uploadFile(HttpServletResponse response,

@@ -19,6 +19,16 @@
           AND ESTBL_COURS_CD = #{estblCoursCd}
     </select>
 
+    <!--각 과목에 있는 학생의 성적 정보를 볼 수 있다-->
+    <select id="getStudentScore" parameterType="string" resultType="map">
+        SELECT A.MBER_NO, A.MBER_NM, B.GRADE, D.ATEND_SCORE, D.TASKS_CORE, D.MIDDLE_EXPR_SCORE, D.TRMEND_EXPR_SCORE, D.ESTBL_COURS_CD
+        FROM MBER A, STDNT B, ATNLC_LCTRE C, SCORE D
+        WHERE A.MBER_NO = B.MBER_NO
+          AND B.MBER_NO = C.MBER_NO
+          AND C.ESTBL_COURS_CD = D.ESTBL_COURS_CD
+          AND D.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
     <!--학생이 수강 신청을 했으면 성적 테이블에 생성되어지는 것-->
     <insert id="insertStudentScore" parameterType="ScoreDTO">
         insert into score(SCRE_SN, ATEND_SCORE, TASKS_CORE, MIDDLE_EXPR_SCORE, TRMEND_EXPR_SCORE, ESTBL_COURS_CD, MBER_NO)

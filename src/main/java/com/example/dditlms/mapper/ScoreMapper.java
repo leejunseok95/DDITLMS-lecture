@@ -5,6 +5,7 @@ import com.example.dditlms.domain.dto.ScoreDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ScoreMapper {
@@ -36,4 +37,11 @@ public interface ScoreMapper {
      * @return 학생 출석 현황
      */
     List<AtendDTO> checkAtendInfo(AtendDTO atendDTO);
+
+    /**
+     * 각 과목을 수강하는 학생들의 성적을 출력
+     * @param estblCoursCd 개설교과 primary key값
+     * @return 입력한 강의를 수강하는 학생들의 성적 list
+     */
+    List<Map<String, Object>> getStudentScore(String estblCoursCd);
 }
