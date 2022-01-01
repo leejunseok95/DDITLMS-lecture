@@ -24,6 +24,7 @@ public class OnlineMainController {
     @GetMapping("/online/studentMain")
     public ModelAndView goStudentMainPage(ModelAndView mv, HttpSession session) {
         /**TODO 임시 변수*/
+//        int mberNo = 201401450;
         int mberNo = 201401449;
         session.setAttribute("stuMberNo", mberNo);
 

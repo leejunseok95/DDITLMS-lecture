@@ -49,10 +49,21 @@ public class TaskController {
         paramMap.put("estblCoursCd", estblCoursCd);
 
         service.getProfessorTaskList(paramMap);
+        //오케이 컨트롤러 딴에서 task_sn끼리 비교를 해서 따로 map에 넣어두고 출력을 하면 되겠구나
+        List<TaskDTO> taskList = (List)paramMap.get("taskList");
+        List<Map<String, Object>>  studentScoreList = (List)paramMap.get("studentScoreList");
+
+        for(Map<String, Object> scoreListTaskSn : studentScoreList) {
+            logger.info("TaskController - goProfessorOnlineLectureAssignment - scoreListTaskSn : {}", scoreListTaskSn);
+            for(TaskDTO taskListTaskSn : taskList) {
+                logger.info("TaskController - goProfessorOnlineLectureAssignment - taskListTaskSn : {}", taskListTaskSn);
+            }
+        }
 
         mv.setViewName("pages/onlineLecture_professor/professor_lecture_assignment");
         mv.addObject("taskList", paramMap.get("taskList"));
         mv.addObject("studentCoursTakenList", paramMap.get("studentCoursTakenList"));
+        mv.addObject("studentScoreList", studentScoreList);
         return mv;
     }
 

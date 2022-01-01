@@ -18,4 +18,21 @@
         </if>
         ORDER BY EXAM_NUMBER ASC
     </select>
+
+    <select id="searchAndGetStudentScoreList" parameterType="map" resultType="map">
+        SELECT A.MBER_NO, A.MBER_NM, B.GRADE, D.ATEND_SCORE, D.TASKS_CORE, D.MIDDLE_EXPR_SCORE, D.TRMEND_EXPR_SCORE, D.ESTBL_COURS_CD
+          FROM MBER A, STDNT B, ATNLC_LCTRE C, SCORE D
+         WHERE A.MBER_NO = B.MBER_NO
+           AND B.MBER_NO = C.MBER_NO
+           AND C.MBER_NO = D.MBER_NO
+           AND C.ESTBL_COURS_CD = D.ESTBL_COURS_CD
+           AND D.ESTBL_COURS_CD = #{estblCoursCd}
+        <if test="keyword == 'mberNo'">
+            AND A.MBER_NO LIKE concat('%',concat(#{search},'%'))
+        </if>
+        <if test="keyword == 'mberNm'">
+            AND A.MBER_NM LIKE concat('%',concat(#{search},'%'))
+        </if>
+        ORDER BY A.MBER_NO ASC
+    </select>
 </mapper>

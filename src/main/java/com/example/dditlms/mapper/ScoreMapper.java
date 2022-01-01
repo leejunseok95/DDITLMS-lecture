@@ -44,4 +44,11 @@ public interface ScoreMapper {
      * @return 입력한 강의를 수강하는 학생들의 성적 list
      */
     List<Map<String, Object>> getStudentScore(String estblCoursCd);
+
+    /**
+     * 과제를 제출한 학생에 대한 정보를 출력하는 쿼리
+     * @param estblCoursCd 개설교과 primary key
+     * @return 학생의 과제 제출 값
+     */
+    List<Map<String, Object>> getStudentTaskScoreList(String estblCoursCd);
 }

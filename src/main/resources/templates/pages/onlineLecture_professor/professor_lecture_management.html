@@ -9,6 +9,18 @@
             <div class="card">
                 <div class="card-header">
                     <h5>학생관리</h5>
+                    <!-- 검색 -->
+                    <form action="/professorOnlineLecture/management" method="get">
+                        <div class="text-end">
+                            <select name="keyword" id="keyword">
+                                <option value="mberNo">학번</option>
+                                <option value="mberNm">이름</option>
+                            </select>
+                            <input type="hidden" name="examInfoCd">
+                            <input type="text" id="search" name="search">
+                            <button type="submit">검색</button>
+                        </div>
+                    </form>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -16,7 +28,7 @@
                         <tr class="text-center">
                             <th scope="col">#</th>
                             <th scope="col">학번</th>
-                            <th scope="col">학과</th>
+                            <th scope="col">이름</th>
                             <th scope="col">학년</th>
                             <th scope="col">출결</th>
                             <th scope="col">과제</th>
@@ -26,36 +38,61 @@
                         </thead>
                         <tbody>
                         <tr class="text-center"
-                            th:each="scoreList, i : ${studentScoreList}"
+                            th:each="scoreList, i : ${users.getList()}"
                             data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">
                             <th scope="row" th:text="${i.count}"></th>
-                            <td th:text="${scoreList.get('MBER_NO')}">test</td>
-                            <td th:text="${scoreList.get('MBER_NM')}">test</td>
-                            <td th:text="${scoreList.get('GRADE')}">test</td>
-                            <td th:text="${scoreList.get('ATEND_SCORE')}">test</td>
-                            <td th:text="${scoreList.get('TASKS_CORE')}">test</td>
-                            <td th:text="${scoreList.get('MIDDLE_EXPR_SCORE')}">test</td>
-                            <td th:text="${scoreList.get('TRMEND_EXPR_SCORE')}">test</td>
+                            <td th:text="${scoreList.get('MBER_NO')}"></td>
+                            <td th:text="${scoreList.get('MBER_NM')}"></td>
+                            <td th:if="${scoreList.get('GRADE').equals('FRESHMAN')}" th:text="'1학년'"></td>
+                            <td th:if="${scoreList.get('GRADE').equals('SOPHOMORE')}" th:text="'2학년'"></td>
+                            <td th:if="${scoreList.get('GRADE').equals('JUNIOR')}" th:text="'3학년'"></td>
+                            <td th:if="${scoreList.get('GRADE').equals('SENIOR')}" th:text="'4학년'"></td>
+                            <td th:text="${scoreList.get('ATEND_SCORE')}"></td>
+                            <td th:text="${scoreList.get('TASKS_CORE')}"></td>
+                            <td th:text="${scoreList.get('MIDDLE_EXPR_SCORE')}"></td>
+                            <td th:text="${scoreList.get('TRMEND_EXPR_SCORE')}"></td>
                         </tr>
                         </tbody>
                     </table>
-<!--                    &lt;!&ndash; Modal 창 &ndash;&gt;-->
-<!--                    <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">-->
-<!--                        <div class="modal-dialog modal-lg">-->
-<!--                            <div class="modal-content">-->
-<!--                                <div class="modal-header">-->
-<!--                                    <h4 class="modal-title" id="myLargeModalLabel">게시판 제목</h4>-->
-<!--                                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>-->
-<!--                                </div>-->
-<!--                                <div class="modal-body">-->
-<!--                                    <video th:src="@{/static/video/video1.mp4}" controls/>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
                 </div>
+                <!-- Modal 창 -->
+                <div class="modal fade bd-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="modal-title" id="myLargeModalLabel">게시판 제목</h4>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!--성적 입력 modal 종료-->
             </div>
         </div>
+        <nav>
+            <ul class="pagination pagination-primary justify-content-center">
+                <!-- getPrePage : 이전 페이지 -->
+                <li class="page-item" th:classappend="${users.getPrePage() == 0} ? 'disabled'">
+                    <!-- href: /page?pageNum=이전페이지&keyword=검색분류&search=검색어 -->
+                    <a class="page-link"
+                       th:href="@{/professorOnlineLecture/management(pageNum=${users.getPrePage()}, keyword=${search.getKeyword()}, search=${search.getSearch()})}">Previous</a>
+                </li>
+                <!-- getNavigateFirstPage() : 페이징의 처음 숫자 getNavigateLastPage : 페이징의 마지막 숫자를 이용해 페이징 숫자 출력 -->
+                <!-- href : /page?pageNum=선택한 페이지&keyword=검색분류&search=검색어 -->
+                <li class="page-item"
+                    th:each="page: ${#numbers.sequence(users.getNavigateFirstPage(), users.getNavigateLastPage())}"
+                    th:classappend="${page == users.getPageNum()} ? 'active'">
+                    <a class="page-link" th:text="${page}"
+                       th:href="@{/professorOnlineLecture/management(pageNum=${page}, keyword=${search.getKeyword()}, search=${search.getSearch()})}"></a>
+                </li>
+                <!-- getPrePage : 다음 페이지 -->
+                <li class="page-item" th:classappend="${users.getNextPage() == 0} ? 'disabled'">
+                    <!-- href: /page?pageNum=다음페이지&keyword=검색분류&search=검색어 -->
+                    <a class="page-link"
+                       th:href="@{/professorOnlineLecture/management(pageNum=${users.getNextPage()}, keyword=${search.getKeyword()}, search=${search.getSearch()})}">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </th:block>
 </html>

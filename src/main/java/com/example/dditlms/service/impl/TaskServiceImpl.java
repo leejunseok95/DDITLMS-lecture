@@ -4,6 +4,7 @@ import com.example.dditlms.domain.dto.AtchmnflDTO;
 import com.example.dditlms.domain.dto.PresentnDTO;
 import com.example.dditlms.domain.dto.TaskDTO;
 import com.example.dditlms.mapper.OnlineLecMapper;
+import com.example.dditlms.mapper.ScoreMapper;
 import com.example.dditlms.mapper.Taskmapper;
 import com.example.dditlms.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class TaskServiceImpl implements TaskService {
     private static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
     private final Taskmapper mapper;
     private final OnlineLecMapper onlineLecMapper;
+    private final ScoreMapper scoreMapper;
 
     //교수 과제 list
     @Override
@@ -36,11 +38,13 @@ public class TaskServiceImpl implements TaskService {
 
         List<TaskDTO> taskList = mapper.getProfessorTaskList(paramMap);
         List<Map<String, Object>> studentCoursTakenList = mapper.getStudentCoursTakenList(estblCoursCd);
+        List<Map<String, Object>> studentScoreList = scoreMapper.getStudentTaskScoreList(estblCoursCd);
         logger.info("TaskServiceImpl - getProfessorTaskList - taskList : " + taskList);
-        logger.info("TaskServiceImpl - getProfessorTaskList - studentCoursTakenList : {}", studentCoursTakenList);
+        logger.info("TaskServiceImpl - getProfessorTaskList - studentScoreList : {}", studentScoreList);
 
         paramMap.put("taskList", taskList);
-        paramMap.put("studentCoursTakenList",studentCoursTakenList);
+        paramMap.put("studentCoursTakenList", studentCoursTakenList);
+        paramMap.put("studentScoreList", studentScoreList);
     }
 
     //과제 등록

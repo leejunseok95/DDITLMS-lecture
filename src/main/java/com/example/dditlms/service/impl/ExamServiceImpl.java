@@ -331,6 +331,7 @@ public class ExamServiceImpl implements ExamService {
                     .estblCoursCd(estblCoursCd)
                     .mberNo(mberNo)
                     .build();
+
         } else if(examInfoCategory.equals("final")) {
             scoreDTO = ScoreDTO.builder()
                     .trmendExprScore(finalScore)

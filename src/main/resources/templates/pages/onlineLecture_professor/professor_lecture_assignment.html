@@ -10,36 +10,86 @@
                 <div class="card-header">
                     <h5>과제</h5>
                     <button class="btn btn-danger" type="button" style="float: right" data-bs-toggle="modal"
-                            data-bs-target=".bd-example-modal-lg">등록
+                            data-bs-target=".bd-example-modal-lg">과제 등록
                     </button>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr class="text-center">
-                            <th scope="col">No</th>
-                            <th scope="col">제목</th>
-                            <th scope="col">내용</th>
-                            <th scope="col">등록일</th>
-                            <th scope="col">마감일</th>
-                            <th scope="col">마감</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr class="goDetailAssignModal text-center"
-                            th:classappend="${i.index}" style="cursor: pointer"
-                            th:each="list, i : ${taskList}" th:id="${list.taskSn}"
-                            data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg2">
-                            <th scope="row" th:text="${i.count}"></th>
-                            <td th:text="${list.taskNm}"></td>
-                            <td th:text="${list.taskCn}"></td>
-                            <td th:text="${#dates.format(list.taskDe, 'yyyy-MM-dd')}"></td>
-                            <td th:text="${#dates.format(list.taskPresentnTmlmt, 'yyyy-MM-dd')}"></td>
-                            <td th:if="${list.taskPresentnTmlmt.before(#calendars.createNow())}">O</td>
-                            <td th:if="${list.taskPresentnTmlmt.after(#calendars.createNow())}">X</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="icon-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="icon-home-tab" data-bs-toggle="tab" href="#icon-home"
+                               role="tab" aria-controls="icon-home" aria-selected="true">
+                                <i class="icon-pencil-alt"></i>과제</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-icon-tab" data-bs-toggle="tab"
+                               href="#profile-icon" role="tab" aria-controls="profile-icon" aria-selected="false">
+                                <i class="icon-user"></i>과제 채점</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="icon-tabContent">
+                        <div class="tab-pane fade active show" id="icon-home" role="tabpanel" aria-labelledby="icon-home-tab">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th scope="col">No</th>
+                                        <th scope="col">제목</th>
+                                        <th scope="col">내용</th>
+                                        <th scope="col">등록일</th>
+                                        <th scope="col">마감일</th>
+                                        <th scope="col">마감</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="goDetailAssignModal text-center"
+                                        th:classappend="${i.index}" style="cursor: pointer"
+                                        th:each="list, i : ${taskList}" th:id="${list.taskSn}"
+                                        data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg2">
+                                        <th scope="row" th:text="${i.count}"></th>
+                                        <td th:text="${list.taskNm}"></td>
+                                        <td th:text="${list.taskCn}"></td>
+                                        <td th:text="${#dates.format(list.taskDe, 'yyyy-MM-dd')}"></td>
+                                        <td th:text="${#dates.format(list.taskPresentnTmlmt, 'yyyy-MM-dd')}"></td>
+                                        <td th:if="${list.taskPresentnTmlmt.before(#calendars.createNow())}">O</td>
+                                        <td th:if="${list.taskPresentnTmlmt.after(#calendars.createNow())}">X</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="profile-icon" role="tabpanel" aria-labelledby="profile-icon-tab">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th scope="col">#</th>
+                                        <th scope="col">학번</th>
+                                        <th scope="col">이름</th>
+                                        <th scope="col">과제 1</th>
+                                        <th scope="col">과제 2</th>
+                                        <th scope="col">과제 3</th>
+                                        <th scope="col">과제 4</th>
+                                        <th scope="col">총점</th>
+                                        <th scope="col">등록</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="text-center vierticalCenter" th:each="scoreList, i : ${studentScoreList}">
+                                        <th scope="row" th:text="${i.count}">#</th>
+                                        <th class="col-md-2" th:text="${scoreList.get('MBER_NO')}">학번</th>
+                                        <td th:text="${scoreList.get('MBER_NM')}">이름</td>
+                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
+                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
+                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
+                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
+                                        <td th:text="${scoreList.get('TASKS_CORE')}">점수</td>
+                                        <td><button>update</button></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -171,7 +221,7 @@
             }
 
             console.log(taskPresentnTmlmt >= today)
-            if(!(taskPresentnTmlmt < today)) {
+            if (!(taskPresentnTmlmt < today)) {
                 downloadAssignmentDiv.innerHTML = ""
             } else {
                 downloadAssignmentDiv.innerHTML = "<button id=\"downloadAssign\" class=\"btn btn-primary\" type=\"button\"\n" +
@@ -185,14 +235,14 @@
 
                     $.ajax({
                         url: '/assignment/downloadAll',
-                        data : formDataForDownload,
+                        data: formDataForDownload,
                         enctype: 'multipart/form-data',
                         cache: false,
                         processData: false,
                         contentType: false,
                         method: 'POST',
                         dataType: 'json',
-                        success : function (data) {
+                        success: function (data) {
                             alert("다운로드 성공")
                         },
                         beforeSend: function (xhr) {
@@ -232,15 +282,15 @@
                     xhr.setRequestHeader(header, token);
                 }
             })
-            .done(function (fragment) {
-                if (fragment.state = true) {
-                    swal("삭제 성공")
-                    location.reload()
-                } else {
-                    swal("삭제 실패")
-                    location.reload()
-                }
-            })
+                .done(function (fragment) {
+                    if (fragment.state = true) {
+                        swal("삭제 성공")
+                        location.reload()
+                    } else {
+                        swal("삭제 실패")
+                        location.reload()
+                    }
+                })
         })
 
         assignRegisterBtn.addEventListener('click', function () {
