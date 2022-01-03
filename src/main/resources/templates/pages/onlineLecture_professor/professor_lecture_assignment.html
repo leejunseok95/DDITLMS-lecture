@@ -27,7 +27,8 @@
                         </li>
                     </ul>
                     <div class="tab-content" id="icon-tabContent">
-                        <div class="tab-pane fade active show" id="icon-home" role="tabpanel" aria-labelledby="icon-home-tab">
+                        <div class="tab-pane fade active show" id="icon-home" role="tabpanel"
+                             aria-labelledby="icon-home-tab">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -69,22 +70,27 @@
                                         <th scope="col">과제 2</th>
                                         <th scope="col">과제 3</th>
                                         <th scope="col">과제 4</th>
-                                        <th scope="col">총점</th>
                                         <th scope="col">등록</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr class="text-center vierticalCenter" th:each="scoreList, i : ${studentScoreList}">
-                                        <th scope="row" th:text="${i.count}">#</th>
-                                        <th class="col-md-2" th:text="${scoreList.get('MBER_NO')}">학번</th>
-                                        <td th:text="${scoreList.get('MBER_NM')}">이름</td>
-                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
-                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
-                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
-                                        <td class="col-md-1"><input class="form-control input-sm" type="number">/25</td>
-                                        <td th:text="${scoreList.get('TASKS_CORE')}">점수</td>
-                                        <td><button>update</button></td>
-                                    </tr>
+                                    <form th:each="studentList, i : ${getTaskStudentNoAndNm}" th:id="${'studentEachTaskScore' + studentList.mberNo}">
+                                        <tr class="text-center vierticalCenter">
+                                            <th scope="row" th:text="${i.count}">#</th>
+                                            <th class="col-md-2" th:text="${studentList.mberNo}">학번</th>
+                                            <td th:text="${studentList.mberNm}">이름</td>
+                                            <!--할수 있다 여기서 다시 each문을 사용하면 됨-->
+                                            <td class="col-md-1"
+                                                th:each="taskScore : ${eachStudentScore.get(studentList.mberNo+'stu')}">
+                                                <input class="form-control input-sm" type="number" th:name="${'taskScore-'+studentList.mberNo+'-'+taskScore.taskSn}"
+                                                       th:value="${taskScore.taskScore}">/25
+                                            </td>
+                                            <td>
+                                                <button type="button" class="updateStudentTaskScore" th:id="${studentList.mberNo}">update</button>
+                                            </td>
+                                            <input type="hidden" name="mberNo" th:value="${studentList.mberNo}">
+                                        </tr>
+                                    </form>
                                     </tbody>
                                 </table>
                             </div>
@@ -185,13 +191,13 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         const taskList = /*[[ ${taskList} ]]*/;
-        console.log(taskList)
         /*]]*/
 
         const assignRegisterBtn = document.querySelector('#registerAssign')
         const assignDeleteBtn = document.querySelector('#deleteAssign')
         const goDetailAssignModal = document.querySelectorAll('.goDetailAssignModal')
         const downloadAssignmentDiv = document.querySelector('.downaloadStudentsAssignment')
+        const updateStudentTaskScore = document.querySelectorAll('.updateStudentTaskScore')
         let downloadAllAssignment = null
         let today = new Date()
 
@@ -200,6 +206,43 @@
                 openModal(e)
             })
         })
+
+        updateStudentTaskScore.forEach(item => {
+            item.addEventListener('click', e => {
+                updateScore(e)
+            })
+        })
+
+        const updateScore = e => {
+            console.log(e.currentTarget.id)
+
+            const id = 'studentEachTaskScore' + e.currentTarget.id;
+            const updateScoreForm = document.getElementById(id)
+
+            let formDataUpdate = new FormData(updateScoreForm)
+
+            $.ajax({
+                url: '/assignment/score/update',
+                data: formDataUpdate,
+                method: 'POST',
+                cache: false,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                }
+            })
+            .done(function (fragment) {
+                if (fragment.state = true) {
+                    swal("등록 성공")
+                    location.reload()
+                } else {
+                    swal("등록 실패")
+                    location.reload()
+                }
+            })
+        }
 
         const openModal = e => {
             const index = e.currentTarget.classList[2];

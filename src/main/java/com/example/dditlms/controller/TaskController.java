@@ -1,6 +1,7 @@
 package com.example.dditlms.controller;
 
 import com.example.dditlms.domain.dto.AtchmnflDTO;
+import com.example.dditlms.domain.dto.PresentnDTO;
 import com.example.dditlms.domain.dto.TaskDTO;
 import com.example.dditlms.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -52,18 +53,14 @@ public class TaskController {
         //오케이 컨트롤러 딴에서 task_sn끼리 비교를 해서 따로 map에 넣어두고 출력을 하면 되겠구나
         List<TaskDTO> taskList = (List)paramMap.get("taskList");
         List<Map<String, Object>>  studentScoreList = (List)paramMap.get("studentScoreList");
-
-        for(Map<String, Object> scoreListTaskSn : studentScoreList) {
-            logger.info("TaskController - goProfessorOnlineLectureAssignment - scoreListTaskSn : {}", scoreListTaskSn);
-            for(TaskDTO taskListTaskSn : taskList) {
-                logger.info("TaskController - goProfessorOnlineLectureAssignment - taskListTaskSn : {}", taskListTaskSn);
-            }
-        }
+        Map<String, Object> testpresentMap = (Map<String, Object>)paramMap.get("eachStudentScore");
 
         mv.setViewName("pages/onlineLecture_professor/professor_lecture_assignment");
         mv.addObject("taskList", paramMap.get("taskList"));
-        mv.addObject("studentCoursTakenList", paramMap.get("studentCoursTakenList"));
+//        mv.addObject("studentCoursTakenList", paramMap.get("studentCoursTakenList"));
         mv.addObject("studentScoreList", studentScoreList);
+        mv.addObject("eachStudentScore", paramMap.get("eachStudentScore"));
+        mv.addObject("getTaskStudentNoAndNm", paramMap.get("getTaskStudentNoAndNm"));
         return mv;
     }
 
@@ -130,6 +127,40 @@ public class TaskController {
         int deleteAtchmnflResult = Integer.parseInt(paramMap.get("deleteAtchmnflResult").toString());
 
         if (deleteTaskResult > 0 && deleteAtchmnflResult > 0) {
+            jsonObject.put("state", true);
+        } else {
+            jsonObject.put("state", false);
+        }
+
+        try {
+            response.getWriter().print(jsonObject);
+        } catch (IOException e) {
+            logger.error("{}",e);
+        }
+    }
+
+    /**
+     * 학생 점수 update 메소드
+     * @param response jsonObject를 보내기 위해 사용하는 메소드
+     * @param paramMap 학생의 각 과제별 점수
+     */
+    @PostMapping("/assignment/score/update")
+    public void updateStudentTaskScore(HttpServletResponse response,
+                                       HttpSession session,
+                                       @RequestParam Map<String, Object> paramMap) {
+        logger.info("TaskController - updateStudentTaskScore - paramMap : {}", paramMap);
+        response.setContentType("text/html; charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        JSONObject jsonObject = new JSONObject();
+
+        String estblCoursCd = session.getAttribute("proEstblCoursCd").toString();
+        paramMap.put("estblCoursCd", estblCoursCd);
+
+        service.updateStudentTaskScore(paramMap);
+
+        int result = Integer.parseInt(paramMap.get("result").toString());
+
+        if(result > 0) {
             jsonObject.put("state", true);
         } else {
             jsonObject.put("state", false);

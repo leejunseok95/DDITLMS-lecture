@@ -22,4 +22,6 @@ public interface TaskService {
     void insertPresentn(Map<String,Object> paramMap);
     //학생의 첨부파일 정보를 가져오기
     void getStudentCoursTakenList(Map<String, Object> paramMap);
+    //과제 점수 update mapper
+    void updateStudentTaskScore(Map<String, Object> paramMap);
 }

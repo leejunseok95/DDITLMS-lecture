@@ -208,8 +208,8 @@ public class ExamServiceImpl implements ExamService {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
-        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
         Map<String, Object> progress = new HashMap<>();
+        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
 
         /**로직 처리 구간*/
         List<ExamInfoDTO> studentExamList = examMapper.getStudentExamInfo(paramMap);

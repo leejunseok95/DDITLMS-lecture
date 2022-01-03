@@ -106,7 +106,7 @@ public class OnlineLecServiceImpl implements OnlineLecService {
     @Override
     public void selectGoOnlineLecture(Map<String, Object> paramMap) {
         /** 파라미터 조회 ****************************************************************************************/
-        int tempMberNo = (int) paramMap.get("tempMberNo");
+        int tempMberNo = Integer.parseInt(paramMap.get("tempMberNo").toString());
         int insertVidoInfo = (int) paramMap.get("insertVidoInfo");
         String estblCoursCd = (String) paramMap.get("estblCoursCd");
         OnlineLecDTO onlineLecDTO = (OnlineLecDTO) paramMap.get("onlineLecDTO");
@@ -118,7 +118,11 @@ public class OnlineLecServiceImpl implements OnlineLecService {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         LocalDate now = LocalDate.now();
         VidoInfoDTO vidoInfoDTO = null; //강의 영상 정보를 입력
-        AtnlcLctreDTO atnlcLctreDTO = new AtnlcLctreDTO(tempMberNo, estblCoursCd, 0); // 첨부파일 관련
+        AtnlcLctreDTO atnlcLctreDTO = AtnlcLctreDTO.builder()
+                .mberNo(tempMberNo)
+                .estblCoursCd(estblCoursCd)
+                .pnt(0)
+                .build();
 
         Map<String, Object> putVideoInfo = new HashMap<>(); // 비디오정보 - 매개변수
         putVideoInfo.put("mberNo", tempMberNo);

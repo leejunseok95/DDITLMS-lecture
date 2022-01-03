@@ -55,6 +55,61 @@
           AND D.ESTBL_COURS_CD = #{estblcoursCd}
     </select>
 
+    <!--학생이 제출한 과제가 있는지 check-->
+    <select id="checkPresentn" parameterType="PresentnDTO" resultType="PresentnDTO">
+        SELECT *
+        FROM PRESENTN
+        WHERE MBER_NO = #{mberNo}
+          AND TASK_SN = #{taskSn}
+    </select>
+
+    <!---->
+    <select id="getTaskScore" parameterType="map" resultType="PresentnDTO">
+        SELECT A.MBER_NO, A.TASK_SN, A.TASK_SCORE, A.PRESENTN_SJ
+        FROM PRESENTN A, TASK B, ESTBL_COURS C
+        WHERE A.TASK_SN = B.TASK_SN
+          AND B.ESTBL_COURS_CD = C.ESTBL_COURS_CD
+          AND A.MBER_NO = #{mberNo}
+          AND C.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <!--반복되서 지겹지만 그냥 과제 출력을 위해 학생의 학번과 이름을 가져오는 쿼리-->
+    <select id="getTaskStudentNoAndNm" parameterType="string" resultType="MberDTO">
+        SELECT A.MBER_NO, A.MBER_NM
+        FROM MBER A, STDNT B, ATNLC_LCTRE C, ESTBL_COURS D
+        WHERE A.MBER_NO = B.MBER_NO
+          AND B.MBER_NO = C.MBER_NO
+          AND C.ESTBL_COURS_CD = D.ESTBL_COURS_CD
+          AND D.ESTBL_COURS_CD = #{estblCoursCd}
+    </select>
+
+    <update id="updatePresentnBySubmit" parameterType="PresentnDTO">
+        UPDATE PRESENTN
+        SET presentn_sj = #{presentnSj},
+            PRESENTN_CN = #{presentnCn},
+            PRESENTN_DATE = #{presentnDate},
+            TASK_SCORE = #{taskScore},
+            ATCHMNFL_ID = #{atchmnflId}
+        WHERE MBER_NO = #{mberNo}
+          AND TASK_SN = #{taskSn}
+    </update>
+
+    <!--score테이블 과제 점수 update-->
+    <update id="updateScoreTasksCore" parameterType="ScoreDTO">
+        UPDATE SCORE
+        SET TASKS_CORE = #{tasksCore}
+        WHERE MBER_NO = #{mberNo}
+          AND ESTBL_COURS_CD = #{estblCoursCd}
+    </update>
+
+    <!--과제 점수 업데이트 하기 위한 쿼리-->
+    <update id="updateStudentTaskScore" parameterType="PresentnDTO">
+        UPDATE PRESENTN
+        SET TASK_SCORE = #{taskScore}
+        WHERE MBER_NO = #{mberNo}
+          AND TASK_SN = #{taskSn}
+    </update>
+
     <!--과제를 제출한 학생들의 첨부파일 번호를 가져오기 위한 쿼리-->
     <select id="getStudentPresentnAtchmnflId" parameterType="int" resultType="TaskDTO">
         SELECT A.MBER_NO, A.TASK_SN, A.ATCHMNFL_ID

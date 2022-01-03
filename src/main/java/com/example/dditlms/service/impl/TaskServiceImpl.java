@@ -1,8 +1,6 @@
 package com.example.dditlms.service.impl;
 
-import com.example.dditlms.domain.dto.AtchmnflDTO;
-import com.example.dditlms.domain.dto.PresentnDTO;
-import com.example.dditlms.domain.dto.TaskDTO;
+import com.example.dditlms.domain.dto.*;
 import com.example.dditlms.mapper.OnlineLecMapper;
 import com.example.dditlms.mapper.ScoreMapper;
 import com.example.dditlms.mapper.Taskmapper;
@@ -18,10 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,16 +30,58 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void getProfessorTaskList(Map<String, Object> paramMap) {
         String estblCoursCd = paramMap.get("estblCoursCd").toString();
+        Map<String, Object> eachStudentScore = new HashMap<>();
+        eachStudentScore.put("estblCoursCd", estblCoursCd);
 
         List<TaskDTO> taskList = mapper.getProfessorTaskList(paramMap);
-        List<Map<String, Object>> studentCoursTakenList = mapper.getStudentCoursTakenList(estblCoursCd);
+//        List<Map<String, Object>> studentCoursTakenList = mapper.getStudentCoursTakenList(estblCoursCd);
         List<Map<String, Object>> studentScoreList = scoreMapper.getStudentTaskScoreList(estblCoursCd);
-        logger.info("TaskServiceImpl - getProfessorTaskList - taskList : " + taskList);
-        logger.info("TaskServiceImpl - getProfessorTaskList - studentScoreList : {}", studentScoreList);
+        List<MberDTO> getTaskStudentNoAndNm = mapper.getTaskStudentNoAndNm(estblCoursCd);
+
+        for (Map<String, Object> scoreList : studentScoreList) {
+            int stuMberNo = Integer.parseInt(scoreList.get("MBER_NO").toString());
+            Object scoreListTaskSn = scoreList.get("TASK_SN");
+            eachStudentScore.put("mberNo", stuMberNo);
+
+            for (TaskDTO taskListTaskSn : taskList) {
+                int stuTaskSn = taskListTaskSn.getTaskSn();
+
+                try {
+//                    logger.info("scoreList : {} ", scoreList);
+                    if (mapper.checkPresentn(PresentnDTO.builder().mberNo(stuMberNo).taskSn(stuTaskSn).build()) == null) {
+//                    if (mapper.checkPresentn(scoreList) == null) {
+                        PresentnDTO presentnDTO = PresentnDTO.builder()
+                                .mberNo(stuMberNo)
+                                .taskSn(stuTaskSn)
+                                .presentnSj("")
+                                .presentnCn("")
+                                .presentnDate(new Date())
+                                .taskScore(0)
+                                .atchmnflId(0)
+                                .build();
+
+//                        logger.info("presentnDTO : {} ", presentnDTO.toString());
+                        mapper.insertPresentn(presentnDTO);
+                    }
+
+                    if (stuTaskSn == Integer.parseInt(scoreListTaskSn.toString())) {
+                        //201401449.1.Score
+                        List<PresentnDTO> test = mapper.getTaskScore(eachStudentScore);
+
+                        eachStudentScore.put(stuMberNo + "stu", test);
+                    }
+                } catch (NullPointerException e) {
+                }
+            }
+
+//            logger.info("checkehckecheck scoreList : {}", scoreList);
+        }
 
         paramMap.put("taskList", taskList);
-        paramMap.put("studentCoursTakenList", studentCoursTakenList);
+//        paramMap.put("studentCoursTakenList", studentCoursTakenList);
         paramMap.put("studentScoreList", studentScoreList);
+        paramMap.put("eachStudentScore", eachStudentScore);
+        paramMap.put("getTaskStudentNoAndNm", getTaskStudentNoAndNm);
     }
 
     //과제 등록
@@ -60,7 +97,7 @@ public class TaskServiceImpl implements TaskService {
 
         AtchmnflDTO atchmnflDTO = null;
         String filePath = "C:\\Users\\LMS\\Desktop\\Ddit\\finalProject\\DDITLMS-lecture\\DDITLMS-lecture\\src\\main\\resources\\static\\assignment";
-        String randomName = UUID.randomUUID().toString().replaceAll("-","");
+        String randomName = UUID.randomUUID().toString().replaceAll("-", "");
         String extension = null;
         String saveName = null;
         String orginalName = null;
@@ -76,11 +113,11 @@ public class TaskServiceImpl implements TaskService {
 
         File dir = new File(filePath);
         //파일 경로에 폴더가 없을 경우 만들기
-        if(dir.exists() == false) {
+        if (dir.exists() == false) {
             dir.mkdirs();
         }
 
-        if(multipartFiles.length > 0) {
+        if (multipartFiles.length > 0) {
             int index = 1;
             for (MultipartFile file : multipartFiles) {
                 extension = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -170,7 +207,7 @@ public class TaskServiceImpl implements TaskService {
 
     //과제 제출
     @Override
-    public void insertPresentn(Map<String,Object> paramMap) {
+    public void insertPresentn(Map<String, Object> paramMap) {
         int taskSn = Integer.parseInt(paramMap.get("taskSn").toString());
         int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
         String presentnSj = paramMap.get("presentnSj").toString();
@@ -182,7 +219,7 @@ public class TaskServiceImpl implements TaskService {
 
         AtchmnflDTO atchmnflDTO = null;
         String filePath = "C:\\Users\\LMS\\Desktop\\Ddit\\finalProject\\DDITLMS-lecture\\DDITLMS-lecture\\src\\main\\resources\\static\\assignment";
-        String randomName = UUID.randomUUID().toString().replaceAll("-","");
+        String randomName = UUID.randomUUID().toString().replaceAll("-", "");
         String extension = null;
         String saveName = null;
         String orginalName = null;
@@ -196,11 +233,11 @@ public class TaskServiceImpl implements TaskService {
 
         File dir = new File(filePath);
         //파일 경로에 폴더가 없을 경우 만들기
-        if(dir.exists() == false) {
+        if (dir.exists() == false) {
             dir.mkdirs();
         }
 
-        if(multipartFiles.length > 0) {
+        if (multipartFiles.length > 0) {
             for (MultipartFile file : multipartFiles) {
                 extension = FilenameUtils.getExtension(file.getOriginalFilename());
                 saveName = randomName + "." + extension;
@@ -242,7 +279,12 @@ public class TaskServiceImpl implements TaskService {
                 .build();
         logger.info("TaskServiceImpl - insertPresentn - taskDTO : {}", presentnDTO.toString());
 
-        int result = mapper.insertPresentn(presentnDTO);
+        int result = 0;
+        if (mapper.checkPresentn(presentnDTO) == null) {
+            result = mapper.insertPresentn(presentnDTO);
+        } else {
+            result = mapper.updatePresentnBySubmit(presentnDTO);
+        }
         logger.info("TaskServiceImpl - insertPresentn - result : {}", result);
         paramMap.put("result", result);
     }
@@ -257,6 +299,41 @@ public class TaskServiceImpl implements TaskService {
 
         logger.info("TaskServiceImpl - getStudentCoursTakenList - atchmnflIdList : {}", atchmnflIdList);
 
-        paramMap.put("atchmnflIdList",atchmnflIdList);
+        paramMap.put("atchmnflIdList", atchmnflIdList);
+    }
+
+    @Override
+    public void updateStudentTaskScore(Map<String, Object> paramMap) {
+        int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+        String estblCoursCd = paramMap.get("estblCoursCd").toString();
+        int result = 0;
+        int scoreSum = 0;
+
+        paramMap.remove("mberNo");
+        paramMap.remove("estblCoursCd");
+        for (Map.Entry<String, Object> elem : paramMap.entrySet()) {
+            int taskSn = Integer.parseInt(elem.getKey().split("-")[2]);
+            int taskScore = Integer.parseInt(elem.getValue().toString());
+
+            scoreSum += taskScore;
+
+            PresentnDTO presentnDTO = PresentnDTO.builder()
+                    .mberNo(mberNo)
+                    .taskSn(taskSn)
+                    .taskScore(taskScore)
+                    .build();
+
+            result = mapper.updateStudentTaskScore(presentnDTO);
+        }
+
+        ScoreDTO scoreDTO = ScoreDTO.builder()
+                .tasksCore(scoreSum)
+                .estblCoursCd(estblCoursCd)
+                .mberNo(mberNo)
+                .build();
+
+        mapper.updateScoreTasksCore(scoreDTO);
+
+        paramMap.put("result",result);
     }
 }
