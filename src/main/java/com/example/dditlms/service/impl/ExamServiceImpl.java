@@ -205,11 +205,22 @@ public class ExamServiceImpl implements ExamService {
     public void getStudentExamInfo(Map<String, Object> paramMap) {
         /**날짜를 계산, 비교해서 현재 시험이 진행 중인지 아닌지 설정*/
         String today = null;
+        String todaybeforeOneDay = null;
+        String todayaftereOneDay = null;
+        Date tobeforeOneDay = null;
+        Date toafterOneDay = null;
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         Map<String, Object> progress = new HashMap<>();
         int mberNo = Integer.parseInt(paramMap.get("mberNo").toString());
+
+        /**현재 시간보다 이전 시간 구하는 로직*/
+        cal.setTime(date);
+        cal.add(Calendar.DATE, -1);
+        todaybeforeOneDay = sdf.format(cal.getTime());
+        cal.add(Calendar.DATE, 2);
+        todayaftereOneDay = sdf.format(cal.getTime());
 
         /**로직 처리 구간*/
         List<ExamInfoDTO> studentExamList = examMapper.getStudentExamInfo(paramMap);
@@ -218,15 +229,28 @@ public class ExamServiceImpl implements ExamService {
             for (ExamInfoDTO examInfoDTO : studentExamList) {
                 Date examEndTime = null;
                 Date examStartTime = examInfoDTO.getExamInfoDate();
+                cal.add(Calendar.DATE, -1);
                 cal.add(Calendar.MINUTE, examInfoDTO.getExamInfoTimelimit());
                 today = sdf.format(cal.getTime());
 
 
                 try {
                     examEndTime = sdf.parse(today);
+                    tobeforeOneDay = sdf.parse(todaybeforeOneDay);
+                    toafterOneDay = sdf.parse(todayaftereOneDay);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+
+
+                if(tobeforeOneDay.compareTo(examStartTime) < 0 && toafterOneDay.compareTo(examStartTime) > 0) {
+                    progress.put(examInfoDTO.getExamInfoCd()+"showExam", "showExam");
+                } else {
+                    progress.put(examInfoDTO.getExamInfoCd()+"showExam", "noExam");
+                }
+
+                logger.info("examStartTime : {}", examStartTime);
+                logger.info("examEndTime : {}", examEndTime);
 
                 if (date.compareTo(examStartTime) > 0) {
                     progress.put(examInfoDTO.getExamInfoCd(), "종료");

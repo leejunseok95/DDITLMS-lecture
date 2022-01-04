@@ -8,12 +8,13 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header pb-0">
-                    <h5>몇년도 몇학기 시험인지 출력</h5>
+                    <h5>2022년도 1학기</h5>
 <!--                    <h5 th:if="${#calendars.format('20210601', 'yyyy-MM-dd').before(#dates.createNow())}">2021년도 1학기 시험</h5>-->
 <!--                    <h5 th:if="${#calendars.format('20210601', 'yyyy-MM-dd').after(#dates.createNow())}">2021년도 2학기 시험</h5>-->
                 </div>
                 <hr>
-                <div class="card-body examDiv" th:each="list,i : ${studentExamInfo}" th:id="${list.examInfoCd}" th:classappend="${i.index}">
+                <div class="card-body examDiv" th:each="list,i : ${studentExamInfo}" th:id="${list.examInfoCd}" th:classappend="${i.index}"
+                th:if="${progress.get(list.examInfoCd+'showExam').equals('showExam')}">
                     <div class="row">
                         <div class="card-title">
                             <h2 th:if="${list.examInfoCategory.equals('middle')}" th:text="'중간고사'"></h2>
@@ -69,16 +70,19 @@
                                         </div>
                                         <br><br>
                                         <div class="order-place">
-                                            <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                                                    data-original-title="test" th:attr="data-bs-target='#exampleModal'+${list.examInfoCd}">
-                                                시험 시작(시험 시간일때만 표시도록
+                                            <button class="btn btn-primary startExamBtn" type="button"
+                                                    th:value="${progress.get(list.examInfoCd)}" th:id="${list.examInfoCd}"
+                                                    th:attr="data-bs-target='#exampleModal'+${list.examInfoCd}">
+                                                시험 응시
                                             </button>
                                         </div>
+
+                                        <!--경고창 modal 시작-->
                                         <div class="modal fade" th:id="${'exampleModal'+list.examInfoCd}" tabindex="-1" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">시험 응시</h5>
+                                                        <h5 class="modal-title" id="exampleModalLabel">시험 시작</h5>
                                                         <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
                                                     </div>
                                                     <div class="modal-body">
@@ -94,6 +98,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!--경고창 modal 종료-->
                                     </div>
                                 </div>
                             </div>
@@ -108,8 +113,38 @@
         const cancelBtn = document.querySelectorAll('.cancelBtn');
         const mberNo = document.querySelector('.mberNo').value;
         const event = document.createEvent('Events')
+        const startExamBtn = document.querySelectorAll('.startExamBtn')
         event.initEvent('keydown', true, true)
         event.keyCode = 27
+
+        goExamTests.forEach(item => {
+            item.addEventListener('click', e=> {
+                goTest(e)
+            })
+        })
+
+        startExamBtn.forEach(item => {
+            item.addEventListener('click', e=> {
+
+                limitTestExam(e)
+            })
+        })
+
+        const limitTestExam = e => {
+            const value =  e.currentTarget.value
+            const id = e.currentTarget.id
+            console.log(value)
+            console.log(id)
+
+            if(value == '진행전') {
+                alert('시험 시간이 아닙니다.')
+            } else if(value == '진행중') {
+                //data-bs-toggle="modal" 추가
+                startExamBtn.setAttribute('data-bs-toggle', 'modal')
+            } else {
+                alert('시험 시간이 아닙니다.')
+            }
+        }
 
         const goTest = e => {
             const examInfoCd = e.currentTarget.value
@@ -120,12 +155,6 @@
             window.open("/onlineLecture/examTest?examInfoCd=" + examInfoCd + "&mberNo="+mberNo, 'popup',
                 'location=no, tollbasrs=no, status=no, fullscreen=yes, width='+screen.width+',height='+screen.height+',fullscreen=yes');
         }
-
-        goExamTests.forEach(item => {
-            item.addEventListener('click', e=> {
-                goTest(e)
-            })
-        })
     </script>
 </th:block>
 </html>

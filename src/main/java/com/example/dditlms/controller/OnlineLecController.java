@@ -281,10 +281,23 @@ public class OnlineLecController {
 
             logger.info("onlineLectureTime : " + paramMap.get("onlineLectureTime"));
 
-            onlineLecDTO
-                    = new OnlineLecDTO(null, Integer.parseInt(paramMap.get("onlineLecWeek").toString()),
-                    paramMap.get("onlineLecTitle").toString(), startDay, endDay, "-", atchmnflDTO.getAtchmnflSn(),
-                    estblCoursCd, "0", endTimeBuilder.toString());
+//            onlineLecDTO
+//                    = new OnlineLecDTO(null, Integer.parseInt(paramMap.get("onlineLecWeek").toString()),
+//                    paramMap.get("onlineLecTitle").toString(), startDay, endDay, "-", atchmnflDTO.getAtchmnflSn(),
+//                    estblCoursCd, "0", endTimeBuilder.toString());
+
+            onlineLecDTO = OnlineLecDTO.builder()
+                    .onlineLecCd(null)
+                    .onlineLecWeek(Integer.parseInt(paramMap.get("onlineLecWeek").toString()))
+                    .onlineLecTitle(paramMap.get("onlineLecTitle").toString())
+                    .onlineLecStart(startDay)
+                    .onlineLecEnd(endDay)
+                    .learningStatus("-")
+                    .atchmnflSn(atchmnflDTO.getAtchmnflSn())
+                    .estblCoursCd(estblCoursCd)
+                    .vidoEndtime(endTimeBuilder.toString())
+                    .vidoStarttime("0")
+                    .build();
 
             service.insertOnlineLecture(onlineLecDTO);
         }

@@ -235,9 +235,7 @@ public class TaskController {
     //학생 과제 알집 다운로드
     @PostMapping("/assignment/downloadAll")
     public void downloadAllStudentAssignment(@RequestParam Map<String, Object> paramMap,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            Object handler) {
+                                            HttpServletResponse response) {
         logger.info("TaskController - downloadAllStudentAssignment - paramMap : {}", paramMap);
         JSONObject jsonObject = new JSONObject();
 
@@ -250,11 +248,15 @@ public class TaskController {
 
         List<TaskDTO> atchmnflIdList = (List<TaskDTO>)paramMap.get("atchmnflIdList");
 
+        logger.info("TaskController - downloadAllStudentAssignment - atchmnflIdList : {}", atchmnflIdList);
+
         for(TaskDTO taskDTO : atchmnflIdList) {
             int atchmnflId = taskDTO.getAtchmnflId();
-            atchmnflDTO = service.getAtchmnflInfo(atchmnflId);
 
-            sourceFiles.add(atchmnflDTO.getFileStreCours() + "\\" + atchmnflDTO.getOrignlFileNm());
+            if(atchmnflId != 0) {
+                atchmnflDTO = service.getAtchmnflInfo(atchmnflId);
+                sourceFiles.add(atchmnflDTO.getFileStreCours() + "\\" + atchmnflDTO.getOrignlFileNm());
+            }
         }
 
         logger.info("TaskController - downloadAllStudentAssignment - atchmnflIdList : {}", atchmnflIdList);

@@ -68,6 +68,8 @@ public class OnlineMainController {
         service.getProfessorEstblCoursList(paramMap);
         service.getProfessorEstblcoursSchedule(paramMap);
 
+        logger.info("test professor : " + paramMap.get("professorEstbSchedule"));
+
         mv.setViewName("pages/onlineLecture_professor/professor_lecture_mainPage");
         mv.addObject("professorEstbList", paramMap.get("professorEstbList"));
         mv.addObject("professorEstbSchedule", paramMap.get("professorEstbSchedule"));

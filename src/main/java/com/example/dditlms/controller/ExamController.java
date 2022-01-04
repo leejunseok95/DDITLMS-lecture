@@ -299,6 +299,7 @@ public class ExamController {
         /**서비스 호출*/
         examService.getStudentExamInfo(paramMap);
         logger.info("studentExamInfo : " + paramMap.get("studentExamInfo"));
+        logger.info("showExam : " + paramMap.get("progress"));
 
         /**값 전달*/
         mv.setViewName("pages/onlineLecture_student/student_lecture_exam");

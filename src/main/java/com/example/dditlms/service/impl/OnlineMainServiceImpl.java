@@ -65,9 +65,12 @@ public class OnlineMainServiceImpl implements OnlineMainService {
             String[] dayFromDb = map.get("LCTRUM_RESVE_USE_DE").toString().split(",");
 
             for (int i = 0; i < dayFromDb.length; i++) {
+                logger.info("dayFromDb[i] : {} {}", dayFromDb[i], i);
+                logger.info("day  : {} {}", day, i);
                 if (dayFromDb[i].equals(day)) {
                     logger.info("dayFromDb : " + dayFromDb[i]);
                     map.put("today", "o");
+                    break;
                 } else {
                     map.put("today", "x");
                 }

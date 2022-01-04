@@ -57,7 +57,14 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="estbSchedule : ${professorEstbSchedule}"
+                                <tr th:each="estbSchedule,i : ${professorEstbSchedule}"
+                                    th:if="${estbSchedule.get('today').equals('o')}">
+                                    <th scope="row" th:text="${i.count}"></th>
+                                    <td th:text="${#calendars.format(#calendars.createNow(), 'yyyy년 MM 월dd일 ')}"></td>
+                                    <td th:text="${estbSchedule.get('SBJECT_NM')}"></td>
+                                    <td th:text="${estbSchedule.get('LCTRUM_RESVE_USE_PD')}"></td>
+                                </tr>
+                                <tr th:each="estbSchedule, i : ${professorEstbSchedule}"
                                     th:unless="${estbSchedule.get('today').equals('o')}">
                                     <th scope="row">1</th>
                                     <td colspan="3">일정이 없습니다.</td>
