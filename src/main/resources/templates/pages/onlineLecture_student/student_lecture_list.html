@@ -74,7 +74,7 @@
 
         goOnlineLecVideos.forEach(goOnlineLecVideo => {
             goOnlineLecVideo.addEventListener('click', function (event) {
-                location.href="/goOnlineLecVideoPlayer?onlineLecCd=" + event.currentTarget.id + "&mberNo=" + mberNo;
+                location.href="/student/onlineLecture/videoPlayer?onlineLecCd=" + event.currentTarget.id + "&mberNo=" + mberNo;
             })
         })
     </script>

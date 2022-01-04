@@ -10,7 +10,7 @@
                 <div class="card-header">
                     <h5>학생관리</h5>
                     <!-- 검색 -->
-                    <form action="/professorOnlineLecture/management" method="get">
+                    <form action="/professor/onlineLecture/management" method="get">
                         <div class="text-end">
                             <select name="keyword" id="keyword">
                                 <option value="mberNo">학번</option>
@@ -75,7 +75,7 @@
                 <li class="page-item" th:classappend="${users.getPrePage() == 0} ? 'disabled'">
                     <!-- href: /page?pageNum=이전페이지&keyword=검색분류&search=검색어 -->
                     <a class="page-link"
-                       th:href="@{/professorOnlineLecture/management(pageNum=${users.getPrePage()}, keyword=${search.getKeyword()}, search=${search.getSearch()})}">Previous</a>
+                       th:href="@{/professor/onlineLecture/management(pageNum=${users.getPrePage()}, keyword=${search.getKeyword()}, search=${search.getSearch()})}">Previous</a>
                 </li>
                 <!-- getNavigateFirstPage() : 페이징의 처음 숫자 getNavigateLastPage : 페이징의 마지막 숫자를 이용해 페이징 숫자 출력 -->
                 <!-- href : /page?pageNum=선택한 페이지&keyword=검색분류&search=검색어 -->
@@ -83,13 +83,13 @@
                     th:each="page: ${#numbers.sequence(users.getNavigateFirstPage(), users.getNavigateLastPage())}"
                     th:classappend="${page == users.getPageNum()} ? 'active'">
                     <a class="page-link" th:text="${page}"
-                       th:href="@{/professorOnlineLecture/management(pageNum=${page}, keyword=${search.getKeyword()}, search=${search.getSearch()})}"></a>
+                       th:href="@{/professor/onlineLecture/management(pageNum=${page}, keyword=${search.getKeyword()}, search=${search.getSearch()})}"></a>
                 </li>
                 <!-- getPrePage : 다음 페이지 -->
                 <li class="page-item" th:classappend="${users.getNextPage() == 0} ? 'disabled'">
                     <!-- href: /page?pageNum=다음페이지&keyword=검색분류&search=검색어 -->
                     <a class="page-link"
-                       th:href="@{/professorOnlineLecture/management(pageNum=${users.getNextPage()}, keyword=${search.getKeyword()}, search=${search.getSearch()})}">Next</a>
+                       th:href="@{/professor/onlineLecture/management(pageNum=${users.getNextPage()}, keyword=${search.getKeyword()}, search=${search.getSearch()})}">Next</a>
                 </li>
             </ul>
         </nav>

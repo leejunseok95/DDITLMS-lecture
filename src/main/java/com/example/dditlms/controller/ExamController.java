@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class ExamController {
     private final ExamService examService;
 
     //교수 시험 페이지
-    @GetMapping("/professorOnlineLecture/exam")
+    @GetMapping("/professor/onlineLecture/exam")
     public ModelAndView goProfessorOnlineLectureExam(ModelAndView mv, HttpSession session) {
         logger.info("ExamController - goProfessorOnlineLectureExam - estblCoursCd session : {}", session.getAttribute("proEstblCoursCd"));
         logger.info("ExamController - goProfessorOnlineLectureExam - mberNo session : {}", session.getAttribute("proMberNo"));
@@ -63,7 +62,7 @@ public class ExamController {
     }
 
     //시험(중간/기말) 등록 메소드
-    @PostMapping("/exam/insertExam")
+    @PostMapping("/professor/onlineLecture/exam/insertExam")
     public void insertExam(HttpServletResponse response, @RequestParam Map<String, Object> paramMap) {
         logger.info("insertExam");
         logger.info("paramMap : " + paramMap);
@@ -91,7 +90,7 @@ public class ExamController {
     }
 
     //문제 수정  controller
-    @PostMapping("/exam/updateExam")
+    @PostMapping("/professor/onlineLecture/exam/updateExam")
     public void updateExam(HttpServletResponse response, @RequestParam Map<String, Object> paramMap) {
         /**1.파라미터 조회 ***************************************************************/
         logger.info("updateExam");
@@ -113,7 +112,7 @@ public class ExamController {
     }
 
     //시험(중간/기말) 등록
-    @PostMapping("/exam/insertExamInfo")
+    @PostMapping("/professor/onlineLecture/exam/insertExamInfo")
     public void insertExamInfo(HttpServletResponse response, HttpSession session,
                                @RequestParam Map<String, Object> paramMap) {
         logger.info("ExamController - insertExamInfo - estblCoursCd : {}", session.getAttribute("proEstblCoursCd"));
@@ -145,7 +144,7 @@ public class ExamController {
     }
 
     //시험 (중간/기말) 시험 수정
-    @PostMapping("/exam/updateExamInfo")
+    @PostMapping("/professor/onlineLecture/exam/updateExamInfo")
     public void updateExamInfo(HttpServletResponse response, HttpSession session,
                                @RequestParam Map<String, String> paramMap) {
         logger.info("ExamController - updateExamInfo - estblCoursCd : {}", session.getAttribute("proEstblCoursCd"));
@@ -195,7 +194,7 @@ public class ExamController {
     }
 
     //시험 (기말/중간) 삭제 메소드
-    @PostMapping("/exam/deleteExamInfo")
+    @PostMapping("/professor/onlineLecture/exam/deleteExamInfo")
     public void deleteExamInfo(HttpServletResponse response,
                                @RequestParam Map<String, String> paramMap) {
         logger.info("ExamController - deleteExamInfo - paramMap deleteExamInfo : {}", paramMap);
@@ -224,7 +223,7 @@ public class ExamController {
     }
 
     //시험문제 삭제 controller
-    @PostMapping("/exam/deleteExam")
+    @PostMapping("/professor/onlineLecture/exam/deleteExam")
     public void deleteExam(HttpServletResponse response, @RequestParam Map<String, String> paramMap) {
         logger.info("ExamController - deleteExamInfo - paramMap deleteExam : {}", paramMap);
         response.setContentType("text/html; charset=utf-8");
@@ -249,7 +248,7 @@ public class ExamController {
     }
 
     //
-    @GetMapping("/exam/examPaper")
+    @GetMapping("/professor/onlineLecture/exam/examPaper")
     public ModelAndView goExamPaper(ModelAndView mv,
                                     @ModelAttribute SearchDTO search,
                                     @RequestParam(required = false, defaultValue = "1") int pageNum,
@@ -282,7 +281,7 @@ public class ExamController {
      * 학생 part
      * ------------------------------------------------------------------------------------------------------------------------------*/
     //학생 시험
-    @GetMapping("/onlineLecture/exam")
+    @GetMapping("/student/onlineLecture/exam")
     public ModelAndView goOnlineLectureExam(ModelAndView mv, HttpSession session) {
         logger.info("ExamController - goOnlineLectureExam - mberNo session : {}", session.getAttribute("stuMberNo"));
         logger.info("ExamController - goOnlineLectureExam - mberNo session : {}", session.getAttribute("stuEstblCoursCd"));
@@ -312,7 +311,7 @@ public class ExamController {
     }
 
     //학생 시험 응시
-    @GetMapping("/onlineLecture/examTest")
+    @GetMapping("/student/onlineLecture/examTest")
     public ModelAndView doOnlineExam(ModelAndView mv,
                                      @RequestParam("examInfoCd") String examInfoCd,
                                      @RequestParam("mberNo") int mberNo) {
@@ -335,7 +334,7 @@ public class ExamController {
 
     //학생 시험 제출
     @ResponseBody
-    @PostMapping("/exam/finishExam")
+    @PostMapping("/student/onlineLecture/exam/finishExam")
     public void submitExamTest(HttpServletResponse response,
                                HttpSession session,
                                @RequestBody Map<String, Object> paramMap) {

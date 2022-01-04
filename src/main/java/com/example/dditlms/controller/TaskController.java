@@ -1,7 +1,6 @@
 package com.example.dditlms.controller;
 
 import com.example.dditlms.domain.dto.AtchmnflDTO;
-import com.example.dditlms.domain.dto.PresentnDTO;
 import com.example.dditlms.domain.dto.TaskDTO;
 import com.example.dditlms.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
@@ -36,7 +34,7 @@ public class TaskController {
     private final TaskService service;
 
     //교수 과제
-    @GetMapping("/professorOnlineLecture/assignment")
+    @GetMapping("/professor/onlineLecture/assignment")
     public ModelAndView goProfessorOnlineLectureAssignment(ModelAndView mv,
                                                            HttpSession session) {
         logger.info("TaskController - professorAssignment - mberNo sesseion : {}", session.getAttribute("proMberNo"));
@@ -65,7 +63,7 @@ public class TaskController {
     }
 
     //교수 과제 등록
-    @PostMapping("/assignment/register")
+    @PostMapping("/professor/onlineLecture/assignment/register")
     public void registerAssignment(HttpServletResponse response,
                                    HttpSession session,
                                    @RequestParam Map<String, Object> paramMap,
@@ -101,7 +99,7 @@ public class TaskController {
 
 
     //업로드한 과제를 수정
-    @PostMapping("/assignment/update")
+    @PostMapping("/professor/onlineLecture/assignment/update")
     public void updateAssignment(HttpServletResponse response,
                                  @RequestParam Map<String, Object> paramMap,
                                  @RequestParam("assignmentFile")MultipartFile[] multipartFiles) {
@@ -112,7 +110,7 @@ public class TaskController {
     }
 
     //업로드한 과제를 삭제
-    @PostMapping("/assignment/delete")
+    @PostMapping("/professor/onlineLecture/assignment/delete")
     public void deleteAssignment(HttpServletResponse response,
                                  @RequestParam Map<String, Object> paramMap,
                                  @RequestParam("assignmentFile")MultipartFile[] multipartFiles) {
@@ -144,7 +142,7 @@ public class TaskController {
      * @param response jsonObject를 보내기 위해 사용하는 메소드
      * @param paramMap 학생의 각 과제별 점수
      */
-    @PostMapping("/assignment/score/update")
+    @PostMapping("/professor/onlineLecture/assignment/score/update")
     public void updateStudentTaskScore(HttpServletResponse response,
                                        HttpSession session,
                                        @RequestParam Map<String, Object> paramMap) {
@@ -182,7 +180,7 @@ public class TaskController {
      * @param session 학생 및 개설교과 session 번호
      * @return mv
      */
-    @GetMapping("/onlineLecture/assignment")
+    @GetMapping("/student/onlineLecture/assignment")
     public ModelAndView goStudentOnlineLectureAssignment(ModelAndView mv,
                                                            HttpSession session) {
         logger.info("TaskController - studentAssignment - mberNo sesseion : {}", session.getAttribute("stuMberNo"));
@@ -211,7 +209,7 @@ public class TaskController {
      * @param response 파일 인코딩, content 정보, 용량
      * @throws IOException
      */
-    @GetMapping("/onlineLecture/assignment/download")
+    @GetMapping("/student/onlineLecture/assignment/download")
     public void downloadAssignmentFile(@RequestParam int atchmnflId,
                                                  HttpServletResponse response) throws IOException {
         logger.info("TaskController - downloadAssignmentFile - atchmnflId : {}", atchmnflId);
@@ -233,7 +231,7 @@ public class TaskController {
     }
 
     //학생 과제 알집 다운로드
-    @PostMapping("/assignment/downloadAll")
+    @PostMapping("/student/onlineLecture/assignment/downloadAll")
     public void downloadAllStudentAssignment(@RequestParam Map<String, Object> paramMap,
                                             HttpServletResponse response) {
         logger.info("TaskController - downloadAllStudentAssignment - paramMap : {}", paramMap);
@@ -320,7 +318,7 @@ public class TaskController {
      * @param paramMap page에서 ajax를 통해 보내온 과제 정보
      * @param multipartFiles 첨부파일
      */
-    @PostMapping("/onlineLecture/assignment/submit")
+    @PostMapping("/student/onlineLecture/assignment/submit")
     public void submitAssignment(HttpServletResponse response,
                                    HttpSession session,
                                    @RequestParam Map<String, Object> paramMap,

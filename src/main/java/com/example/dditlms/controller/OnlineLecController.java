@@ -31,7 +31,7 @@ public class OnlineLecController {
     private final OnlineLecService service;
 
     //학생 강의 목록
-    @GetMapping("/onlineLecture")
+    @GetMapping("/student/onlineLecture")
     public ModelAndView goOnlineLecture(ModelAndView mv,
                                         HttpSession session,
                                         OnlineLecDTO onlineLecDTO,
@@ -72,13 +72,13 @@ public class OnlineLecController {
         return mv;
     }
 
-    @GetMapping("/goOnlineLecVideoPlayer")
-    public ModelAndView goOnlineLecVideoPlayer(@RequestParam("onlineLecCd") String onlineLecCd,
+    @GetMapping("/student/onlineLecture/videoPlayer")
+    public ModelAndView goOnlineLecVideoPlayer(ModelAndView mv,
+                                               @RequestParam("onlineLecCd") String onlineLecCd,
                                                @RequestParam("mberNo") int mberNo) {
         logger.info("onlineLecCd : " + onlineLecCd);
         logger.info("mberNo : " + mberNo);
 
-        ModelAndView mv = new ModelAndView("pages/onlineLecture_student/student_lecture_video");
         Map<String, Object> putVideoInfo = new HashMap<>();
         putVideoInfo.put("mberNo", mberNo);
         putVideoInfo.put("onlineLecCd", onlineLecCd);
@@ -87,24 +87,19 @@ public class OnlineLecController {
 
         logger.info("atchmnflDTO : " + atchmnflDTO);
 
+        mv.setViewName("pages/onlineLecture_student/student_lecture_video");
         mv.addObject("atchmnflDTO", atchmnflDTO);
         mv.addObject("mberNo", mberNo);
         mv.addObject("onlineLecCd", onlineLecCd);
         mv.addObject("vidoInfoDTO", vidoInfoDTO);
-        logger.info("vidoInfoDTO : " + vidoInfoDTO.toString());
 
         return mv;
     }
 
     //학생 온라인 강의 영상 정보 관리
-    @PostMapping("/onlineLecture/uploadVideoInfo")
+    @PostMapping("/student/onlineLecture/uploadVideoInfo")
     public void saveOnlineLecVideoInfo(HttpServletResponse response,
                                        @RequestParam Map<String, String> paramMap) {
-        logger.info("uploadVideoInfo param :" + paramMap);
-        response.setContentType("text/html; charset=utf-8");
-        response.setCharacterEncoding("utf-8");
-        JSONObject jsonObject = new JSONObject();
-
         int mberNo = Integer.parseInt(paramMap.get("mberNo"));
         String onlineLecCd = paramMap.get("onlineLecCd");
         OnlineLecForPrintDTO onlineLecForPrintDTO
@@ -152,7 +147,7 @@ public class OnlineLecController {
     }
 
     //학생 게시판
-    @GetMapping("/onlineLecture/board")
+    @GetMapping("/student/onlineLecture/board")
     public String goOnlineLectureBoard() {
         logger.info("onlineBoard");
         return "pages/onlineLecture_student/student_lecture_board";
@@ -163,7 +158,7 @@ public class OnlineLecController {
     //-----------------------------------------------------------------------------
 
     //교수 강의 페이지
-    @GetMapping("/professorOnlineLecture")
+    @GetMapping("/professor/onlineLecture")
     public ModelAndView goProfessorOnlineLecture(ModelAndView mv,
                                                  HttpSession session,
                                                  String estblCoursCd) {
@@ -187,14 +182,14 @@ public class OnlineLecController {
     }
 
     //교수 게시판
-    @GetMapping("/professorOnlineLecture/board")
+    @GetMapping("/professor/onlineLecture/board")
     public String goProfessorOnlineLectureBoard() {
         logger.info("professorBoard");
         return "pages/onlineLecture_professor/professor_lecture_board";
     }
 
     //강의 업로드
-    @PostMapping(value = "/uploadLecture", consumes = ("multipart/form-data"))
+    @PostMapping(value = "/professor/onlineLecture/uploadLecture", consumes = ("multipart/form-data"))
     public void uploadFile(HttpServletResponse response,
                            HttpSession session,
                            @RequestParam Map<String, Object> paramMap,

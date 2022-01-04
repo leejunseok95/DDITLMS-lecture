@@ -67,7 +67,7 @@
             <li class="page-item" th:classappend="${users.getPrePage() == 0} ? 'disabled'">
                 <!-- href: /page?pageNum=이전페이지&keyword=검색분류&search=검색어 -->
                 <a class="page-link"
-                   th:href="@{/exam/examPaper(pageNum=${users.getPrePage()}, examInfoCd=${examInfoCd} ,keyword=${search.getKeyword()}, search=${search.getSearch()})}">Previous</a>
+                   th:href="@{/professor/onlineLecture/exam/examPaper(pageNum=${users.getPrePage()}, examInfoCd=${examInfoCd} ,keyword=${search.getKeyword()}, search=${search.getSearch()})}">Previous</a>
             </li>
             <!-- getNavigateFirstPage() : 페이징의 처음 숫자 getNavigateLastPage : 페이징의 마지막 숫자를 이용해 페이징 숫자 출력 -->
             <!-- href : /page?pageNum=선택한 페이지&keyword=검색분류&search=검색어 -->
@@ -75,13 +75,13 @@
                 th:each="page: ${#numbers.sequence(users.getNavigateFirstPage(), users.getNavigateLastPage())}"
                 th:classappend="${page == users.getPageNum()} ? 'active'">
                 <a class="page-link" th:text="${page}"
-                   th:href="@{/exam/examPaper(pageNum=${page}, examInfoCd=${examInfoCd} , keyword=${search.getKeyword()}, search=${search.getSearch()})}"></a>
+                   th:href="@{/professor/onlineLecture/exam/examPaper(pageNum=${page}, examInfoCd=${examInfoCd} , keyword=${search.getKeyword()}, search=${search.getSearch()})}"></a>
             </li>
             <!-- getPrePage : 다음 페이지 -->
             <li class="page-item" th:classappend="${users.getNextPage() == 0} ? 'disabled'">
                 <!-- href: /page?pageNum=다음페이지&keyword=검색분류&search=검색어 -->
                 <a class="page-link"
-                   th:href="@{/exam/examPaper(pageNum=${users.getNextPage()}, examInfoCd=${examInfoCd} , keyword=${search.getKeyword()}, search=${search.getSearch()})}">Next</a>
+                   th:href="@{/professor/onlineLecture/exam/examPaper(pageNum=${users.getNextPage()}, examInfoCd=${examInfoCd} , keyword=${search.getKeyword()}, search=${search.getSearch()})}">Next</a>
             </li>
         </ul>
     </nav>
@@ -302,7 +302,7 @@
                 }
 
                 $.ajax({
-                    url: "/exam/insertExam",
+                    url: "/professor/onlineLecture/exam/insertExam",
                     data: examFormDate,
                     method: "post",
                     dataType: "json",
@@ -345,7 +345,7 @@
             }
 
             $.ajax({
-                url: "/exam/updateExam",
+                url: "/professor/onlineLecture/exam/updateExam",
                 data: examUpdateFormDate,
                 method: "post",
                 dataType: "json",
@@ -371,7 +371,7 @@
             let examUpdateFormDate = new FormData(examUpdateForm);
 
             $.ajax({
-                url: "/exam/deleteExam",
+                url: "/professor/onlineLecture/exam/deleteExam",
                 data: examUpdateFormDate,
                 method: "post",
                 dataType: "json",

@@ -222,7 +222,7 @@
             let formDataUpdate = new FormData(updateScoreForm)
 
             $.ajax({
-                url: '/assignment/score/update',
+                url: '/professor/onlineLecture/assignment/score/update',
                 data: formDataUpdate,
                 method: 'POST',
                 cache: false,
@@ -277,7 +277,7 @@
                     let formDataForDownload = new FormData(detailForm)
 
                     $.ajax({
-                        url: '/assignment/downloadAll',
+                        url: '/student/onlineLecture/assignment/downloadAll',
                         data: formDataForDownload,
                         enctype: 'multipart/form-data',
                         cache: false,
@@ -313,7 +313,7 @@
             let formDataForDelete = new FormData(detailForm)
 
             $.ajax({
-                url: '/assignment/delete',
+                url: '/professor/onlineLecture/assignment/delete',
                 data: formDataForDelete,
                 enctype: 'multipart/form-data',
                 cache: false,
@@ -358,7 +358,7 @@
             }
 
             $.ajax({
-                url: '/assignment/register',
+                url: '/professor/onlineLecture/assignment/register',
                 enctype: 'multipart/form-data',
                 cache: false,
                 processData: false,

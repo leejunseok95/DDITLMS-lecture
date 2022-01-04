@@ -191,7 +191,7 @@
 
             goExamPapers.forEach(goExamPaper => {
                 goExamPaper.addEventListener('click', function (event) {
-                    location.href = "/exam/examPaper?examInfoCd=" + targetList[index].examInfoCd;
+                    location.href = "/professor/onlineLecture/exam/examPaper?examInfoCd=" + targetList[index].examInfoCd;
                 })
             })
         }
@@ -233,7 +233,7 @@
             }
 
             $.ajax({
-                url: "/exam/insertExamInfo",
+                url: "/professor/onlineLecture/exam/insertExamInfo",
                 data: examInfoFormData,
                 method: "post",
                 dataType: "json",
@@ -285,7 +285,7 @@
             }
 
             $.ajax({
-                url: "/exam/updateExamInfo",
+                url: "/professor/onlineLecture/exam/updateExamInfo",
                 data: updateExamInfoFormData,
                 method: "post",
                 dataType: "json",
@@ -311,7 +311,7 @@
             let deleteExamInfoFormData = new FormData(deleteExamInfoForm);
 
             $.ajax({
-                url: "/exam/deleteExamInfo",
+                url: "/professor/onlineLecture/exam/deleteExamInfo",
                 data: deleteExamInfoFormData,
                 method: "post",
                 dataType: "json",

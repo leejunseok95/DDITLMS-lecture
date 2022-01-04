@@ -20,6 +20,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.context.NullSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import javax.sql.DataSource;
@@ -54,9 +58,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-//                .antMatchers("/student/**").hasAuthority(Role.STUDENT.getValue())
-//                .antMatchers("/admin/**").hasAuthority(Role.ADMIN.getValue())
-//                .antMatchers("/professor/**").hasAuthority(Role.PROFESSOR.getValue())
+                .antMatchers("/student/**").hasAuthority(Role.ROLE_STUDENT.getValue())
+                .antMatchers("/professor/**").hasAuthority(Role.ROLE_PROFESSOR.getValue())
+                .antMatchers("/onlineLecture/login").permitAll()
 //                .antMatchers("/forget","/forget/**").permitAll()
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
@@ -67,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionRegistry(sessionRegistry());
 
         http.formLogin()
-                .loginPage("/login")
+                .loginPage("/onlineLecture/login")
                 .defaultSuccessUrl("/")
                 .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler)
@@ -75,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
         http.logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/onlineLecture/login")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID","remember-me")
                 .clearAuthentication(true)
@@ -89,6 +93,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler());
+    }
+
+    @Bean
+    SecurityContextRepository securityContextRepository(){
+        return new NullSecurityContextRepository();
+    }
+
+    @Bean
+    public SessionAuthenticationStrategy sessionAuthenticationStrategy(){
+        return new NullAuthenticatedSessionStrategy();
     }
 
     @Bean

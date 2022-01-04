@@ -5,30 +5,16 @@
 <th:block th:fragment="headerFragment">
     <div class="page-main-header">
         <div class="main-header-right row m-0">
-            <nav class="navbar navbar-dark bg-primary" aria-label="First navbar example">
+            <nav class="navbar navbar-dark bg-light-primary" aria-label="First navbar example">
                 <div class="container-fluid">
                     <a class="navbar-brand" th:href="@{/professorOnlineLecture}">온라인 강의(교수)</a>
-
-                    <div class="navbar-collapse collapse" id="navbarsExample01" style="">
-                        <ul class="navbar-nav me-auto mb-2">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page"
-                                   th:href="@{/professorOnlineLecture}">강의실</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/professorOnlineLecture/board}">게시판</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/professorOnlineLecture/assignment}">과제</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/professorOnlineLecture/exam}">시험</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{/professorOnlineLecture/management}">학생관리</a>
-                            </li>
-                        </ul>
+                    <!--로그아웃-->
+                    <div style="z-index: 10" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post">
+                            <button class="btn btn-primary-light"><i data-feather="log-out"></i>Log out</a></button>
+                        </form>
                     </div>
+                    <!--로그아웃-->
                 </div>
             </nav>
         </div>

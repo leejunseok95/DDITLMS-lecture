@@ -1,22 +1,37 @@
 package com.example.dditlms.domain.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MberDTO {
-    private int mberNo;
-    private String mberSe;
-    private String mberNm;
+    private long mberNo;
     private String email;
-    private String telno;
-    private String bankNm;
-    private String acnutNo;
-    private String id;
+    private int failCount;
+    private String memberId;
+    private String memberImg;
+    private String mberNm;
+    private String menuOd;
     private String password;
+    private String telno;
+    private String mberSe;
+
+    @Override
+    public String toString() {
+        return "MberDTO{" +
+                "mberNo=" + mberNo +
+                ", email='" + email + '\'' +
+                ", failCount=" + failCount +
+                ", memberId='" + memberId + '\'' +
+                ", memberImg='" + memberImg + '\'' +
+                ", mberNm='" + mberNm + '\'' +
+                ", menuOd='" + menuOd + '\'' +
+                ", password='" + password + '\'' +
+                ", telno='" + telno + '\'' +
+                ", mberSe='" + mberSe + '\'' +
+                '}';
+    }
 }

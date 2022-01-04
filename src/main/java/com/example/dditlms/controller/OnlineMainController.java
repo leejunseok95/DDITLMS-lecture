@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -21,7 +18,7 @@ public class OnlineMainController {
     private static final Logger logger = LoggerFactory.getLogger(OnlineMainController.class);
     private final OnlineMainService service;
 
-    @GetMapping("/online/studentMain")
+    @GetMapping("/student/online/studentMain")
     public ModelAndView goStudentMainPage(ModelAndView mv, HttpSession session) {
         /**TODO 임시 변수*/
 //        int mberNo = 201401450;
@@ -56,7 +53,7 @@ public class OnlineMainController {
 
     /**********************************************교수님  part*********************************/
 
-    @GetMapping("online/professorMain")
+    @GetMapping("/professor/online/professorMain")
     public ModelAndView goProfessorMainPage(ModelAndView mv, HttpSession session) {
         /**TODO 임시 변수*/
         int mberNo = 9999;

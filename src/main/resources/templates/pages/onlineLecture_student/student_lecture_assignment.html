@@ -196,7 +196,7 @@
             } else if (atchmnflId != null || atchmnflId != '') {
                 document.querySelector('.downloadAssignment').innerHTML =
                     "<label class=\"col-md-2\">첨부파일</label>" +
-                    "<a href='/onlineLecture/assignment/download?atchmnflId=" + atchmnflId + "'>" + orignlFileNm + "</a><br>";
+                    "<a href='/student/onlineLecture/assignment/download?atchmnflId=" + atchmnflId + "'>" + orignlFileNm + "</a><br>";
             }
         }
 
@@ -217,7 +217,7 @@
             }
 
             $.ajax({
-                url : '/onlineLecture/assignment/submit',
+                url : '/student/onlineLecture/assignment/submit',
                 enctype : 'multipart/form-data',
                 cache: false,
                 processData: false,

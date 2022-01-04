@@ -23,7 +23,7 @@ public class ScoreController {
     private final ScoreService service;
 
     //교수 학생 관리
-    @GetMapping("/professorOnlineLecture/management")
+    @GetMapping("/professor/onlineLecture/management")
     public ModelAndView goProfessorOnlineLectureStudManagement(ModelAndView mv,
                                                                @ModelAttribute SearchDTO search,
                                                                @RequestParam(required = false, defaultValue = "1") int pageNum,

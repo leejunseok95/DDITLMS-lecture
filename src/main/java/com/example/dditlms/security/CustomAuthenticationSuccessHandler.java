@@ -1,7 +1,9 @@
 package com.example.dditlms.security;
 
+import com.example.dditlms.domain.dto.MberDTO;
 import com.example.dditlms.domain.entity.Member;
 import com.example.dditlms.domain.repository.MemberRepository;
+import com.example.dditlms.mapper.MberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
@@ -28,19 +30,21 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    private final MemberRepository memberRepository;
+//    private final MemberRepository memberRepository;
+    private final MberMapper mapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication)
             throws IOException, ServletException {
-        Member member = ((AccountContext)authentication.getPrincipal()).getMember();
+        MberDTO member = ((AccountContext)authentication.getPrincipal()).getMember();
+
         if(member.getFailCount()>=5){
             throw new LockedException("Account locked");
         }else{
             member.setFailCount(0);
-            memberRepository.save(member);
+            mapper.updateMberFailCount(member);
         }
 
         // 쿠팡 둘러보기 하다가 로그인 성공 시 다시 거기로 가는 경우

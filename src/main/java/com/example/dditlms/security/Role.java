@@ -1,16 +1,18 @@
 package com.example.dditlms.security;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum Role {
-    STUDENT("ROLE_STUDENT"),
-    PROFESSOR("ROLE_PROFESSOR"),
-    ADMIN("ROLE_ADMIN");
+    ROLE_STUDENT("ROLE_STUDENT"),
+    ROLE_PROFESSOR("ROLE_PROFESSOR"),
+    ROLE_ACCADEMIC_DEP("ROLE_ACCADEMIC_DEP"),
+    ROLE_ADMIN_DEP("ROLE_ADMIN_DEP"),
+    ROLE_GENERAL_DEP("ROLE_GENERAL_DEP"),
+    ROLE_STUDENT_DEP("ROLE_STUDENT_DEP");
 
-    String value;
+    private String value;
 
-    Role(String value){
-        this.value = value;
-    }
 }
