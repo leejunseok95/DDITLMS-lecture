@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,11 +51,12 @@ public class OnlineLecLoginController {
     }
 
     @GetMapping("/")
-    public String checkUserTogoMainPage() {
+    public String checkUserTogoMainPage(HttpSession session) {
         MberDTO member = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try{
             member = ((AccountContext)authentication.getPrincipal()).getMember();
+            session.setAttribute("mberNm", member.getMberNm());
         }catch(ClassCastException e){
             return "redirect:/onlineLecture/login";
         }

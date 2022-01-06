@@ -5,13 +5,12 @@
       layout:decorator="~{layout/layout_for_exam}">
 <th:block layout:fragment="content">
     <style>
-
         .right-bar {
             right: 0px;
             top: 0px;
             bottom: 0px;
             width: 400px;
-            height: 100vmax;
+            /*height: 50vmax;*/
             z-index: 99;
             position: fixed;
             display: block;
@@ -24,15 +23,15 @@
             grid-template-columns: repeat(5, 1fr);
         }
 
-        .wrap-exam {
-            width : 1200px;
-            justify-content: left;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-        }
+        /*.wrap-exam {*/
+        /*    width : 1300px;*/
+        /*    justify-content: left;*/
+        /*    display: grid;*/
+        /*    grid-template-columns: repeat(1, 1fr);*/
+        /*}*/
 
     </style>
-    <div class="right-bar">
+    <div class="right-bar" style="background: #E6DDC4;">
         <h3 style="text-align: center; display: inline">현재 시간 : </h3>
         <h3 class = "h3-clock" style="text-align: center; display: inline"></h3>
         <div class="card-body animate-chk">
@@ -44,39 +43,35 @@
                     </label>
                 </div>
                 <br>
-                <button class="btn btn-primary float-end submission" type="button">제출</button>
+                <button class="btn float-end submission" type="button" style="background: #89B5AF">제출</button>
             </div>
         </div>
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid" style="background: #F0E9D2;">
         <div class="container">
             <div class="row no-gutters">
-                <div class="bg-secondary wrap-exam">
-                    <div th:each="list : ${examList}" class="question bg-primary" style="margin: 5px">
+                <div class="wrap-exam">
+                    <div th:each="list : ${examList}" class="question" style="background: #678983; margin: 5px; padding : 10px 20px; border-radius : 10px;">
                         <div class="py-2 h4">
-                            <b th:text="${list.examNumber+'. '}"></b>
-                            <b th:text="${list.examTitle}"></b>
+                            <b th:text="${list.examNumber+'. '}" style="color: black"></b>
+                            <b th:text="${list.examTitle}" style="color: black"></b>
                         </div>
                         <div class="ml-md-3 ml-sm-3 pl-md-5 pt-sm-0 pt-3" th:id="${list.examSn + ':' + list.examNumber}"
                              th:if="${list.examType.equals('subjective')}">
+                            <br>
                             <div class="input-group">
-                                <span class="input-group-text btn btn-danger">정답</span>
+                                <span class="input-group-text btn" style="background: #89B5AF">정답</span>
                                 <input th:id="${list.examSn}" class="form-control btn-square studentAnswer" placeholder="입력" type="text">
                             </div>
                         </div>
+                        <!--선택 영역-->
                         <div class="ml-md-3 ml-sm-3 pl-md-5 pt-sm-0 pt-3" th:if="${list.examType.equals('objective')}">
                             <label th:each="num : ${#numbers.sequence(1,4)}" style="display: block">
-                                <b th:text="${num + '. ' + examContentMap.get(list.examSn+num)}"/>
+                                <span th:text="${num + '. ' + examContentMap.get(list.examSn+num)}" style="color: black; font-size: large;"/>
                             </label>
+                            <br>
                             <div class="input-group">
-                                <span class="input-group-text btn btn-danger">정답</span>
-<!--                                <select th:id="${list.examSn}" class="form-control btn-square studentAnswer">-->
-<!--                                    <option checked disabled>선택</option>-->
-<!--                                    <option value="1">1</option>-->
-<!--                                    <option value="2">2</option>-->
-<!--                                    <option value="3">3</option>-->
-<!--                                    <option value="4">4</option>-->
-<!--                                </select>-->
+                                <span class="input-group-text btn" style="background: #89B5AF">정답</span>
                                 <input th:id="${list.examSn}" class="form-control btn-square studentAnswer" maxlength="1" placeholder="번호 입력" type="text">
                             </div>
                         </div>

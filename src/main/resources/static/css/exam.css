@@ -10,21 +10,21 @@ body {
     background-color: #333
 }
 
-.container {
-   /* background-color: #555;*/
-    color: #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    font-family: 'Montserrat', sans-serif;
-    max-width: 700px
-}
+/*.container {*/
+/*   !* background-color: #555;*!*/
+/*    color: #ddd;*/
+/*    border-radius: 10px;*/
+/*    padding: 20px;*/
+/*    font-family: 'Montserrat', sans-serif;*/
+/*    max-width: 500px*/
+/*}*/
 
 .container>p {
     font-size: 32px
 }
 
 .question {
-    width: 75%
+    width: 65%
 }
 
 .options {
