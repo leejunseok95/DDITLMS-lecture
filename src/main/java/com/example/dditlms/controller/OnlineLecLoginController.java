@@ -57,15 +57,18 @@ public class OnlineLecLoginController {
         try{
             member = ((AccountContext)authentication.getPrincipal()).getMember();
             session.setAttribute("mberNm", member.getMberNm());
+            logger.info("OnlineLecLogincontroller - checkUserTogoMainaPage - mberNo : {}", member.getMberNo());
         }catch(ClassCastException e){
             return "redirect:/onlineLecture/login";
         }
         String selection = member.getMberSe();
         logger.info("OnlineLecLogincontroller - checkUserTogoMainPage - selection : {}", selection);
         if(selection.equals("ROLE_STUDENT")){
+            session.setAttribute("stuMberNo", member.getMberNo());
             return "redirect:/student/online/studentMain";
 //        }else if(selection.equals("ROLE_PROFESSOR")){
         }else if(selection.equals("ROLE_PROFESSOR")){
+            session.setAttribute("proMberNo", member.getMberNo());
             return "redirect:/professor/online/professorMain";
         } else {
             return "redirect:/onlineLecture/login";

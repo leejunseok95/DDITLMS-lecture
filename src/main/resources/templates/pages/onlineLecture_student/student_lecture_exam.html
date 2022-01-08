@@ -132,21 +132,21 @@
             })
         })
 
-        const limitTestExam = e => {
-            const value =  e.currentTarget.value
-            const id = e.currentTarget.id
-            console.log(value)
-            console.log(id)
-
-            if(value == '진행전') {
-                alert('시험 시간이 아닙니다.')
-            } else if(value == '진행중') {
-                //data-bs-toggle="modal" 추가
-                startExamBtn.setAttribute('data-bs-toggle', 'modal')
-            } else {
-                alert('시험이 종료 되었습니다.')
-            }
-        }
+        // const limitTestExam = e => {
+        //     const value =  e.currentTarget.value
+        //     const id = e.currentTarget.id
+        //     console.log(value)
+        //     console.log(id)
+        //
+        //     if(value == '진행전') {
+        //         alert('시험 시간이 아닙니다.')
+        //     } else if(value == '진행중') {
+        //         //data-bs-toggle="modal" 추가
+        //         startExamBtn.setAttribute('data-bs-toggle', 'modal')
+        //     } else {
+        //         alert('시험이 종료 되었습니다.')
+        //     }
+        // }
 
         const goTest = e => {
             const examInfoCd = e.currentTarget.value

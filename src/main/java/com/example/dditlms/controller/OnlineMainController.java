@@ -20,10 +20,12 @@ public class OnlineMainController {
 
     @GetMapping("/student/online/studentMain")
     public ModelAndView goStudentMainPage(ModelAndView mv, HttpSession session) {
+        logger.info("OnlineMainController - goStudentMainPage - sessionMberNo : {} ", session.getAttribute("stuMberNo"));
         /**TODO 임시 변수*/
 //        int mberNo = 201401450;
-        int mberNo = 201401449;
-        session.setAttribute("stuMberNo", mberNo);
+//        int mberNo = Integer.getInteger(session.getAttribute("stuMberNo").toString());
+        int mberNo = Integer.valueOf(session.getAttribute("stuMberNo").toString());
+        logger.info("OnlineMainController - goStudentMainPage - mberNO : {} ", mberNo);
 
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("mberNo", mberNo);
@@ -56,8 +58,8 @@ public class OnlineMainController {
     @GetMapping("/professor/online/professorMain")
     public ModelAndView goProfessorMainPage(ModelAndView mv, HttpSession session) {
         /**TODO 임시 변수*/
-        int mberNo = 9999;
-        session.setAttribute("proMberNo", mberNo);
+//        int mberNo = 9999;
+        int mberNo = Integer.valueOf(session.getAttribute("proMberNo").toString());
 
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("mberNo", mberNo);
