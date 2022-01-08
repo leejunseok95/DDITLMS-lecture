@@ -70,7 +70,8 @@
                                         </div>
                                         <br><br>
                                         <div class="order-place">
-                                            <button class="btn btn-primary startExamBtn" type="button" data-bs-toggle="modal"
+                                            <!--data-bs-toggle="modal"-->
+                                            <button class="btn btn-primary startExamBtn" type="button"
                                                     th:value="${progress.get(list.examInfoCd)}" th:id="${list.examInfoCd}"
                                                     th:attr="data-bs-target='#exampleModal'+${list.examInfoCd}">
                                                 시험 응시
@@ -88,7 +89,9 @@
                                                     <div class="modal-body">
                                                         제한 시간 안에 문제 풀이를 마감하셔야 합니다.<br>
                                                         시험 도중에 나갔다 들어오게 된다면 다시 입장이 불가능 합니다.<br>
-                                                        지금 퀴즈에 응시하시겠습니까?<br>
+                                                        또한 시험 페이지에서 마우스가 벗어나거나, browser창 사이즈 조절이 발생한다면.<br>
+                                                        한번의 경고 이후 2번째부터는 강제 종료가 발생합니다.<br>
+                                                        시험에 응시하시겠습니까?<br>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <input class="mberNo" type="hidden" name="mberNo" th:value="${mberNo}">
@@ -135,14 +138,14 @@
             console.log(value)
             console.log(id)
 
-            // if(value == '진행전') {
-            //     alert('시험 시간이 아닙니다.')
-            // } else if(value == '진행중') {
-            //     //data-bs-toggle="modal" 추가
-            //     startExamBtn.setAttribute('data-bs-toggle', 'modal')
-            // } else {
-            //     alert('시험 시간이 아닙니다.')
-            // }
+            if(value == '진행전') {
+                alert('시험 시간이 아닙니다.')
+            } else if(value == '진행중') {
+                //data-bs-toggle="modal" 추가
+                startExamBtn.setAttribute('data-bs-toggle', 'modal')
+            } else {
+                alert('시험이 종료 되었습니다.')
+            }
         }
 
         const goTest = e => {

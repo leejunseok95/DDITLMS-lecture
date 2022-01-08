@@ -1,6 +1,7 @@
 package com.example.dditlms.mapper;
 
 import com.example.dditlms.domain.dto.AtchmnflDTO;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
