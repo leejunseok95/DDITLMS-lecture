@@ -214,8 +214,6 @@
         })
 
         const updateScore = e => {
-            console.log(e.currentTarget.id)
-
             const id = 'studentEachTaskScore' + e.currentTarget.id;
             const updateScoreForm = document.getElementById(id)
 
@@ -249,7 +247,6 @@
             const atchmnflId = taskList[index].atchmnflId
             const taskPresentnTmlmt = new Date(taskList[index].taskPresentnTmlmt)
             moment.DATETIME_LOCAL = "YYYY-MM-DD"
-            console.log(atchmnflId)
 
             document.querySelector('#taskSnDetail').value = taskList[index].taskSn
             document.querySelector('#taskNmDetail').value = taskList[index].taskNm
@@ -263,7 +260,6 @@
                 document.querySelector('#atchmnflIdDetail').value = atchmnflId
             }
 
-            console.log(taskPresentnTmlmt >= today)
             if (!(taskPresentnTmlmt < today)) {
                 downloadAssignmentDiv.innerHTML = ""
             } else {

@@ -120,13 +120,12 @@
         })
 
         document.addEventListener("visibilitychange", e => {
-            console.log(e)
+
         })
 
         window.addEventListener('mouseout', function (event) {
             // console.log(event.target)
             // console.log(event.relatedTarget)
-            console.log(count)
 
             if(event.relatedTarget == null) {
                 count ++;
@@ -188,7 +187,6 @@
                 const params = {
                     answerList : answerList
                 }
-                console.log(params)
                 $.ajax({
                     url:"/student/onlineLecture/exam/finishExam",
                     data : JSON.stringify(params),
@@ -200,7 +198,7 @@
                     }
                 })
                 .done(function (fragment) {
-                    console.log(fragment.state)
+
                     if (fragment.state == "성공") {
                         swal("시험이 종료되었습니다.")
                         setTimeout(function () {
@@ -232,7 +230,6 @@
                event.returnValue = false
             }
             else if(event.keyCode >= 112 && event.keyCode <= 122) {
-                console.log(event.keyCode)
                 event.preventDefault()
                 event.returnValue = false
             }

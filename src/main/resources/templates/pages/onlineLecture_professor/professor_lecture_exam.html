@@ -158,7 +158,6 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         const targetList = /*[[ ${examInfoList} ]]*/;
-        console.log(targetList)
         /*]]*/
 
         //시험문제정보(중간/기말) 등록 버튼
@@ -179,7 +178,6 @@
         moment.DATETIME_LOCAL = "YYYY-MM-DDThh:mm:ss"
         const openModal = e => {
             const index = e.currentTarget.classList[2]
-            console.log(e.currentTarget.classList)
             document.querySelector('#updateExamInfoCd').value = targetList[index].examInfoCd;
             document.querySelector('#updateExamInfoTitle').value = targetList[index].examInfoTitle;
             document.querySelector('#updateExamInfoCategory').value = targetList[index].examInfoCategory;

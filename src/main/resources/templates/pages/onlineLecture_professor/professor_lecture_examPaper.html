@@ -180,7 +180,6 @@
 
         const openModal = e => {
             const index = e.currentTarget.classList[3]
-            console.log(e.currentTarget.classList)
             document.querySelector('#updateExamSn').value = targetList[index].examSn;
             document.querySelector('#updateExamTitle').value = targetList[index].examTitle;
             document.querySelector('#updateExamType').value = targetList[index].examType;
@@ -223,7 +222,6 @@
                 function updateValue() {
                     examContentResultUpdate.value = updateContent1.value + '/' + updateContent2.value +
                         '/' + updateContent3.value + '/' + updateContent4.value + '/';
-                    console.log(examContentResultUpdate.value)
                 }
             }
         }
@@ -263,7 +261,6 @@
 
                 function updateValue() {
                     examContentResult.value = content1.value + '/' + content2.value + '/' + content3.value + '/' + content4.value + '/';
-                    console.log(examContentResult.value)
                 }
             }
         }

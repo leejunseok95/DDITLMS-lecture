@@ -267,12 +267,9 @@
                 },
                 success: function (fragment) {
                     if (fragment.state == "true") {
-                        console.log("등록 확인")
                         swal("등록 성공")
                         location.reload();
                     } else {
-                        console.log(fragment + " " + fragment.state);
-                        console.log("등록 실패");
                         swal("등록실패");
                         return;
                     }

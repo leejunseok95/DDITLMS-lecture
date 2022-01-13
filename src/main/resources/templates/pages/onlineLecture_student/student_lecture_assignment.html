@@ -117,8 +117,6 @@
         const taskList = /*[[ ${taskList} ]]*/;
         const taskAtchmnFileList = /*[[ ${taskAtchmnFileInfo} ]]*/;
         const presentnList = /*[[ ${presentnList} ]]*/;
-        console.log(taskList)
-        console.log(taskAtchmnFileList)
         /*]]*/
 
         const goDetailAssignModal = document.querySelectorAll('.goDetailAssignModal')
@@ -129,11 +127,6 @@
         for(let i = 0; i < taskList.length; i++) {
             const taskSnsubmit = taskList[i].taskSn + 'submit'
             const taskSnsubmitTr = document.getElementById(taskSnsubmit)
-
-            console.log(taskSnsubmit)
-            console.log(new Date(taskList[i].taskPresentnTmlmt))
-            console.log(today)
-            console.log(new Date(taskList[i].taskPresentnTmlmt) >= today)
 
             if(new Date(taskList[i].taskPresentnTmlmt) >= today) {
                 for(let j = 0; j < presentnList.length; j++) {
@@ -166,7 +159,6 @@
                     orignlFileNm = taskAtchmnFileList[i].orignlFileNm
                 }
             }
-            console.log(document.getElementById(taskSnsubmit).value)
 
             if(document.getElementById(taskSnsubmit).value == null) {
                 assignModalSubmitBtn.innerHTML =

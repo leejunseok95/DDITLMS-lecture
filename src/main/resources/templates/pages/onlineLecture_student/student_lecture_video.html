@@ -51,8 +51,6 @@
         let percent = null;
 
         window.addEventListener('beforeunload', (event)=> {
-            console.log("페이지 이동")
-
             const dialogText = '강의를 종료하시겠습니까?';
             event.returnValue = dialogText;
             uploadVideoInfo();
@@ -77,7 +75,6 @@
         }, 500)
 
         function stop() {
-            console.log('stop');
             clearInterval(Interval);
         }
 
@@ -89,8 +86,6 @@
                 vidoProgress : percent,
                 onlineLecCd : onlineLecCd.value
             }
-
-            console.log(formData)
 
             $.ajax ({
                 url: "/student/onlineLecture/uploadVideoInfo",
