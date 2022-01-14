@@ -119,6 +119,8 @@
         const presentnList = /*[[ ${presentnList} ]]*/;
         /*]]*/
 
+        console.log(presentnList)
+
         const goDetailAssignModal = document.querySelectorAll('.goDetailAssignModal')
         const assignModalSubmitBtn = document.querySelector('.assignModalSubmitBtn')
         const submitAssignmentBtn = document.querySelector('#submitAssignmentBtn')
@@ -130,7 +132,7 @@
 
             if(new Date(taskList[i].taskPresentnTmlmt) >= today) {
                 for(let j = 0; j < presentnList.length; j++) {
-                    if(taskList[i].taskSn == presentnList[j].taskSn) {
+                    if(taskList[i].taskSn == presentnList[j].taskSn && presentnList[j].presentnCn != null) {
                         taskSnsubmitTr.innerText = '제출완료'
                         taskSnsubmitTr.value = 'success'
                     }

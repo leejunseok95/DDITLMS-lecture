@@ -24,16 +24,16 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-<!--                                <tr class="goStudentOnlineLec"-->
-<!--                                    th:each="estbList, i :${studentEstbList}"-->
-<!--                                    th:unless="${estbList.get('LCTRE_KND').equals('O')}"-->
-<!--                                    th:id="${estbList.get('ESTBL_COURS_CD')}">-->
-<!--                                    <th scope="row" th:text="${i.count}"></th>-->
-<!--                                    <td th:text="${estbList.get('SBJECT_NM')}"></td>-->
-<!--                                    <td th:text="${estbList.get('SBJECT_PNT')}"></td>-->
-<!--                                    <td th:text="${estbList.get('LCTRE_SE')}"></td>-->
-<!--                                    <td th:text="${estbList.get('MBER_NM')}"></td>-->
-<!--                                </tr>-->
+                                <tr class="goStudentOnlineLec"
+                                    th:each="estbList, i :${studentEstbList}"
+                                    th:unless="${estbList.get('LCTRE_KND').equals('O')}"
+                                    th:id="${estbList.get('ESTBL_COURS_CD')}">
+                                    <th scope="row" th:text="${i.count}"></th>
+                                    <td th:text="${estbList.get('SBJECT_NM')}"></td>
+                                    <td th:text="${estbList.get('SBJECT_PNT')}"></td>
+                                    <td th:text="${estbList.get('LCTRE_SE')}"></td>
+                                    <td th:text="${estbList.get('MBER_NM')}"></td>
+                                </tr>
                                 <tr class="goStudentOnlineLec" style="cursor: pointer"
                                     th:each="estbList, i :${studentEstbList}"
                                     th:if="${estbList.get('LCTRE_KND').equals('O')}"
