@@ -44,6 +44,7 @@
                 </div>
                 <br>
                 <button class="btn float-end submission" type="button" style="background: #89B5AF">제출</button>
+                <button class="btn float-end dummyDataExam" type="button">시연용 데이터</button>
             </div>
         </div>
     </div>
@@ -91,6 +92,7 @@
         const checkBoxBtn = document.querySelectorAll('.checkbox_animated')
         const clock = document.querySelector('.h3-clock')
         const submissionExam = document.querySelector('.submission')
+        const dummyDataExamBtn = document.querySelector('.dummyDataExam')
         let count = 0;
         let time = examInfoTimelimit * 60 //기준시간 작성
         let min = "" //분
@@ -119,23 +121,29 @@
             }
         })
 
-        document.addEventListener("visibilitychange", e => {
+        // document.addEventListener("visibilitychange", e => {
+        //
+        // })
 
+        dummyDataExamBtn.addEventListener('click', function () {
+            for(let i = 1; i < examList.length; i++) {
+                document.getElementById(examList[i].examSn).value = 3
+            }
         })
 
         window.addEventListener('mouseout', function (event) {
             // console.log(event.target)
             // console.log(event.relatedTarget)
 
-            if(event.relatedTarget == null) {
-                count ++;
-                if(count == 1) {
-                    alert("경고!")
-                } else if (count == 2) {
-                    alert("부정행위로 인해 창을 강제 종료합니다.")
-                    parent.window.close();
-                }
-            }
+            // if(event.relatedTarget == null) {
+            //     count ++;
+            //     if(count == 1) {
+            //         alert("경고!")
+            //     } else if (count == 2) {
+            //         alert("부정행위로 인해 창을 강제 종료합니다.")
+            //         parent.window.close();
+            //     }
+            // }
         })
 
         inputBtn.forEach(item => {
