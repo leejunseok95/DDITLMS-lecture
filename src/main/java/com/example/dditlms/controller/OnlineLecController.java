@@ -212,6 +212,7 @@ public class OnlineLecController {
         AtchmnflDTO atchmnflDTO = null;
         OnlineLecDTO onlineLecDTO = null;
 
+        //update
 //        String videoFilePath = "C:\\Users\\LMS\\Desktop\\Ddit\\finalProject\\DDITLMS-lecture\\DDITLMS-lecture\\src\\main\\resources\\static\\video";
         String videoFilePath = "C:\\DDITLMS-lecture\\src\\main\\resources\\static\\video";
         String randomName = UUID.randomUUID().toString().replaceAll("-", "");
