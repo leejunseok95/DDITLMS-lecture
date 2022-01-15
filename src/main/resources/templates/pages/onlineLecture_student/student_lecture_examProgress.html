@@ -121,29 +121,17 @@
             }
         })
 
-        // document.addEventListener("visibilitychange", e => {
-        //
-        // })
-
-        dummyDataExamBtn.addEventListener('click', function () {
-            for(let i = 1; i < examList.length; i++) {
-                document.getElementById(examList[i].examSn).value = 3
-            }
-        })
-
         window.addEventListener('mouseout', function (event) {
-            // console.log(event.target)
-            // console.log(event.relatedTarget)
 
-            // if(event.relatedTarget == null) {
-            //     count ++;
-            //     if(count == 1) {
-            //         alert("경고!")
-            //     } else if (count == 2) {
-            //         alert("부정행위로 인해 창을 강제 종료합니다.")
-            //         parent.window.close();
-            //     }
-            // }
+            if(event.relatedTarget == null) {
+                count ++;
+                if(count == 1) {
+                    alert("경고!")
+                } else if (count == 2) {
+                    alert("부정행위로 인해 창을 강제 종료합니다.")
+                    parent.window.close();
+                }
+            }
         })
 
         inputBtn.forEach(item => {
@@ -151,6 +139,27 @@
                 checkInput(e)
             })
         })
+
+        // dummyDataExamBtn.addEventListener('click', function () {
+        //     for(let i = 1; i < examList.length; i++) {
+        //         const dummyIndex = 'E' +i;
+        //         const dummyId = mberNo +dummyIndex
+        //         const dummyValue = document.getElementById(dummyIndex)
+        //         const dummyCheck = document.getElementById(dummyId)
+        //         console.log(dummyIndex)
+        //         console.log(dummyId)
+        //         console.log(dummyValue)
+        //         console.log(dummyCheck)
+        //
+        //         document.getElementById(examList[i].examSn).value = 3
+        //
+        //         if(dummyValue.value != 0) {
+        //             dummyCheck.setAttribute('checked', 'checked')
+        //         } else if (dummyValue.value == null) {
+        //             dummyCheck.removeAttribute('checked')
+        //         }
+        //     }
+        // })
 
         const checkInput = e => {
             const index = e.currentTarget.id

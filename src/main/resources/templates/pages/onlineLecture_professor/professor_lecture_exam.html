@@ -34,7 +34,6 @@
                                     <th class="text-center" scope="col">시험시간</th>
                                     <th class="text-center" scope="col">시험내용</th>
                                     <th class="text-center" scope="col">진행</th>
-                                    <th class="text-center" scope="col">문제 등록</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -55,8 +54,6 @@
                                     <td th:text="${list.examInfoTimelimit}"><span th:text="${list.examInfoTimelimit}"></span></td>
                                     <td th:text="${list.examInfoContent}"><span th:text="${list.examInfoContent}"></span></td>
                                     <td th:text="${progress.get(list.examInfoCd)}"></td>
-                                    <td th:if="${examAvailability.equals('possible')}" th:text="'완료'"><span th:text="'완료'"></span></td>
-                                    <td th:if="${examAvailability.equals('impossible')}" th:text="'미완료'"><span th:text="'미완료'"></span></td>
                                 </tr>
                                 </tbody>
                             </table>

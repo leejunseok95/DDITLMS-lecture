@@ -79,12 +79,16 @@ public class OnlineLecLoginController {
     public String test(ModelAndView mv, HttpServletRequest request,
                              HttpServletResponse response,
                              @RequestParam String token) {
+        //ID값 가져와서 회원 정보 출력
         String id = jwtSecurityService.getToken(token);
         MberDTO member = mapper.onlineLecLoginById(id);
+
+        //계정 설정
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(Role.valueOf(member.getMberSe()).getValue()));
         AccountContext accountContext = new AccountContext(member,authorities);
 
+        //Security 계정을 받아서 설정
         Authentication userNameToken = new UsernamePasswordAuthenticationToken(accountContext,null,authorities);
         SecurityContextHolder.getContext().setAuthentication(userNameToken);
 
